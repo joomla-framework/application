@@ -42,13 +42,13 @@ class ColorProcessorTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Application\Cli\ColorProcessor::addStyle
+	 * @covers  Joomla\Application\Cli\ColorProcessor::setStyle
 	 * @since   1.0
 	 */
-	public function testAddStyle()
+	public function testSetStyle()
 	{
 		$style = new ColorStyle('red');
-		$this->object->addStyle('foo', $style);
+		$this->object->setStyle('foo', $style);
 
 		$this->assertThat(
 			$this->object->process('<foo>foo</foo>'),
@@ -99,7 +99,7 @@ class ColorProcessorTest extends \PHPUnit_Framework_TestCase
 	public function testProcessNamed()
 	{
 		$style = new ColorStyle('red');
-		$this->object->addStyle('foo', $style);
+		$this->object->setStyle('foo', $style);
 
 		$this->assertThat(
 			$this->object->process('<foo>foo</foo>'),

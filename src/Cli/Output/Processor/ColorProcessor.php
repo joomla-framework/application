@@ -57,7 +57,24 @@ class ColorProcessor implements ProcessorInterface
 	 */
 	public function __construct()
 	{
-		$this->addPredefinedStyles();
+		$this->setPredefinedStyles();
+	}
+
+	/**
+	 * Set a style.
+	 *
+	 * @param   string      $name   The style name.
+	 * @param   ColorStyle  $style  The color style.
+	 *
+	 * @return  ColorProcessor  Instance of $this to allow chaining.
+	 *
+	 * @since   1.2
+	 */
+	public function setStyle($name, ColorStyle $style)
+	{
+		$this->styles[$name] = $style;
+
+		return $this;
 	}
 
 	/**
@@ -69,10 +86,12 @@ class ColorProcessor implements ProcessorInterface
 	 * @return  ColorProcessor  Instance of $this to allow chaining.
 	 *
 	 * @since   1.0
+	 *
+	 * @deprecated  2.0  Use setStyle($name, $style) instead
 	 */
 	public function addStyle($name, ColorStyle $style)
 	{
-		$this->styles[$name] = $style;
+		$this->setStyle($name, $style);
 
 		return $this;
 	}
@@ -147,30 +166,30 @@ class ColorProcessor implements ProcessorInterface
 	}
 
 	/**
-	 * Adds predefined color styles to the ColorProcessor object
+	 * Sets predefined color styles to the ColorProcessor object
 	 *
 	 * @return  Stdout  Instance of $this to allow chaining.
 	 *
 	 * @since   1.0
 	 */
-	private function addPredefinedStyles()
+	private function setPredefinedStyles()
 	{
-		$this->addStyle(
+		$this->setStyle(
 			'info',
 			new ColorStyle('green', '', array('bold'))
 		);
 
-		$this->addStyle(
+		$this->setStyle(
 			'comment',
 			new ColorStyle('yellow', '', array('bold'))
 		);
 
-		$this->addStyle(
+		$this->setStyle(
 			'question',
 			new ColorStyle('black', 'cyan')
 		);
 
-		$this->addStyle(
+		$this->setStyle(
 			'error',
 			new ColorStyle('white', 'red')
 		);
