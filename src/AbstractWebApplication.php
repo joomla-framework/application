@@ -10,7 +10,6 @@ namespace Joomla\Application;
 
 use Joomla\Uri\Uri;
 use Joomla\Input\Input;
-use Joomla\String\String;
 use Joomla\Session\Session;
 use Joomla\Registry\Registry;
 
@@ -313,7 +312,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		else
 		{
 			// We have to use a JavaScript redirect here because MSIE doesn't play nice with utf-8 URLs.
-			if (($this->client->engine == Web\WebClient::TRIDENT) && !String::is_ascii($url))
+			if (($this->client->engine == Web\WebClient::TRIDENT) && !$this->is_ascii($url))
 			{
 				$html = '<html><head>';
 				$html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';
@@ -333,6 +332,23 @@ abstract class AbstractWebApplication extends AbstractApplication
 
 		// Close the application after the redirect.
 		$this->close();
+	}
+
+	/**
+	 * Tests whether a string contains only 7bit ASCII bytes.
+	 * You might use this to conditionally check whether a string
+	 * needs handling as UTF-8 or not, potentially offering performance
+	 * benefits by using the native PHP equivalent if it's just ASCII e.g.;
+	 *
+	 * @param   string  $str  The string to test.
+	 *
+	 * @return  boolean True if the string is all ASCII
+	 *
+	 * @since   1.0
+	 */
+	protected function is_ascii($url)
+	{
+		return (preg_match('/(?:[^\x00-\x7F])/', $str) !== 1);
 	}
 
 	/**
