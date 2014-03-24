@@ -346,7 +346,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   1.0
 	 */
-	protected function is_ascii($url)
+	private function is_ascii($str)
 	{
 		return (preg_match('/(?:[^\x00-\x7F])/', $str) !== 1);
 	}

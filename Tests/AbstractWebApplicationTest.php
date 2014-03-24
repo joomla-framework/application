@@ -966,6 +966,33 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * Tests the Joomla\Application\AbstractWebApplication::redirect method.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public function testIs_ascii()
+	{
+		$this->assertTrue(
+			TestHelper::invoke($this->instance, 'is_ascii', 'anormalstring9'),
+			'Regular characters should return true'
+		);
+		$this->assertFalse(
+			TestHelper::invoke($this->instance, 'is_ascii', 'anormal string9'),
+			'Spaces are not allowed in ascii'
+		);
+		$this->assertFalse(
+			TestHelper::invoke($this->instance, 'is_ascii', '@normalstrin*g9'),
+			'Symbols like @ and * are not allowed in ascii'
+		);
+		$this->assertFalse(
+			TestHelper::invoke($this->instance, 'is_ascii', 'normàlstring9'),
+			'Accented characters should return false'
+		);
+	}
+
+	/**
 	 * Tests the Joomla\Application\AbstractWebApplication::redirect method with headers already sent.
 	 *
 	 * @return  void
