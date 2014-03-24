@@ -975,7 +975,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testIs_ascii()
 	{
 		$this->assertTrue(
-			TestHelper::invoke($this->instance, 'is_ascii', 'anormalstring9'),
+			TestHelper::invoke($this->instance, 'is_ascii', 'a.normal-string_9'),
 			'Regular characters should return true'
 		);
 		$this->assertFalse(
