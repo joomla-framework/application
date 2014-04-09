@@ -11,7 +11,6 @@ namespace Joomla\Application;
 use Joomla\Uri\Uri;
 use Joomla\Input\Input;
 use Joomla\String\String;
-use Joomla\Session\Session;
 use Joomla\Registry\Registry;
 
 /**
@@ -60,15 +59,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @since  1.0
 	 */
 	protected $response;
-
-	/**
-	 * The application session object.
-	 *
-	 * @var    Session
-	 * @since  1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
-	 */
-	private $session;
 
 	/**
 	 * Class constructor.
@@ -514,19 +504,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to get the application session object.
-	 *
-	 * @return  Session  The session object
-	 *
-	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
-	 */
-	public function getSession()
-	{
-		return $this->session;
-	}
-
-	/**
 	 * Method to check the current client connnection status to ensure that it is alive.  We are
 	 * wrapping this to isolate the connection_status() function from our code base for testing reasons.
 	 *
@@ -634,23 +611,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	public function isSSLConnection()
 	{
 		return (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off');
-	}
-
-	/**
-	 * Sets the session for the application to use, if required.
-	 *
-	 * @param   Session  $session  A session object.
-	 *
-	 * @return  AbstractWebApplication  Returns itself to support chaining.
-	 *
-	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
-	 */
-	public function setSession(Session $session)
-	{
-		$this->session = $session;
-
-		return $this;
 	}
 
 	/**
@@ -772,6 +732,9 @@ abstract class AbstractWebApplication extends AbstractApplication
 
 		if (!$this->input->$method->get($token, '', 'alnum'))
 		{
+			// @TODO - Deal with the use of the session object here
+			return false;
+
 			if ($this->session->isNew())
 			{
 				// Redirect to login screen.
@@ -800,9 +763,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getFormToken($forceNew = false)
 	{
-		// @todo we need the user id somehow here
+		// @todo - We need the user id somehow here
 		$userId  = 0;
 
-		return md5($this->get('secret') . $userId . $this->session->getToken($forceNew));
+		// @todo - Deal with the use of the session object here
+		return md5($this->get('secret') . $userId /*. $this->session->getToken($forceNew)*/);
 	}
 }
