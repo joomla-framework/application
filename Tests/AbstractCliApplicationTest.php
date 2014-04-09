@@ -7,7 +7,6 @@
 namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractCliApplication;
-use Joomla\Registry\Registry;
 use Joomla\Test\TestConfig;
 use Joomla\Test\TestHelper;
 
@@ -53,9 +52,7 @@ class AbstractCliApplicationTest extends \PHPUnit_Framework_TestCase
 			$this->returnValue('ok')
 		);
 
-		$mockConfig = $this->getMock('Joomla\Registry\Registry', array('test'), array(null), '', true);
-
-		$instance = new ConcreteCli($mockInput, $mockConfig);
+		$instance = new ConcreteCli($mockInput);
 
 		$input = TestHelper::getValue($instance, 'input');
 		$this->assertEquals('ok', $input->test());

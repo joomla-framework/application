@@ -8,7 +8,6 @@ namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractApplication;
 use Joomla\Test\TestHelper;
-use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/Stubs/ConcreteBase.php';
 
@@ -43,8 +42,8 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 			'Input property wrong type'
 		);
 
-		$this->assertInstanceOf(
-			'Joomla\Registry\Registry',
+		$this->assertInternalType(
+			'array',
 			TestHelper::getValue($this->instance, 'config'),
 			'Config property wrong type'
 		);
@@ -59,21 +58,10 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 			$this->returnValue('ok')
 		);
 
-		$mockConfig = $this->getMock('Joomla\Registry\Registry', array('test'), array(null), '', true);
-		$mockConfig
-			->expects($this->any())
-			->method('test')
-			->will(
-			$this->returnValue('ok')
-		);
-
-		$instance = new ConcreteBase($mockInput, $mockConfig);
+		$instance = new ConcreteBase($mockInput);
 
 		$input = TestHelper::getValue($instance, 'input');
 		$this->assertEquals('ok', $input->test());
-
-		$config = TestHelper::getValue($instance, 'config');
-		$this->assertEquals('ok', $config->test());
 	}
 
 	/**
@@ -131,7 +119,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testGet()
 	{
 		$mockInput = $this->getMock('Joomla\Input\Input', array('test'), array(), '', false);
-		$config = new Registry(array('foo' => 'bar'));
+		$config = array('foo' => 'bar');
 
 		$instance = new ConcreteBase($mockInput, $config);
 
@@ -168,7 +156,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testSet()
 	{
 		$mockInput = $this->getMock('Joomla\Input\Input', array('test'), array(), '', false);
-		$config = new Registry(array('foo' => 'bar'));
+		$config = array('foo' => 'bar');
 
 		$instance = new ConcreteBase($mockInput, $config);
 
@@ -187,7 +175,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetConfiguration()
 	{
-		$config = new Registry(array('foo' => 'bar'));
+		$config = array('foo' => 'bar');
 
 		$this->assertSame($this->instance, $this->instance->setConfiguration($config), 'Checks chainging.');
 		$this->assertEquals('bar', $this->instance->get('foo'), 'Checks the configuration was set.');

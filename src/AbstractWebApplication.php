@@ -12,7 +12,6 @@ use Joomla\Uri\Uri;
 use Joomla\Input\Input;
 use Joomla\String\String;
 use Joomla\Session\Session;
-use Joomla\Registry\Registry;
 
 /**
  * Base class for a Joomla! Web application.
@@ -75,16 +74,16 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @param   Input          $input   An optional argument to provide dependency injection for the application's
 	 *                                  input object.  If the argument is a Input object that object will become
 	 *                                  the application's input object, otherwise a default input object is created.
-	 * @param   Registry       $config  An optional argument to provide dependency injection for the application's
-	 *                                  config object.  If the argument is a Registry object that object will become
-	 *                                  the application's config object, otherwise a default config object is created.
+	 * @param   array          $config  An optional argument to provide dependency injection for the application's
+	 *                                  config object.  If the argument is an array that object will become the
+	 *                                  application's config object, otherwise a default config object is created.
 	 * @param   Web\WebClient  $client  An optional argument to provide dependency injection for the application's
 	 *                                  client object.  If the argument is a Web\WebClient object that object will become
 	 *                                  the application's client object, otherwise a default client object is created.
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(Input $input = null, Registry $config = null, Web\WebClient $client = null)
+	public function __construct(Input $input = null, $config = array(), Web\WebClient $client = null)
 	{
 		$this->client = $client instanceof Web\WebClient ? $client : new Web\WebClient;
 
@@ -284,7 +283,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		 */
 		if (!preg_match('#^[a-z]+\://#i', $url))
 		{
-			// Get a JURI instance for the requested URI.
+			// Get a Uri instance for the requested URI.
 			$uri = new Uri($this->get('uri.request'));
 
 			// Get a base URL to prepend from the requested URI.

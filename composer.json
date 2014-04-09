@@ -11,7 +11,6 @@
         "joomla/event": "~1.1",
         "joomla/session": "~1.1",
         "joomla/string": "~1.1",
-        "joomla/registry": "~1.1",
         "joomla/uri": "~1.1",
         "joomla/filesystem": "~1.1",
         "psr/log": "~1.0"

@@ -9,7 +9,6 @@
 namespace Joomla\Application;
 
 use Joomla\Input\Input;
-use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -24,7 +23,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	/**
 	 * The application configuration object.
 	 *
-	 * @var    Registry
+	 * @var    array
 	 * @since  1.0
 	 */
 	protected $config;
@@ -48,19 +47,19 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	/**
 	 * Class constructor.
 	 *
-	 * @param   Input     $input   An optional argument to provide dependency injection for the application's
-	 *                             input object.  If the argument is a InputCli object that object will become
-	 *                             the application's input object, otherwise a default input object is created.
-	 * @param   Registry  $config  An optional argument to provide dependency injection for the application's
-	 *                             config object.  If the argument is a Registry object that object will become
-	 *                             the application's config object, otherwise a default config object is created.
+	 * @param   Input  $input   An optional argument to provide dependency injection for the application's
+	 *                          input object.  If the argument is a InputCli object that object will become
+	 *                          the application's input object, otherwise a default input object is created.
+	 * @param   array  $config  An optional argument to provide dependency injection for the application's
+	 *                          config object.  If the argument is an array that object will become the
+	 *                          application's config object, otherwise a default config object is created.
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(Input $input = null, Registry $config = null)
+	public function __construct(Input $input = null, $config = array())
 	{
 		$this->input = $input instanceof Input ? $input : new Input;
-		$this->config = $config instanceof Registry ? $config : new Registry;
+		$this->config = $config;
 
 		$this->initialise();
 	}
@@ -119,7 +118,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function get($key, $default = null)
 	{
-		return $this->config->get($key, $default);
+		return isset($this->config[$key]) ? $this->config[$key] : $default;
 	}
 
 	/**
@@ -167,8 +166,8 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function set($key, $value = null)
 	{
-		$previous = $this->config->get($key);
-		$this->config->set($key, $value);
+		$previous = $this->get($key);
+		$this->config[$key] = $value;
 
 		return $previous;
 	}
@@ -176,13 +175,13 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	/**
 	 * Sets the configuration for the application.
 	 *
-	 * @param   Registry  $config  A registry object holding the configuration.
+	 * @param   array  $config  An array holding the configuration.
 	 *
 	 * @return  AbstractApplication  Returns itself to support chaining.
 	 *
 	 * @since   1.0
 	 */
-	public function setConfiguration(Registry $config)
+	public function setConfiguration($config)
 	{
 		$this->config = $config;
 

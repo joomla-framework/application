@@ -8,7 +8,6 @@ namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractWebApplication;
 use Joomla\Application\Web\WebClient;
-use Joomla\Registry\Registry;
 use Joomla\Test\TestConfig;
 use Joomla\Test\TestHelper;
 
@@ -102,8 +101,8 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			'Input property wrong type'
 		);
 
-		$this->assertInstanceOf(
-			'Joomla\Registry\Registry',
+		$this->assertInternalType(
+			'array',
 			TestHelper::getValue($this->instance, 'config'),
 			'Config property wrong type'
 		);
@@ -152,14 +151,6 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			$this->returnValue('ok')
 		);
 
-		$mockConfig = $this->getMock('Joomla\Registry\Registry', array('test'), array(null), '', true);
-		$mockConfig
-			->expects($this->any())
-			->method('test')
-			->will(
-			$this->returnValue('ok')
-		);
-
 		$mockClient = $this->getMock('Joomla\\Application\\Web\\WebClient', array('test'), array(), '', false);
 		$mockClient
 			->expects($this->any())
@@ -168,18 +159,12 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			$this->returnValue('ok')
 		);
 
-		$inspector = new ConcreteWeb($mockInput, $mockConfig, $mockClient);
+		$inspector = new ConcreteWeb($mockInput, array(), $mockClient);
 
 		$this->assertThat(
 			$inspector->input->test(),
 			$this->equalTo('ok'),
 			'Tests input injection.'
-		);
-
-		$this->assertThat(
-			TestHelper::getValue($inspector, 'config')->test(),
-			$this->equalTo('ok'),
-			'Tests config injection.'
 		);
 
 		$this->assertThat(
@@ -719,37 +704,37 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testLoadSystemUrisWithSiteUriSet()
 	{
 		// Set the site_uri value in the configuration.
-		$config = new Registry(array('site_uri' => 'http://test.joomla.org/path/'));
+		$config = array('site_uri' => 'http://test.joomla.org/path/');
 		TestHelper::setValue($this->instance, 'config', $config);
 
 		TestHelper::invoke($this->instance, 'loadSystemUris');
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.full'),
+			$this->instance->get('uri.base.full'),
 			$this->equalTo('http://test.joomla.org/path/'),
 			'Checks the full base uri.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.host'),
+			$this->instance->get('uri.base.host'),
 			$this->equalTo('http://test.joomla.org'),
 			'Checks the base uri host.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.path'),
+			$this->instance->get('uri.base.path'),
 			$this->equalTo('/path/'),
 			'Checks the base uri path.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.full'),
+			$this->instance->get('uri.media.full'),
 			$this->equalTo('http://test.joomla.org/path/media/'),
 			'Checks the full media uri.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.path'),
+			$this->instance->get('uri.media.path'),
 			$this->equalTo('/path/media/'),
 			'Checks the media uri path.'
 		);
@@ -767,31 +752,31 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		TestHelper::invoke($this->instance, 'loadSystemUris', 'http://joom.la/application');
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.full'),
+			$this->instance->get('uri.base.full'),
 			$this->equalTo('http://joom.la/'),
 			'Checks the full base uri.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.host'),
+			$this->instance->get('uri.base.host'),
 			$this->equalTo('http://joom.la'),
 			'Checks the base uri host.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.path'),
+			$this->instance->get('uri.base.path'),
 			$this->equalTo('/'),
 			'Checks the base uri path.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.full'),
+			$this->instance->get('uri.media.full'),
 			$this->equalTo('http://joom.la/media/'),
 			'Checks the full media uri.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.path'),
+			$this->instance->get('uri.media.path'),
 			$this->equalTo('/media/'),
 			'Checks the media uri path.'
 		);
@@ -807,38 +792,38 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testLoadSystemUrisWithoutSiteUriWithMediaUriSet()
 	{
 		// Set the media_uri value in the configuration.
-		$config = new Registry(array('media_uri' => 'http://cdn.joomla.org/media/'));
+		$config = array('media_uri' => 'http://cdn.joomla.org/media/');
 		TestHelper::setValue($this->instance, 'config', $config);
 
 		TestHelper::invoke($this->instance, 'loadSystemUris', 'http://joom.la/application');
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.full'),
+			$this->instance->get('uri.base.full'),
 			$this->equalTo('http://joom.la/'),
 			'Checks the full base uri.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.host'),
+			$this->instance->get('uri.base.host'),
 			$this->equalTo('http://joom.la'),
 			'Checks the base uri host.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.path'),
+			$this->instance->get('uri.base.path'),
 			$this->equalTo('/'),
 			'Checks the base uri path.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.full'),
+			$this->instance->get('uri.media.full'),
 			$this->equalTo('http://cdn.joomla.org/media/'),
 			'Checks the full media uri.'
 		);
 
 		// Since this is on a different domain we need the full url for this too.
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.path'),
+			$this->instance->get('uri.media.path'),
 			$this->equalTo('http://cdn.joomla.org/media/'),
 			'Checks the media uri path.'
 		);
@@ -854,38 +839,38 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testLoadSystemUrisWithoutSiteUriWithRelativeMediaUriSet()
 	{
 		// Set the media_uri value in the configuration.
-		$config = new Registry(array('media_uri' => '/media/'));
+		$config = array('media_uri' => '/media/');
 		TestHelper::setValue($this->instance, 'config', $config);
 
 		TestHelper::invoke($this->instance, 'loadSystemUris', 'http://joom.la/application');
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.full'),
+			$this->instance->get('uri.base.full'),
 			$this->equalTo('http://joom.la/'),
 			'Checks the full base uri.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.host'),
+			$this->instance->get('uri.base.host'),
 			$this->equalTo('http://joom.la'),
 			'Checks the base uri host.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.base.path'),
+			$this->instance->get('uri.base.path'),
 			$this->equalTo('/'),
 			'Checks the base uri path.'
 		);
 
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.full'),
+			$this->instance->get('uri.media.full'),
 			$this->equalTo('http://joom.la/media/'),
 			'Checks the full media uri.'
 		);
 
 		// Since this is on a different domain we need the full url for this too.
 		$this->assertThat(
-			TestHelper::getValue($this->instance, 'config')->get('uri.media.path'),
+			$this->instance->get('uri.media.path'),
 			$this->equalTo('/media/'),
 			'Checks the media uri path.'
 		);
@@ -946,8 +931,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		);
 
 		// Inject the internal configuration.
-		$config = new Registry;
-		$config->set('uri.base.full', $base);
+		$config = array('uri.base.full' => $base);
 
 		TestHelper::setValue($this->instance, 'config', $config);
 
@@ -981,8 +965,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->instance->headersSent = true;
 
 		// Inject the internal configuration.
-		$config = new Registry;
-		$config->set('uri.base.full', $base);
+		$config = array('uri.base.full' => $base);
 
 		TestHelper::setValue($this->instance, 'config', $config);
 
@@ -1094,9 +1077,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		);
 
 		// Inject the internal configuration.
-		$config = new Registry;
-		$config->set('uri.base.full', $base);
-		$config->set('uri.request', $request);
+		$config = array('uri.base.full' => $base, 'uri.request' => $request);
 
 		TestHelper::setValue($this->instance, 'config', $config);
 
