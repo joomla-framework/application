@@ -65,6 +65,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @var    Session
 	 * @since  1.0
+	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	private $session;
 
@@ -517,6 +518,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  Session  The session object
 	 *
 	 * @since   1.0
+	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	public function getSession()
 	{
@@ -641,6 +643,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  AbstractWebApplication  Returns itself to support chaining.
 	 *
 	 * @since   1.0
+	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	public function setSession(Session $session)
 	{
