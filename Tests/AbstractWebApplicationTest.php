@@ -1253,29 +1253,6 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Test getFormToken
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getFormToken
-	 *
-	 * @return void
-	 */
-	public function testGetFormToken()
-	{
-		$this->markTestSkipped('Test needs to be refactored now that the Session package has been removed');
-
-		$mockSession = $this->getMock('Joomla\\Session\\Session');
-
-		$this->instance->setSession($mockSession);
-		$this->instance->set('secret', 'abc');
-		$expected = md5('abc' . 0 . $this->instance->getSession()->getToken());
-		$this->assertEquals(
-			$expected,
-			$this->instance->getFormToken(),
-			'Form token should be calculated as above.'
-		);
-	}
-
-	/**
 	 * Setup for testing.
 	 *
 	 * @return  void
