@@ -60,7 +60,15 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @since  1.0
 	 */
 	protected $response;
-
+	
+	/**
+	 * Current user identifier.
+	 * 
+	 * @var    mixed
+	 * @since  1.0
+	 */
+	protected $userId = 0;
+	
 	/**
 	 * The application session object.
 	 *
@@ -789,7 +797,18 @@ abstract class AbstractWebApplication extends AbstractApplication
 			return true;
 		}
 	}
-
+	
+	/**
+	 * Method to get current user id
+	 * 
+	 * @return  mixed  Application user identifier
+	 * @since   1.0
+	 */
+	public function getUserId()
+	{
+		return $this->userId;
+	}
+	
 	/**
 	 * Method to determine a hash for anti-spoofing variable names
 	 *
@@ -802,9 +821,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getFormToken($forceNew = false)
 	{
-		// @todo we need the user id somehow here
-		$userId  = 0;
-
-		return md5($this->get('secret') . $userId . $this->session->getToken($forceNew));
+		return md5($this->get('secret') . $this->getUserId() . $this->session->getToken($forceNew));
 	}
 }
