@@ -350,12 +350,12 @@ class MyCli extends AbstractCliApplication
 
 ## Installation via Composer
 
-Add `"joomla/application": "~1.0"` to the require block in your composer.json and then run `composer install`.
+Add `"joomla/application": "2.0.*@dev"` to the require block in your composer.json and then run `composer install`.
 
 ```json
 {
 	"require": {
-		"joomla/application": "~1.0"
+		"joomla/application": "2.0.*@dev"
 	}
 }
 ```
@@ -363,5 +363,5 @@ Add `"joomla/application": "~1.0"` to the require block in your composer.json an
 Alternatively, you can simply run the following from the command line:
 
 ```sh
-composer require joomla/application "~1.0"
+composer require joomla/application "2.0.*@dev"
 ```
