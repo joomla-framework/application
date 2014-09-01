@@ -4,9 +4,9 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-namespace Joomla\Application\Tests;
+namespace Joomla\Application\Tests\Cli\Output\Processor;
 
-use Joomla\Application\Cli\ColorProcessor;
+use Joomla\Application\Cli\Output\Processor\ColorProcessor;
 use Joomla\Application\Cli\ColorStyle;
 
 /**
