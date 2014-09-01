@@ -5,7 +5,4 @@
 			<directory>Tests</directory>
 		</testsuite>
 	</testsuites>
-    <php>
-        <const name="JPATH_ROOT" value="__DIR__" />
-    </php>
 </phpunit>

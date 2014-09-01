@@ -72,7 +72,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Data for fetchConfigurationData method.
+	 * Data for redirect method.
 	 *
 	 * @return  array
 	 *

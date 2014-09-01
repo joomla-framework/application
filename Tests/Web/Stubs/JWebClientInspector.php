@@ -143,18 +143,6 @@ class JWebClientInspector extends Joomla\Application\Web\WebClient
 	}
 
 	/**
-	 * fetchConfigurationData()
-	 *
-	 * @return  void
-	 *
-	 * @since   1.0
-	 */
-	public function fetchConfigurationData()
-	{
-		return parent::fetchConfigurationData();
-	}
-
-	/**
 	 * loadSystemURIs()
 	 *
 	 * @return  void

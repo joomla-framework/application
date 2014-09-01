@@ -37,7 +37,7 @@ class AbstractDaemonApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public static function tearDownAfterClass()
 	{
-		$pidPath = JPATH_ROOT . '/japplicationdaemontest.pid';
+		$pidPath = __DIR__ . '/japplicationdaemontest.pid';
 
 		if (file_exists($pidPath))
 		{
@@ -214,7 +214,7 @@ class AbstractDaemonApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testWriteProcessIdFile()
 	{
-		$pidPath = JPATH_ROOT . '/japplicationdaemontest.pid';
+		$pidPath = __DIR__ . '/japplicationdaemontest.pid';
 
 		if (file_exists($pidPath))
 		{
