@@ -1,3 +1,19 @@
+# IDE related files
+.project
+.metadata
+.gradle
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+.buildpath
+
+#Local project files
 vendor/
 composer.phar
 composer.lock
