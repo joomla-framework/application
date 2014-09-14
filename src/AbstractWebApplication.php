@@ -11,7 +11,6 @@ namespace Joomla\Application;
 use Joomla\Uri\Uri;
 use Joomla\Input\Input;
 use Joomla\String\String;
-use Joomla\Session\Session;
 use Joomla\Registry\Registry;
 
 /**
@@ -60,15 +59,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @since  1.0
 	 */
 	protected $response;
-
-	/**
-	 * The application session object.
-	 *
-	 * @var    Session
-	 * @since  1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
-	 */
-	private $session;
 
 	/**
 	 * Class constructor.
@@ -514,19 +504,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to get the application session object.
-	 *
-	 * @return  Session  The session object
-	 *
-	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
-	 */
-	public function getSession()
-	{
-		return $this->session;
-	}
-
-	/**
 	 * Method to check the current client connnection status to ensure that it is alive.  We are
 	 * wrapping this to isolate the connection_status() function from our code base for testing reasons.
 	 *
@@ -637,23 +614,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Sets the session for the application to use, if required.
-	 *
-	 * @param   Session  $session  A session object.
-	 *
-	 * @return  AbstractWebApplication  Returns itself to support chaining.
-	 *
-	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
-	 */
-	public function setSession(Session $session)
-	{
-		$this->session = $session;
-
-		return $this;
-	}
-
-	/**
 	 * Method to load the system URI strings for the application.
 	 *
 	 * @param   string  $requestUri  An optional request URI to use instead of detecting one from the
@@ -753,58 +713,5 @@ abstract class AbstractWebApplication extends AbstractApplication
 			$this->set('uri.media.full', $this->get('uri.base.full') . 'media/');
 			$this->set('uri.media.path', $this->get('uri.base.path') . 'media/');
 		}
-	}
-
-	/**
-	 * Checks for a form token in the request.
-	 *
-	 * Use in conjunction with getFormToken.
-	 *
-	 * @param   string  $method  The request method in which to look for the token key.
-	 *
-	 * @return  boolean  True if found and valid, false otherwise.
-	 *
-	 * @since   1.0
-	 * @deprecated  2.0  Deprecated without replacement
-	 */
-	public function checkToken($method = 'post')
-	{
-		$token = $this->getFormToken();
-
-		if (!$this->input->$method->get($token, '', 'alnum'))
-		{
-			if ($this->session->isNew())
-			{
-				// Redirect to login screen.
-				$this->redirect('index.php');
-				$this->close();
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
-		{
-			return true;
-		}
-	}
-
-	/**
-	 * Method to determine a hash for anti-spoofing variable names
-	 *
-	 * @param   boolean  $forceNew  If true, force a new token to be created
-	 *
-	 * @return  string  Hashed var name
-	 *
-	 * @since   1.0
-	 * @deprecated  2.0  Deprecated without replacement
-	 */
-	public function getFormToken($forceNew = false)
-	{
-		// @todo we need the user id somehow here
-		$userId  = 0;
-
-		return md5($this->get('secret') . $userId . $this->session->getToken($forceNew));
 	}
 }
