@@ -1229,23 +1229,6 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Tests the setSession method.
-	 *
-	 * @return  void
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getSession
-	 * @covers  Joomla\Application\AbstractWebApplication::setSession
-	 * @since   1.0
-	 */
-	public function testSetSession()
-	{
-		$mockSession = $this->getMock('Joomla\Session\Session', array('test'), array(), '', false);
-
-		$this->assertSame($this->instance, $this->instance->setSession($mockSession), 'Checks chainging.');
-		$this->assertNull($this->instance->getSession()->test(), 'Checks the session was set with the new object.');
-	}
-
-	/**
 	 * Test...
 	 *
 	 * @covers Joomla\Application\AbstractWebApplication::isSSLConnection
@@ -1266,27 +1249,6 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->assertThat(
 			$this->instance->isSSLConnection(),
 			$this->equalTo(true)
-		);
-	}
-
-	/**
-	 * Test getFormToken
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getFormToken
-	 *
-	 * @return void
-	 */
-	public function testGetFormToken()
-	{
-		$mockSession = $this->getMock('Joomla\\Session\\Session');
-
-		$this->instance->setSession($mockSession);
-		$this->instance->set('secret', 'abc');
-		$expected = md5('abc' . 0 . $this->instance->getSession()->getToken());
-		$this->assertEquals(
-			$expected,
-			$this->instance->getFormToken(),
-			'Form token should be calculated as above.'
 		);
 	}
 

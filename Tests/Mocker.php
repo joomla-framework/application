@@ -137,7 +137,6 @@ class Mocker
 	 * Creates an instance of the mock Joomla\Application\AbstractWebApplication object.
 	 *
 	 * @param   array  $options  A associative array of options to configure the mock.
-	 *                           session => a mock session
 	 *                           class => an alternative class to mock (used for hybird legacy applications)
 	 *                           methods => an array of additional methods to mock
 	 *
@@ -147,7 +146,7 @@ class Mocker
 	 */
 	public function createMockWeb($options = array())
 	{
-			// Set expected server variables.
+		// Set expected server variables.
 		if (!isset($_SERVER['HTTP_HOST']))
 		{
 			$_SERVER['HTTP_HOST'] = 'localhost';
@@ -170,7 +169,6 @@ class Mocker
 			'getBody',
 			'getHeaders',
 			'getLogger',
-			'getSession',
 			'hasLogger',
 			'header',
 			'initialise',
@@ -185,7 +183,6 @@ class Mocker
 			'setConfiguration',
 			'setHeader',
 			'setLogger',
-			'setSession',
 		);
 
 		// Add custom methods if required for derived application classes.
@@ -205,12 +202,6 @@ class Mocker
 			// Call original constructor.
 			true
 		);
-
-		// Mock a call to JApplicationWeb::getSession().
-		if (isset($options['session']))
-		{
-			$mockObject->expects($this->test->any())->method('getSession')->will($this->test->returnValue($options['session']));
-		}
 
 		Helper::assignMockCallbacks(
 			$mockObject,
