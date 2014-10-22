@@ -8,7 +8,6 @@
 
 namespace Joomla\Application;
 
-use Joomla\Registry\Registry;
 use Joomla\Input;
 use Joomla\Application\Cli\CliOutput;
 
@@ -31,15 +30,14 @@ abstract class AbstractCliApplication extends AbstractApplication
 	 * @param   Input\Cli  $input   An optional argument to provide dependency injection for the application's
 	 *                              input object.  If the argument is a InputCli object that object will become
 	 *                              the application's input object, otherwise a default input object is created.
-	 * @param   Registry   $config  An optional argument to provide dependency injection for the application's
-	 *                              config object.  If the argument is a Registry object that object will become
-	 *                              the application's config object, otherwise a default config object is created.
-	 *
+	 * @param   array      $config  An optional argument to provide dependency injection for the application's
+	 *                              config object.  If the argument is an array that object will become the
+	 *                              application's config object, otherwise a default config object is created.
 	 * @param   CliOutput  $output  The output handler.
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(Input\Cli $input = null, Registry $config = null, CliOutput $output = null)
+	public function __construct(Input\Cli $input = null, $config = array(), CliOutput $output = null)
 	{
 		// Close the application if we are not executed from the command line.
 		// @codeCoverageIgnoreStart

@@ -7,7 +7,6 @@
 namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractDaemonApplication;
-use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
 
 include_once __DIR__ . '/Stubs/ConcreteDaemon.php';
@@ -235,14 +234,14 @@ class AbstractDaemonApplicationTest extends \PHPUnit_Framework_TestCase
 		// Check the value of the file.
 		$this->assertEquals(
 			$pid,
-			(int) file_get_contents($this->inspector->getClassProperty('config')->get('application_pid_file')),
+			(int) file_get_contents($this->inspector->get('application_pid_file')),
 			'Line: ' . __LINE__
 		);
 
 		// Check the permissions on the file.
 		$this->assertEquals(
 			'0644',
-			substr(decoct(fileperms($this->inspector->getClassProperty('config')->get('application_pid_file'))), 1),
+			substr(decoct(fileperms($this->inspector->get('application_pid_file'))), 1),
 			'Line: ' . __LINE__
 		);
 	}
