@@ -10,7 +10,7 @@
         "joomla/input": "~1.2",
         "joomla/session": "~1.1",
         "joomla/string": "~1.1",
-        "joomla/registry": "~1.1",
+        "joomla/registry": "~2.0@dev",
         "joomla/uri": "~1.1",
         "psr/log": "~1.0"
     },
