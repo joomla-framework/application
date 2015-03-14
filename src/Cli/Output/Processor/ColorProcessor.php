@@ -12,7 +12,7 @@ use Joomla\Application\Cli\ColorStyle;
 use Joomla\Application\Cli\Output\Stdout;
 
 /**
- * Class ColorProcessor.
+ * Command line output processor supporting ANSI-colored output
  *
  * @since  1.0
  */
@@ -53,7 +53,7 @@ class ColorProcessor implements ProcessorInterface
 	/**
 	 * Class constructor
 	 *
-	 * @param   boolean  $noColors  Defines non-colored mode on construct
+	 * @param  boolean  $noColors  Defines non-colored mode on construct
 	 *
 	 * @since  1.1.0
 	 */

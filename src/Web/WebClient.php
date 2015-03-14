@@ -8,7 +8,6 @@
 
 namespace Joomla\Application\Web;
 
-
 /**
  * Class to model a Web Client.
  *
@@ -54,79 +53,105 @@ class WebClient
 	const ANDROIDTABLET = 22;
 
 	/**
-	 * @var    integer  The detected platform on which the web client runs.
+	 * The detected platform on which the web client runs.
+	 *
+	 * @var    integer
 	 * @since  1.0
 	 */
 	protected $platform;
 
 	/**
-	 * @var    boolean  True if the web client is a mobile device.
+	 * True if the web client is a mobile device.
+	 *
+	 * @var    boolean
 	 * @since  1.0
 	 */
 	protected $mobile = false;
 
 	/**
-	 * @var    integer  The detected rendering engine used by the web client.
+	 * The detected rendering engine used by the web client.
+	 *
+	 * @var    integer
 	 * @since  1.0
 	 */
 	protected $engine;
 
 	/**
-	 * @var    integer  The detected browser used by the web client.
+	 * The detected browser used by the web client.
+	 *
+	 * @var    integer
 	 * @since  1.0
 	 */
 	protected $browser;
 
 	/**
-	 * @var    string  The detected browser version used by the web client.
+	 * The detected browser version used by the web client.
+	 *
+	 * @var    string
 	 * @since  1.0
 	 */
 	protected $browserVersion;
 
 	/**
-	 * @var    array  The priority order detected accepted languages for the client.
+	 * The priority order detected accepted languages for the client.
+	 *
+	 * @var    array
 	 * @since  1.0
 	 */
 	protected $languages = array();
 
 	/**
-	 * @var    array  The priority order detected accepted encodings for the client.
+	 * The priority order detected accepted encodings for the client.
+	 *
+	 * @var    array
 	 * @since  1.0
 	 */
 	protected $encodings = array();
 
 	/**
-	 * @var    string  The web client's user agent string.
+	 * The web client's user agent string.
+	 *
+	 * @var    string
 	 * @since  1.0
 	 */
 	protected $userAgent;
 
 	/**
-	 * @var    string  The web client's accepted encoding string.
+	 * The web client's accepted encoding string.
+	 *
+	 * @var    string
 	 * @since  1.0
 	 */
 	protected $acceptEncoding;
 
 	/**
-	 * @var    string  The web client's accepted languages string.
+	 * The web client's accepted languages string.
+	 *
+	 * @var    string
 	 * @since  1.0
 	 */
 	protected $acceptLanguage;
 
 	/**
-	 * @var    boolean  True if the web client is a robot.
+	 * True if the web client is a robot.
+	 *
+	 * @var    boolean
 	 * @since  1.0
 	 */
 	protected $robot = false;
 
 	/**
-	 * @var    array  An array of flags determining whether or not a detection routine has been run.
+	 * An array of flags determining whether or not a detection routine has been run.
+	 *
+	 * @var    array
 	 * @since  1.0
 	 */
 	protected $detection = array();
 
 	/**
-	 * @var    array  An array of headers sent by client
+	 * An array of headers sent by client.
+	 *
+	 * @var    array
 	 * @since  1.3.0
 	 */
 	protected $headers;
@@ -229,6 +254,7 @@ class WebClient
 					$this->detectRobot($this->userAgent);
 				}
 				break;
+
 			case 'headers':
 				if (empty($this->detection['headers']))
 				{
@@ -242,6 +268,12 @@ class WebClient
 		{
 			return $this->$name;
 		}
+
+		$trace = debug_backtrace();
+		trigger_error(
+			'Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'],
+			E_USER_NOTICE
+		);
 	}
 
 	/**
@@ -479,6 +511,7 @@ class WebClient
 		{
 			$this->mobile = true;
 			$this->platform = self::ANDROID;
+
 			/**
 			 * Attempt to distinguish between Android phones and tablets
 			 * There is no totally foolproof method but certain rules almost always hold
@@ -513,14 +546,7 @@ class WebClient
 	 */
 	protected function detectRobot($userAgent)
 	{
-		if (preg_match('/http|bot|robot|spider|crawler|curl|^$/i', $userAgent))
-		{
-			$this->robot = true;
-		}
-		else
-		{
-			$this->robot = false;
-		}
+		$this->robot = preg_match('/http|bot|robot|spider|crawler|curl|^$/i', $userAgent);
 
 		$this->detection['robot'] = true;
 	}

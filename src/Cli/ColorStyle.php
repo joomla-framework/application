@@ -9,7 +9,7 @@
 namespace Joomla\Application\Cli;
 
 /**
- * Class ColorStyle
+ * Class defining ANSI-color styles for command line output
  *
  * @since  1.0
  */
@@ -162,7 +162,7 @@ final class ColorStyle
 	 *
 	 * @param   string  $string  The parameter string.
 	 *
-	 * @return  ColorStyle  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 * @throws  \RuntimeException
