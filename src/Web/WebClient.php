@@ -264,7 +264,7 @@ class WebClient
 		}
 
 		// Return the property if it exists.
-		if (isset($this->$name))
+		if (property_exists($this, $name))
 		{
 			return $this->$name;
 		}
