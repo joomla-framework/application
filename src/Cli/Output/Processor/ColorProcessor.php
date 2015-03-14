@@ -53,9 +53,9 @@ class ColorProcessor implements ProcessorInterface
 	/**
 	 * Class constructor
 	 *
-	 * @param  boolean  $noColors  Defines non-colored mode on construct
+	 * @param   boolean  $noColors  Defines non-colored mode on construct
 	 *
-	 * @since  1.1.0
+	 * @since   1.1.0
 	 */
 	public function __construct($noColors = null)
 	{
