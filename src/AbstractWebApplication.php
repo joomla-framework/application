@@ -303,38 +303,39 @@ abstract class AbstractWebApplication extends AbstractApplication
 		if ($this->checkHeadersSent())
 		{
 			echo "<script>document.location.href='$url';</script>\n";
+
+			$this->close();
 		}
-		else
+
+		// We have to use a JavaScript redirect here because MSIE doesn't play nice with UTF-8 URLs.
+		if (($this->client->engine == Web\WebClient::TRIDENT) && !$this->isAscii($url))
 		{
-			// We have to use a JavaScript redirect here because MSIE doesn't play nice with utf-8 URLs.
-			if (($this->client->engine == Web\WebClient::TRIDENT) && !$this->isAscii($url))
-			{
-				$html = '<html><head>';
-				$html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';
-				$html .= '<script>document.location.href=\'' . $url . '\';</script>';
-				$html .= '</head><body></body></html>';
+			$html = '<html><head>';
+			$html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';
+			$html .= '<script>document.location.href=\'' . $url . '\';</script>';
+			$html .= '</head><body></body></html>';
 
-				echo $html;
-			}
-			else
-			{
-				// All other cases use the more efficient HTTP header for redirection.
-				$this->header($moved ? 'HTTP/1.1 301 Moved Permanently' : 'HTTP/1.1 303 See other');
-				$this->header('Location: ' . $url);
-				$this->header('Content-Type: text/html; charset=' . $this->charSet);
+			echo $html;
 
-				// Send other headers that may have been set.
-				$this->sendHeaders();
-			}
+			$this->close();
 		}
+
+		// All other cases use the more efficient HTTP header for redirection.
+		$this->header($moved ? 'HTTP/1.1 301 Moved Permanently' : 'HTTP/1.1 303 See other');
+		$this->header('Location: ' . $url);
+		$this->header('Content-Type: text/html; charset=' . $this->charSet);
+
+		// Send other headers that may have been set.
+		$this->sendHeaders();
 
 		// Close the application after the redirect.
 		$this->close();
 	}
 
 	/**
-	 * Set/get cachable state for the response.  If $allow is set, sets the cachable state of the
-	 * response.  Always returns the current state.
+	 * Set/get cachable state for the response.
+	 *
+	 * If $allow is set, sets the cachable state of the response.  Always returns the current state.
 	 *
 	 * @param   boolean  $allow  True to allow browser caching.
 	 *
@@ -353,15 +354,16 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to set a response header.  If the replace flag is set then all headers
-	 * with the given name will be replaced by the new one.  The headers are stored
-	 * in an internal array to be sent when the site is sent to the browser.
+	 * Method to set a response header.
+	 *
+	 * If the replace flag is set then all headers with the given name will be replaced by the new one.
+	 * The headers are stored in an internal array to be sent when the site is sent to the browser.
 	 *
 	 * @param   string   $name     The name of the header to set.
 	 * @param   string   $value    The value of the header to set.
 	 * @param   boolean  $replace  True to replace any headers with the same name.
 	 *
-	 * @return  AbstractWebApplication  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -408,7 +410,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Method to clear any set response headers.
 	 *
-	 * @return  AbstractWebApplication  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -422,7 +424,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Send the response headers.
 	 *
-	 * @return  AbstractWebApplication  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -452,7 +454,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @param   string  $content  The content to set as the response body.
 	 *
-	 * @return  AbstractWebApplication  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -468,7 +470,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @param   string  $content  The content to prepend to the response body.
 	 *
-	 * @return  AbstractWebApplication  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -484,7 +486,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @param   string  $content  The content to append to the response body.
 	 *
-	 * @return  AbstractWebApplication  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -528,8 +530,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to check the current client connnection status to ensure that it is alive.  We are
-	 * wrapping this to isolate the connection_status() function from our code base for testing reasons.
+	 * Method to check the current client connnection status to ensure that it is alive.
 	 *
 	 * @return  boolean  True if the connection is valid and normal.
 	 *
@@ -543,8 +544,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to check to see if headers have already been sent.  We are wrapping this to isolate the
-	 * headers_sent() function from our code base for testing reasons.
+	 * Method to check to see if headers have already been sent.
 	 *
 	 * @return  boolean  True if the headers have already been sent.
 	 *
@@ -567,14 +567,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	protected function detectRequestUri()
 	{
 		// First we need to detect the URI scheme.
-		if ($this->isSSLConnection())
-		{
-			$scheme = 'https://';
-		}
-		else
-		{
-			$scheme = 'http://';
-		}
+		$scheme = $this->isSSLConnection() ? 'https://' : 'http://';
 
 		/*
 		 * There are some differences in the way that Apache and IIS populate server environment variables.  To
@@ -605,8 +598,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to send a header to the client.  We are wrapping this to isolate the header() function
-	 * from our code base for testing reasons.
+	 * Method to send a header to the client.
 	 *
 	 * @param   string   $string   The header string.
 	 * @param   boolean  $replace  The optional replace parameter indicates whether the header should
@@ -642,7 +634,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @param   Session  $session  A session object.
 	 *
-	 * @return  AbstractWebApplication  Returns itself to support chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
@@ -780,15 +772,11 @@ abstract class AbstractWebApplication extends AbstractApplication
 				$this->redirect('index.php');
 				$this->close();
 			}
-			else
-			{
-				return false;
-			}
+
+			return false;
 		}
-		else
-		{
-			return true;
-		}
+
+		return true;
 	}
 
 	/**
@@ -818,7 +806,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @param   string  $str  The string to test.
 	 *
-	 * @return  boolean True if the string is all ASCII
+	 * @return  boolean  True if the string is all ASCII
 	 *
 	 * @since   1.4.0
 	 */

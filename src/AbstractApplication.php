@@ -81,8 +81,9 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	}
 
 	/**
-	 * Method to run the application routines.  Most likely you will want to instantiate a controller
-	 * and execute it, or perform some sort of task directly.
+	 * Method to run the application routines.
+	 *
+	 * Most likely you will want to instantiate a controller and execute it, or perform some sort of task directly.
 	 *
 	 * @return  void
 	 *
@@ -132,7 +133,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	public function getLogger()
 	{
 		// If a logger hasn't been set, use NullLogger
-		if (! ($this->logger instanceof LoggerInterface))
+		if (!($this->logger instanceof LoggerInterface))
 		{
 			$this->logger = new NullLogger;
 		}
@@ -178,7 +179,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 *
 	 * @param   Registry  $config  A registry object holding the configuration.
 	 *
-	 * @return  AbstractApplication  Returns itself to support chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -194,7 +195,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 *
 	 * @param   LoggerInterface  $logger  The logger.
 	 *
-	 * @return  AbstractApplication  Returns itself to support chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
