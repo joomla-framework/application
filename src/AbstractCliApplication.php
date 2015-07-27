@@ -85,7 +85,6 @@ abstract class AbstractCliApplication extends AbstractApplication
 	 *
 	 * @return  $this
 	 *
-	 * @codeCoverageIgnore
 	 * @since   1.0
 	 */
 	public function out($text = '', $nl = true)
