@@ -309,12 +309,9 @@ abstract class AbstractWebApplication extends AbstractApplication
 		if ($this->checkHeadersSent())
 		{
 			echo "<script>document.location.href='$url';</script>\n";
-
-			$this->close();
 		}
-
 		// We have to use a JavaScript redirect here because MSIE doesn't play nice with UTF-8 URLs.
-		if (($this->client->engine == Web\WebClient::TRIDENT) && !$this->isAscii($url))
+		elseif (($this->client->engine == Web\WebClient::TRIDENT) && !$this->isAscii($url))
 		{
 			$html = '<html><head>';
 			$html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';
@@ -322,17 +319,17 @@ abstract class AbstractWebApplication extends AbstractApplication
 			$html .= '</head><body></body></html>';
 
 			echo $html;
-
-			$this->close();
 		}
+		else
+		{
+			// All other cases use the more efficient HTTP header for redirection.
+			$this->header($moved ? 'HTTP/1.1 301 Moved Permanently' : 'HTTP/1.1 303 See other');
+			$this->header('Location: ' . $url);
+			$this->header('Content-Type: text/html; charset=' . $this->charSet);
 
-		// All other cases use the more efficient HTTP header for redirection.
-		$this->header($moved ? 'HTTP/1.1 301 Moved Permanently' : 'HTTP/1.1 303 See other');
-		$this->header('Location: ' . $url);
-		$this->header('Content-Type: text/html; charset=' . $this->charSet);
-
-		// Send other headers that may have been set.
-		$this->sendHeaders();
+			// Send other headers that may have been set.
+			$this->sendHeaders();
+		}
 
 		// Close the application after the redirect.
 		$this->close();

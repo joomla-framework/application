@@ -51,7 +51,7 @@ class ColorProcessorTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Application\Cli\ColorProcessor::addStyle
+	 * @covers  Joomla\Application\Cli\Output\Processor\ColorProcessor::addStyle
 	 * @since   1.0
 	 */
 	public function testAddStyle()
@@ -72,7 +72,7 @@ class ColorProcessorTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Application\Cli\ColorProcessor::stripColors
+	 * @covers  Joomla\Application\Cli\Output\Processor\ColorProcessor::stripColors
 	 * @since   1.0
 	 */
 	public function testStripColors()
@@ -88,7 +88,7 @@ class ColorProcessorTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Application\Cli\ColorProcessor::process
+	 * @covers  Joomla\Application\Cli\Output\Processor\ColorProcessor::process
 	 * @since   1.0
 	 */
 	public function testProcess()
@@ -106,7 +106,7 @@ class ColorProcessorTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Application\Cli\ColorProcessor::process
+	 * @covers  Joomla\Application\Cli\Output\Processor\ColorProcessor::process
 	 * @since   1.0
 	 */
 	public function testProcessNamed()
@@ -127,7 +127,7 @@ class ColorProcessorTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @return  void
 	 *
-	 * @covers  Joomla\Application\Cli\ColorProcessor::replaceColors
+	 * @covers  Joomla\Application\Cli\Output\Processor\ColorProcessor::replaceColors
 	 * @since   1.0
 	 */
 	public function testProcessReplace()

@@ -734,6 +734,9 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	 * @testdox  Tests that the application redirects successfully when the headers have already been sent.
 	 *
 	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function testRedirectWithHeadersSent()
 	{
@@ -776,7 +779,8 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$object->expects($this->once())
-			->method('close');
+			->method('close')
+			->willReturn(true);
 		$object->expects($this->any())
 			->method('checkHeadersSent')
 			->willReturn(true);
