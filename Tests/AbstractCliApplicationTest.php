@@ -29,6 +29,12 @@ class AbstractCliApplicationTest extends \PHPUnit_Framework_TestCase
 		$executionDateTime = new \DateTime($object->get('execution.datetime'));
 
 		$this->assertSame(date('Y'), $executionDateTime->format('Y'));
+
+		// Test if the container is filled correct with an output
+		$this->assertTrue($object->getContainer()->exists('Joomla\\Application\\Cli\\CliOutput'));
+		$this->assertInstanceOf('Joomla\Application\Cli\CliOutput', $object->getContainer()->get('Joomla\\Application\\Cli\\CliOutput'));
+		$this->assertTrue($object->getContainer()->exists('CliOutput'));
+		$this->assertTrue($object->getContainer()->exists('output'));
 	}
 
 	/**
@@ -46,6 +52,12 @@ class AbstractCliApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->assertAttributeSame($mockInput, 'input', $object);
 		$this->assertAttributeSame($mockConfig, 'config', $object);
 		$this->assertAttributeSame($mockOutput, 'output', $object);
+
+		// Test if the container is filled correct with the output
+		$this->assertTrue($object->getContainer()->exists('Joomla\\Application\\Cli\\CliOutput'));
+		$this->assertEquals($mockOutput, $object->getContainer()->get('Joomla\\Application\\Cli\\CliOutput'));
+		$this->assertEquals($mockOutput, $object->getContainer()->get('CliOutput'));
+		$this->assertEquals($mockOutput, $object->getContainer()->get('output'));
 	}
 
 	/**

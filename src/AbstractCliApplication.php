@@ -22,6 +22,8 @@ abstract class AbstractCliApplication extends AbstractApplication
 	/**
 	 * @var    CliOutput  Output object
 	 * @since  1.0
+	 *
+	 * @deprecated 2.0, use getOutput() instead
 	 */
 	protected $output;
 
@@ -55,6 +57,10 @@ abstract class AbstractCliApplication extends AbstractApplication
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input instanceof Input\Input ? $input : new Input\Cli, $config);
 
+		$this->getContainer()->set('Joomla\\Application\\Cli\\CliOutput', $this->output);
+		$this->getContainer()->alias('CliOutput', 'Joomla\\Application\\Cli\\CliOutput');
+		$this->getContainer()->alias('output', 'Joomla\\Application\\Cli\\CliOutput');
+
 		// Set the execution datetime and timestamp;
 		$this->set('execution.datetime', gmdate('Y-m-d H:i:s'));
 		$this->set('execution.timestamp', time());
@@ -72,7 +78,7 @@ abstract class AbstractCliApplication extends AbstractApplication
 	 */
 	public function getOutput()
 	{
-		return $this->output;
+		return $this->getContainer()->get('Joomla\\Application\\Cli\\CliOutput');
 	}
 
 	/**
