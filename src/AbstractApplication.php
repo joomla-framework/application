@@ -68,13 +68,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 		$this->config = $config instanceof Registry ? $config : new Registry;
 
 		// Create the container
-		$container = new Container();
-
-		// Set the application
-		$container->set('Joomla\\Application\\AbstractApplication', $this, false, true);
-		$container->alias('AbstractApplication', 'Joomla\\Application\\AbstractApplication');
-		$container->alias(get_class($this), 'Joomla\\Application\\AbstractApplication');
-		$container->alias('app', 'Joomla\\Application\\AbstractApplication');
+		$container = $this->getContainer();
 
 		// Set the input
 		$container->set('Joomla\\Input\\Input', $this->input, false, true);
@@ -94,8 +88,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 		}, true, false);
 		$container->alias('LoggerInterface', 'Psr\\Log\\LoggerInterface');
 		$container->alias('logger', 'Psr\\Log\\LoggerInterface');
-
-		$this->container = $container;
 
 		$this->initialise();
 	}
@@ -202,6 +194,17 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function getContainer()
 	{
+		if ($this->container === null)
+		{
+			$this->container = new Container();
+
+			// Set the application
+			$this->container->set('Joomla\\Application\\AbstractApplication', $this, false, true);
+			$this->container->alias('AbstractApplication', 'Joomla\\Application\\AbstractApplication');
+			$this->container->alias(get_class($this), 'Joomla\\Application\\AbstractApplication');
+			$this->container->alias('app', 'Joomla\\Application\\AbstractApplication');
+		}
+
 		return $this->container;
 	}
 

@@ -372,11 +372,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
 		);
 
-		TestHelper::setValue(
-			$object,
-			'response',
-			$mockResponse
-		);
+		$object->getContainer()->set('response', $mockResponse);
 
 		TestHelper::invoke($object, 'compress');
 
@@ -427,11 +423,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
 		);
 
-		TestHelper::setValue(
-			$object,
-			'response',
-			$mockResponse
-		);
+		$object->getContainer()->set('response', $mockResponse);
 
 		TestHelper::invoke($object, 'compress');
 
@@ -482,11 +474,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
 		);
 
-		TestHelper::setValue(
-			$object,
-			'response',
-			$mockResponse
-		);
+		$object->getContainer()->set('response', $mockResponse);
 
 		TestHelper::invoke($object, 'compress');
 
@@ -1196,6 +1184,33 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertSame('', $object->getBody(), 'Returns an empty string by default');
 		$this->assertSame(array(), $object->getBody(true), 'Returns an empty array when requesting the body as an array');
+	}
+
+	/**
+	 * @testdox  Tests the getResponse() method to correctly retrieve the full response.
+	 *
+	 * @covers  Joomla\Application\AbstractWebApplication::getResponse
+	 */
+	public function testGetResponse()
+	{
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+
+		$this->assertNotNull($object->getResponse());
+		$this->assertAttributeInternalType('array', 'headers', $object->getResponse());
+		$this->assertAttributeInternalType('array', 'body', $object->getResponse());
+		$this->assertAttributeInternalType('boolean', 'cachable', $object->getResponse());
+	}
+
+	/**
+	 * @testdox  Tests the getClient() method to correctly retrieve the client.
+	 *
+	 * @covers  Joomla\Application\AbstractWebApplication::getClient
+	 */
+	public function testGetClient()
+	{
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+
+		$this->assertInstanceOf('Joomla\Application\Web\WebClient', $object->getClient());
 	}
 
 	/**

@@ -49,6 +49,8 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @var    Web\WebClient
 	 * @since  1.0
+	 *
+	 * @deprecated 2.0, use getClient() instead
 	 */
 	public $client;
 
@@ -57,6 +59,8 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @var    object
 	 * @since  1.0
+	 *
+	 * @deprecated 2.0, use getResponse() instead
 	 */
 	protected $response;
 
@@ -86,12 +90,16 @@ abstract class AbstractWebApplication extends AbstractApplication
 	public function __construct(Input $input = null, Registry $config = null, Web\WebClient $client = null)
 	{
 		$this->client = $client instanceof Web\WebClient ? $client : new Web\WebClient;
+		$this->getContainer()->set('Joomla\\Application\\Web\\WebClient', $this->client);
+		$this->getContainer()->alias('WebClient', 'Joomla\\Application\\Web\\WebClient');
+		$this->getContainer()->alias('client', 'Joomla\\Application\\Web\\WebClient');
 
 		// Setup the response object.
 		$this->response = new \stdClass;
 		$this->response->cachable = false;
 		$this->response->headers = array();
 		$this->response->body = array();
+		$this->getContainer()->set('response', $this->response);
 
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input, $config);
@@ -351,10 +359,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		if ($allow !== null)
 		{
-			$this->response->cachable = (bool) $allow;
+			$this->getResponse()->cachable = (bool) $allow;
 		}
 
-		return $this->response->cachable;
+		return $this->getResponse()->cachable;
 	}
 
 	/**
@@ -379,20 +387,20 @@ abstract class AbstractWebApplication extends AbstractApplication
 		// If the replace flag is set, unset all known headers with the given name.
 		if ($replace)
 		{
-			foreach ($this->response->headers as $key => $header)
+			foreach ($this->getResponse()->headers as $key => $header)
 			{
 				if ($name == $header['name'])
 				{
-					unset($this->response->headers[$key]);
+					unset($this->getResponse()->headers[$key]);
 				}
 			}
 
 			// Clean up the array as unsetting nested arrays leaves some junk.
-			$this->response->headers = array_values($this->response->headers);
+			$this->getResponse()->headers = array_values($this->getResponse()->headers);
 		}
 
 		// Add the header to the internal array.
-		$this->response->headers[] = array('name' => $name, 'value' => $value);
+		$this->getResponse()->headers[] = array('name' => $name, 'value' => $value);
 
 		return $this;
 	}
@@ -407,7 +415,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getHeaders()
 	{
-		return $this->response->headers;
+		return $this->getResponse()->headers;
 	}
 
 	/**
@@ -419,7 +427,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function clearHeaders()
 	{
-		$this->response->headers = array();
+		$this->getResponse()->headers = array();
 
 		return $this;
 	}
@@ -435,7 +443,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		if (!$this->checkHeadersSent())
 		{
-			foreach ($this->response->headers as $header)
+			foreach ($this->getResponse()->headers as $header)
 			{
 				if ('status' == strtolower($header['name']))
 				{
@@ -453,6 +461,30 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
+	 * Returns the internal response object.
+	 *
+	 * @return  stdClass
+	 *
+	 * @since   1.0
+	 */
+	public function getResponse()
+	{
+		return $this->getContainer()->get('response');
+	}
+
+	/**
+	 * Returns the internal response object.
+	 *
+	 * @return  Joomla\Application\Web\WebClient
+	 *
+	 * @since   1.0
+	 */
+	public function getClient()
+	{
+		return $this->getContainer()->get('Joomla\\Application\\Web\\WebClient');
+	}
+
+	/**
 	 * Set body content.  If body content already defined, this will replace it.
 	 *
 	 * @param   string  $content  The content to set as the response body.
@@ -463,7 +495,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function setBody($content)
 	{
-		$this->response->body = array((string) $content);
+		$this->getResponse()->body = array((string) $content);
 
 		return $this;
 	}
@@ -479,7 +511,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function prependBody($content)
 	{
-		array_unshift($this->response->body, (string) $content);
+		array_unshift($this->getResponse()->body, (string) $content);
 
 		return $this;
 	}
@@ -495,7 +527,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function appendBody($content)
 	{
-		array_push($this->response->body, (string) $content);
+		array_push($this->getResponse()->body, (string) $content);
 
 		return $this;
 	}
@@ -511,7 +543,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getBody($asArray = false)
 	{
-		return $asArray ? $this->response->body : implode((array) $this->response->body);
+		return $asArray ? $this->getResponse()->body : implode((array) $this->getResponse()->body);
 	}
 
 	/**
