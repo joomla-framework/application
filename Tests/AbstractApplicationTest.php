@@ -20,8 +20,35 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	{
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication');
 
+		// Test attributes
 		$this->assertAttributeInstanceOf('Joomla\Input\Input', 'input', $object);
 		$this->assertAttributeInstanceOf('Joomla\Registry\Registry', 'config', $object);
+		$this->assertAttributeInstanceOf('Joomla\DI\Container', 'container', $object);
+
+		// Test if the container is filled correct with the applicatoin it belongs to
+		$this->assertTrue($object->getContainer()->exists('Joomla\\Application\\AbstractApplication'));
+		$this->assertInstanceOf('Joomla\Application\AbstractApplication', $object->getContainer()->get('Joomla\\Application\\AbstractApplication'));
+		$this->assertTrue($object->getContainer()->exists('AbstractApplication'));
+		$this->assertTrue($object->getContainer()->exists(get_class($object)));
+		$this->assertTrue($object->getContainer()->exists('app'));
+
+		// Test if the container is filled correct with an input
+		$this->assertTrue($object->getContainer()->exists('Joomla\\Input\\Input'));
+		$this->assertInstanceOf('Joomla\Input\Input', $object->getContainer()->get('Joomla\\Input\\Input'));
+		$this->assertTrue($object->getContainer()->exists('Input'));
+		$this->assertTrue($object->getContainer()->exists('input'));
+
+		// Test if the container is filled correct with a config
+		$this->assertTrue($object->getContainer()->exists('Joomla\\Registry\\Registry'));
+		$this->assertInstanceOf('Joomla\Registry\Registry', $object->getContainer()->get('Joomla\\Registry\\Registry'));
+		$this->assertTrue($object->getContainer()->exists('Registry'));
+		$this->assertTrue($object->getContainer()->exists('config'));
+
+		// Test if the container is filled correct with a logger
+		$this->assertTrue($object->getContainer()->exists('Psr\\Log\\LoggerInterface'));
+		$this->assertInstanceOf('Psr\Log\LoggerInterface', $object->getContainer()->get('Psr\\Log\\LoggerInterface'));
+		$this->assertTrue($object->getContainer()->exists('LoggerInterface'));
+		$this->assertTrue($object->getContainer()->exists('logger'));
 	}
 
 	/**
@@ -37,6 +64,18 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertAttributeSame($mockInput, 'input', $object);
 		$this->assertAttributeSame($mockConfig, 'config', $object);
+
+		// Test if the container is filled correct with the input
+		$this->assertTrue($object->getContainer()->exists('Joomla\\Input\\Input'));
+		$this->assertEquals($mockInput, $object->getContainer()->get('Joomla\\Input\\Input'));
+		$this->assertEquals($mockInput, $object->getContainer()->get('Input'));
+		$this->assertEquals($mockInput, $object->getContainer()->get('input'));
+
+		// Test if the container is filled correct with the config
+		$this->assertTrue($object->getContainer()->exists('Joomla\\Registry\\Registry'));
+		$this->assertEquals($mockConfig, $object->getContainer()->get('Joomla\\Registry\\Registry'));
+		$this->assertEquals($mockConfig, $object->getContainer()->get('Registry'));
+		$this->assertEquals($mockConfig, $object->getContainer()->get('config'));
 	}
 
 	/**
@@ -97,6 +136,50 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @testdox  Tests that a configuration is set and contains the data which is passed by the constructor.
+	 *
+	 * @covers  Joomla\Application\AbstractApplication::getConfig
+	 */
+	public function testGetConfig()
+	{
+		$mockConfig = $this->getMock('Joomla\Registry\Registry', array('get'), array(array('foo' => 'bar')), '', true, true, true, false, true);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array(null, $mockConfig));
+
+		$this->assertInstanceOf('Joomla\\Registry\\Registry', $object->getConfig());
+		$this->assertSame($mockConfig, $object->getConfig());
+	}
+
+	/**
+	 * @testdox  Tests that a input is set and contains the data which is passed by the constructor.
+	 *
+	 * @covers  Joomla\Application\AbstractApplication::getInput
+	 */
+	public function testGetInput()
+	{
+		$mockInput  = $this->getMock('Joomla\Input\Input');
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array($mockInput));
+
+		$this->assertInstanceOf('Joomla\\Input\\Input', $object->getInput());
+		$this->assertSame($mockInput, $object->getInput());
+	}
+
+	/**
+	 * @testdox  Tests that a container exists and is filled correctly.
+	 *
+	 * @covers  Joomla\Application\AbstractApplication::getContainer
+	 */
+	public function testGetContainer()
+	{
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication');
+
+		$container = $object->getContainer();
+		$this->assertInstanceOf('Joomla\\DI\\Container', $container);
+
+		// Tests if always the same instance is returned
+		$this->assertSame($container, $object->getContainer());
+	}
+
+	/**
 	 * @testdox  Tests that data is set to the application configuration successfully.
 	 *
 	 * @covers  Joomla\Application\AbstractApplication::set
@@ -130,6 +213,11 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 
 		// Now the config objects should match
 		$this->assertAttributeSame($mockConfig, 'config', $object);
+
+		// Now the config in the container should match
+		$this->assertSame($mockConfig, $object->getContainer()->get('Joomla\\Registry\\Registry'));
+		$this->assertSame($mockConfig, $object->getContainer()->get('Registry'));
+		$this->assertSame($mockConfig, $object->getContainer()->get('config'));
 	}
 
 	/**
@@ -144,6 +232,11 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 
 		$object->setLogger($mockLogger);
 
-		$this->assertAttributeSame($mockLogger, 'logger', $object);
+		$this->assertSame($mockLogger, $object->getLogger());
+
+		// Now the logger in the container should match
+		$this->assertSame($mockLogger, $object->getContainer()->get('Psr\\Log\\LoggerInterface'));
+		$this->assertSame($mockLogger, $object->getContainer()->get('LoggerInterface'));
+		$this->assertSame($mockLogger, $object->getContainer()->get('logger'));
 	}
 }

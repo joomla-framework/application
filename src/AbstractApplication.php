@@ -13,6 +13,7 @@ use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Joomla\DI\Container;
 
 /**
  * Joomla Framework Base Application Class
@@ -26,6 +27,8 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 *
 	 * @var    Registry
 	 * @since  1.0
+	 *
+	 * @deprecated 2.0, use getConfig() instead
 	 */
 	protected $config;
 
@@ -34,16 +37,18 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 *
 	 * @var    Input
 	 * @since  1.0
+	 *
+	 * @deprecated 2.0, use getInput() instead
 	 */
 	public $input = null;
 
 	/**
-	 * A logger.
+	 * The DI container.
 	 *
-	 * @var    LoggerInterface
+	 * @var    Container
 	 * @since  1.0
 	 */
-	private $logger;
+	private $container;
 
 	/**
 	 * Class constructor.
@@ -61,6 +66,36 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	{
 		$this->input = $input instanceof Input ? $input : new Input;
 		$this->config = $config instanceof Registry ? $config : new Registry;
+
+		// Create the container
+		$container = new Container();
+
+		// Set the application
+		$container->set('Joomla\\Application\\AbstractApplication', $this, false, true);
+		$container->alias('AbstractApplication', 'Joomla\\Application\\AbstractApplication');
+		$container->alias(get_class($this), 'Joomla\\Application\\AbstractApplication');
+		$container->alias('app', 'Joomla\\Application\\AbstractApplication');
+
+		// Set the input
+		$container->set('Joomla\\Input\\Input', $this->input, false, true);
+		$container->alias('Input', 'Joomla\\Input\\Input');
+		$container->alias('input', 'Joomla\\Input\\Input');
+
+		// Set the configuration
+		$container->set('Joomla\\Registry\\Registry', $this->config, true, false);
+		$container->alias('Registry', 'Joomla\\Registry\\Registry');
+		$container->alias('config', 'Joomla\\Registry\\Registry');
+
+		// Set the logger
+		$container->set('Psr\\Log\\LoggerInterface', function()
+		{
+			// If a logger hasn't been set, use NullLogger
+			return new NullLogger();
+		}, true, false);
+		$container->alias('LoggerInterface', 'Psr\\Log\\LoggerInterface');
+		$container->alias('logger', 'Psr\\Log\\LoggerInterface');
+
+		$this->container = $container;
 
 		$this->initialise();
 	}
@@ -119,7 +154,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function get($key, $default = null)
 	{
-		return $this->config->get($key, $default);
+		return $this->getConfig()->get($key, $default);
 	}
 
 	/**
@@ -131,13 +166,43 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function getLogger()
 	{
-		// If a logger hasn't been set, use NullLogger
-		if (! ($this->logger instanceof LoggerInterface))
-		{
-			$this->logger = new NullLogger;
-		}
+		return $this->getContainer()->get('Psr\\Log\\LoggerInterface');
+	}
 
-		return $this->logger;
+	/**
+	 * Get the config of the application.
+	 *
+	 * @return  Joomla\Registry\Registry
+	 *
+	 * @since   2.0
+	 */
+	public function getConfig()
+	{
+		return $this->getContainer()->get('Joomla\\Registry\\Registry');
+	}
+
+	/**
+	 * Get the input of the application.
+	 *
+	 * @return  Joomla\Input\Input
+	 *
+	 * @since   2.0
+	 */
+	public function getInput()
+	{
+		return $this->getContainer()->get('Joomla\\Input\\Input');
+	}
+
+	/**
+	 * Get the DI container of the application.
+	 *
+	 * @return  Container
+	 *
+	 * @since   2.0
+	 */
+	public function getContainer()
+	{
+		return $this->container;
 	}
 
 	/**
@@ -167,8 +232,8 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function set($key, $value = null)
 	{
-		$previous = $this->config->get($key);
-		$this->config->set($key, $value);
+		$previous = $this->getConfig()->get($key);
+		$this->getConfig()->set($key, $value);
 
 		return $previous;
 	}
@@ -186,6 +251,8 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	{
 		$this->config = $config;
 
+		$this->getContainer()->set('Joomla\\Registry\\Registry', $config);
+
 		return $this;
 	}
 
@@ -200,7 +267,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function setLogger(LoggerInterface $logger)
 	{
-		$this->logger = $logger;
+		$this->getContainer()->set('Psr\\Log\\LoggerInterface', $logger);
 
 		return $this;
 	}
