@@ -60,7 +60,6 @@ abstract class AbstractCliApplication extends AbstractApplication
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input instanceof Input\Input ? $input : new Input\Cli, $config);
 
-
 		// Set the execution datetime and timestamp;
 		$this->set('execution.datetime', gmdate('Y-m-d H:i:s'));
 		$this->set('execution.timestamp', time());

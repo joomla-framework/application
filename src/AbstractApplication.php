@@ -84,8 +84,9 @@ abstract class AbstractApplication implements LoggerAwareInterface
 		$container->set('Psr\\Log\\LoggerInterface', function()
 		{
 			// If a logger hasn't been set, use NullLogger
-			return new NullLogger();
-		}, true, false);
+			return new NullLogger;
+		}, true, false
+		);
 		$container->alias('LoggerInterface', 'Psr\\Log\\LoggerInterface');
 		$container->alias('logger', 'Psr\\Log\\LoggerInterface');
 
@@ -196,7 +197,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	{
 		if ($this->container === null)
 		{
-			$this->container = new Container();
+			$this->container = new Container;
 
 			// Set the application
 			$this->container->set('Joomla\\Application\\AbstractApplication', $this, false, true);
