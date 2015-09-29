@@ -90,16 +90,12 @@ abstract class AbstractWebApplication extends AbstractApplication
 	public function __construct(Input $input = null, Registry $config = null, Web\WebClient $client = null)
 	{
 		$this->client = $client instanceof Web\WebClient ? $client : new Web\WebClient;
-		$this->getContainer()->set('Joomla\\Application\\Web\\WebClient', $this->client);
-		$this->getContainer()->alias('WebClient', 'Joomla\\Application\\Web\\WebClient');
-		$this->getContainer()->alias('client', 'Joomla\\Application\\Web\\WebClient');
 
 		// Setup the response object.
 		$this->response = new \stdClass;
 		$this->response->cachable = false;
 		$this->response->headers = array();
 		$this->response->body = array();
-		$this->getContainer()->set('response', $this->response);
 
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input, $config);
@@ -469,7 +465,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getResponse()
 	{
-		return $this->getContainer()->get('response');
+		return $this->response;
 	}
 
 	/**
@@ -481,7 +477,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getClient()
 	{
-		return $this->getContainer()->get('Joomla\\Application\\Web\\WebClient');
+		return $this->client;
 	}
 
 	/**

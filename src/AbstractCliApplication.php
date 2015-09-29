@@ -53,9 +53,6 @@ abstract class AbstractCliApplication extends AbstractApplication
 		// @codeCoverageIgnoreEnd
 
 		$this->output = ($output instanceof CliOutput) ? $output : new Cli\Output\Stdout;
-		$this->getContainer()->set('Joomla\\Application\\Cli\\CliOutput', $this->output);
-		$this->getContainer()->alias('CliOutput', 'Joomla\\Application\\Cli\\CliOutput');
-		$this->getContainer()->alias('output', 'Joomla\\Application\\Cli\\CliOutput');
 
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input instanceof Input\Input ? $input : new Input\Cli, $config);
@@ -77,7 +74,7 @@ abstract class AbstractCliApplication extends AbstractApplication
 	 */
 	public function getOutput()
 	{
-		return $this->getContainer()->get('Joomla\\Application\\Cli\\CliOutput');
+		return $this->output;
 	}
 
 	/**

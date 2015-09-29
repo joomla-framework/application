@@ -372,7 +372,11 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
 		);
 
-		$object->getContainer()->set('response', $mockResponse);
+		TestHelper::setValue(
+			$object,
+			'response',
+			$mockResponse
+		);
 
 		TestHelper::invoke($object, 'compress');
 
@@ -423,7 +427,11 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
 		);
 
-		$object->getContainer()->set('response', $mockResponse);
+		TestHelper::setValue(
+			$object,
+			'response',
+			$mockResponse
+		);
 
 		TestHelper::invoke($object, 'compress');
 
@@ -474,7 +482,11 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
 		);
 
-		$object->getContainer()->set('response', $mockResponse);
+		TestHelper::setValue(
+			$object,
+			'response',
+			$mockResponse
+		);
 
 		TestHelper::invoke($object, 'compress');
 
