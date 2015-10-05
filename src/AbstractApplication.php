@@ -13,14 +13,18 @@ use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Joomla\DI\ContainerAwareInterface;
+use Joomla\DI\ContainerAwareTrait;
 
 /**
  * Joomla Framework Base Application Class
  *
  * @since  1.0
  */
-abstract class AbstractApplication implements LoggerAwareInterface
+abstract class AbstractApplication implements LoggerAwareInterface, ContainerAwareInterface
 {
+	use ContainerAwareTrait;
+
 	/**
 	 * The application configuration object.
 	 *
