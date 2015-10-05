@@ -22,8 +22,6 @@ abstract class AbstractCliApplication extends AbstractApplication
 	/**
 	 * @var    CliOutput  Output object
 	 * @since  1.0
-	 *
-	 * @deprecated 2.0, use getOutput() instead
 	 */
 	protected $output;
 

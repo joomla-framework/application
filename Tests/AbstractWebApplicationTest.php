@@ -1199,33 +1199,6 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @testdox  Tests the getResponse() method to correctly retrieve the full response.
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getResponse
-	 */
-	public function testGetResponse()
-	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
-
-		$this->assertNotNull($object->getResponse());
-		$this->assertAttributeInternalType('array', 'headers', $object->getResponse());
-		$this->assertAttributeInternalType('array', 'body', $object->getResponse());
-		$this->assertAttributeInternalType('boolean', 'cachable', $object->getResponse());
-	}
-
-	/**
-	 * @testdox  Tests the getClient() method to correctly retrieve the client.
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getClient
-	 */
-	public function testGetClient()
-	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
-
-		$this->assertInstanceOf('Joomla\Application\Web\WebClient', $object->getClient());
-	}
-
-	/**
 	 * @testdox  Tests that the application correcty detects the request URI based on the injected data
 	 *
 	 * @param   string  $https        Value for $_SERVER['HTTPS'] or null to not set it

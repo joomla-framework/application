@@ -49,8 +49,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @var    Web\WebClient
 	 * @since  1.0
-	 *
-	 * @deprecated 2.0, use getClient() instead
 	 */
 	public $client;
 
@@ -59,8 +57,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @var    object
 	 * @since  1.0
-	 *
-	 * @deprecated 2.0, use getResponse() instead
 	 */
 	protected $response;
 
@@ -355,10 +351,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		if ($allow !== null)
 		{
-			$this->getResponse()->cachable = (bool) $allow;
+			$this->response->cachable = (bool) $allow;
 		}
 
-		return $this->getResponse()->cachable;
+		return $this->response->cachable;
 	}
 
 	/**
@@ -383,20 +379,20 @@ abstract class AbstractWebApplication extends AbstractApplication
 		// If the replace flag is set, unset all known headers with the given name.
 		if ($replace)
 		{
-			foreach ($this->getResponse()->headers as $key => $header)
+			foreach ($this->response->headers as $key => $header)
 			{
 				if ($name == $header['name'])
 				{
-					unset($this->getResponse()->headers[$key]);
+					unset($this->response->headers[$key]);
 				}
 			}
 
 			// Clean up the array as unsetting nested arrays leaves some junk.
-			$this->getResponse()->headers = array_values($this->getResponse()->headers);
+			$this->response->headers = array_values($this->response->headers);
 		}
 
 		// Add the header to the internal array.
-		$this->getResponse()->headers[] = array('name' => $name, 'value' => $value);
+		$this->response->headers[] = array('name' => $name, 'value' => $value);
 
 		return $this;
 	}
@@ -411,7 +407,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getHeaders()
 	{
-		return $this->getResponse()->headers;
+		return $this->response->headers;
 	}
 
 	/**
@@ -423,7 +419,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function clearHeaders()
 	{
-		$this->getResponse()->headers = array();
+		$this->response->headers = array();
 
 		return $this;
 	}
@@ -439,7 +435,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		if (!$this->checkHeadersSent())
 		{
-			foreach ($this->getResponse()->headers as $header)
+			foreach ($this->response->headers as $header)
 			{
 				if ('status' == strtolower($header['name']))
 				{
@@ -457,30 +453,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Returns the internal response object.
-	 *
-	 * @return  stdClass
-	 *
-	 * @since   1.0
-	 */
-	public function getResponse()
-	{
-		return $this->response;
-	}
-
-	/**
-	 * Returns the internal response object.
-	 *
-	 * @return  Joomla\Application\Web\WebClient
-	 *
-	 * @since   1.0
-	 */
-	public function getClient()
-	{
-		return $this->client;
-	}
-
-	/**
 	 * Set body content.  If body content already defined, this will replace it.
 	 *
 	 * @param   string  $content  The content to set as the response body.
@@ -491,7 +463,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function setBody($content)
 	{
-		$this->getResponse()->body = array((string) $content);
+		$this->response->body = array((string) $content);
 
 		return $this;
 	}
@@ -507,7 +479,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function prependBody($content)
 	{
-		array_unshift($this->getResponse()->body, (string) $content);
+		array_unshift($this->response->body, (string) $content);
 
 		return $this;
 	}
@@ -523,7 +495,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function appendBody($content)
 	{
-		array_push($this->getResponse()->body, (string) $content);
+		array_push($this->response->body, (string) $content);
 
 		return $this;
 	}
@@ -539,7 +511,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getBody($asArray = false)
 	{
-		return $asArray ? $this->getResponse()->body : implode((array) $this->getResponse()->body);
+		return $asArray ? $this->response->body : implode((array) $this->response->body);
 	}
 
 	/**

@@ -13,7 +13,6 @@ use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Joomla\DI\Container;
 
 /**
  * Joomla Framework Base Application Class
@@ -27,8 +26,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 *
 	 * @var    Registry
 	 * @since  1.0
-	 *
-	 * @deprecated 2.0, use getConfig() instead
 	 */
 	protected $config;
 
@@ -37,8 +34,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 *
 	 * @var    Input
 	 * @since  1.0
-	 *
-	 * @deprecated 2.0, use getInput() instead
 	 */
 	public $input = null;
 
@@ -49,14 +44,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 * @since  1.0
 	 */
 	private $logger;
-
-	/**
-	 * The DI container.
-	 *
-	 * @var    Container
-	 * @since  1.0
-	 */
-	private $container;
 
 	/**
 	 * Class constructor.
@@ -74,16 +61,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	{
 		$this->input = $input instanceof Input ? $input : new Input;
 		$this->config = $config instanceof Registry ? $config : new Registry;
-
-		// Create the container
-		$container = $this->getContainer();
-
-		// Set the input
-		$container->set('Input', $this->input, false, true);
-		$container->alias('input', 'Input');
-
-		// Set the configuration
-		$container->set('config', $this->config, true, false);
 
 		$this->initialise();
 	}
@@ -142,7 +119,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function get($key, $default = null)
 	{
-		return $this->getConfig()->get($key, $default);
+		return $this->config->get($key, $default);
 	}
 
 	/**
@@ -161,53 +138,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 		}
 
 		return $this->logger;
-	}
-
-	/**
-	 * Get the config of the application.
-	 *
-	 * @return  Joomla\Registry\Registry
-	 *
-	 * @since   2.0
-	 */
-	public function getConfig()
-	{
-		return $this->getContainer()->get('config');
-	}
-
-	/**
-	 * Get the input of the application.
-	 *
-	 * @return  Joomla\Input\Input
-	 *
-	 * @since   2.0
-	 */
-	public function getInput()
-	{
-		return $this->getContainer()->get('Input');
-	}
-
-	/**
-	 * Get the DI container of the application.
-	 *
-	 * @return  Container
-	 *
-	 * @since   2.0
-	 */
-	public function getContainer()
-	{
-		if ($this->container === null)
-		{
-			$this->container = new Container;
-
-			// Set the application
-			$this->container->set('Joomla\\Application\\AbstractApplication', $this, false, true);
-			$this->container->alias('AbstractApplication', 'Joomla\\Application\\AbstractApplication');
-			$this->container->alias(get_class($this), 'Joomla\\Application\\AbstractApplication');
-			$this->container->alias('app', 'Joomla\\Application\\AbstractApplication');
-		}
-
-		return $this->container;
 	}
 
 	/**
@@ -237,8 +167,8 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function set($key, $value = null)
 	{
-		$previous = $this->getConfig()->get($key);
-		$this->getConfig()->set($key, $value);
+		$previous = $this->config->get($key);
+		$this->config->set($key, $value);
 
 		return $previous;
 	}
@@ -255,8 +185,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	public function setConfiguration(Registry $config)
 	{
 		$this->config = $config;
-
-		$this->getContainer()->set('config', $config);
 
 		return $this;
 	}
