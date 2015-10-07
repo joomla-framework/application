@@ -89,6 +89,18 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	 *
 	 * @covers  Joomla\Application\AbstractApplication::getLogger
 	 */
+	public function testGetConfiguration()
+	{
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication');
+
+		$this->assertInstanceOf('Joomla\\Registry\\Registry', $object->getConfiguration());
+	}
+
+	/**
+	 * @testdox  Tests that a default LoggerInterface object is returned.
+	 *
+	 * @covers  Joomla\Application\AbstractApplication::getLogger
+	 */
 	public function testGetLogger()
 	{
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication');

@@ -128,6 +128,18 @@ abstract class AbstractApplication implements LoggerAwareInterface, ContainerAwa
 	}
 
 	/**
+	 * Returns the configuration of the application.
+	 *
+	 * @return  Registry $config
+	 *
+	 * @since   2.0
+	 */
+	public function getConfiguration()
+	{
+		return $this->config;
+	}
+
+	/**
 	 * Get the logger.
 	 *
 	 * @return  LoggerInterface
