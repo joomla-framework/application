@@ -1534,7 +1534,9 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testGetFormToken()
 	{
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
-		$mockSession = $this->getMock('Joomla\\Session\\Session');
+		$mockSession = $this->getMockBuilder('Joomla\Session\Session')
+			->disableOriginalConstructor()
+			->getMock();
 
 		$object->setSession($mockSession);
 		$object->set('secret', 'abc');

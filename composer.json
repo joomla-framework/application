@@ -6,14 +6,15 @@
     "homepage": "https://github.com/joomla-framework/application",
     "license": "GPL-2.0+",
     "require": {
-        "php": ">=5.3.10",
+        "php": ">=5.4",
         "joomla/input": "~1.2",
         "joomla/registry": "2.0.*@dev",
         "psr/log": "~1.0"
     },
     "require-dev": {
         "joomla/test": "~1.1",
-        "joomla/session": "~1.1",
+        "joomla/event": "~2.0@dev",
+        "joomla/session": "~2.0@dev",
         "joomla/uri": "~1.1",
         "phpunit/phpunit": "4.*",
         "squizlabs/php_codesniffer": "1.*"
