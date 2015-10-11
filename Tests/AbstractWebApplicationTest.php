@@ -1138,7 +1138,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			self::$headers,
 			array(
 				array('foo: bar', true, null),
-				array('Status: 200', null, 200)
+				array('HTTP/1.1 200', null, 200)
 			)
 		);
 	}
@@ -1511,17 +1511,17 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @testdox  Tests the application correctly detects if a SSL connection is active
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::isSSLConnection
+	 * @covers  Joomla\Application\AbstractWebApplication::isSslConnection
 	 */
-	public function testIsSSLConnection()
+	public function testisSslConnection()
 	{
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
 
-		$this->assertFalse($object->isSSLConnection());
+		$this->assertFalse($object->isSslConnection());
 
 		$object->input->server->set('HTTPS', 'on');
 
-		$this->assertTrue($object->isSSLConnection());
+		$this->assertTrue($object->isSslConnection());
 	}
 
 	/**

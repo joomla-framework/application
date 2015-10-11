@@ -65,7 +65,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @var    Session
 	 * @since  1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	private $session;
 
@@ -440,7 +439,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 				if ('status' == strtolower($header['name']))
 				{
 					// 'status' headers indicate an HTTP status, and need to be handled slightly differently
-					$this->header(ucfirst(strtolower($header['name'])) . ': ' . $header['value'], null, (int) $header['value']);
+					$this->header('HTTP/1.1 ' . $header['value'], null, (int) $header['value']);
 				}
 				else
 				{
@@ -520,7 +519,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  Session  The session object
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	public function getSession()
 	{
@@ -631,7 +629,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   1.0
 	 */
-	public function isSSLConnection()
+	public function isSslConnection()
 	{
 		$serverSSLVar = $this->input->server->getString('HTTPS', '');
 
@@ -646,7 +644,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  $this
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	public function setSession(Session $session)
 	{
@@ -769,7 +766,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  boolean  True if found and valid, false otherwise.
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  Deprecated without replacement
 	 */
 	public function checkToken($method = 'post')
 	{
@@ -798,7 +794,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  string  Hashed var name
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  Deprecated without replacement
 	 */
 	public function getFormToken($forceNew = false)
 	{
