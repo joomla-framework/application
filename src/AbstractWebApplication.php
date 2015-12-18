@@ -10,7 +10,7 @@ namespace Joomla\Application;
 
 use Joomla\Uri\Uri;
 use Joomla\Input\Input;
-use Joomla\Session\Session;
+use Joomla\Session\SessionInterface;
 use Joomla\Registry\Registry;
 
 /**
@@ -63,9 +63,8 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * The application session object.
 	 *
-	 * @var    Session
+	 * @var    SessionInterface
 	 * @since  1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	private $session;
 
@@ -440,7 +439,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 				if ('status' == strtolower($header['name']))
 				{
 					// 'status' headers indicate an HTTP status, and need to be handled slightly differently
-					$this->header(ucfirst(strtolower($header['name'])) . ': ' . $header['value'], null, (int) $header['value']);
+					$this->header('HTTP/1.1 ' . $header['value'], null, (int) $header['value']);
 				}
 				else
 				{
@@ -517,16 +516,15 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Method to get the application session object.
 	 *
-	 * @return  Session  The session object
+	 * @return  SessionInterface  The session object
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
 	public function getSession()
 	{
 		if ($this->session === null)
 		{
-			throw new \RuntimeException('A \Joomla\Session\Session object has not been set.');
+			throw new \RuntimeException('A \Joomla\Session\SessionInterface object has not been set.');
 		}
 
 		return $this->session;
@@ -631,7 +629,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   1.0
 	 */
-	public function isSSLConnection()
+	public function isSslConnection()
 	{
 		$serverSSLVar = $this->input->server->getString('HTTPS', '');
 
@@ -641,14 +639,13 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Sets the session for the application to use, if required.
 	 *
-	 * @param   Session  $session  A session object.
+	 * @param   SessionInterface  $session  A session object.
 	 *
 	 * @return  $this
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  The joomla/session package will no longer be required by this class
 	 */
-	public function setSession(Session $session)
+	public function setSession(SessionInterface $session)
 	{
 		$this->session = $session;
 
@@ -769,7 +766,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  boolean  True if found and valid, false otherwise.
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  Deprecated without replacement
 	 */
 	public function checkToken($method = 'post')
 	{
@@ -798,7 +794,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  string  Hashed var name
 	 *
 	 * @since   1.0
-	 * @deprecated  2.0  Deprecated without replacement
 	 */
 	public function getFormToken($forceNew = false)
 	{

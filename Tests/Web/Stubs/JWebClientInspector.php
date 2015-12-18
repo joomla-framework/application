@@ -18,9 +18,9 @@ class JWebClientInspector extends Joomla\Application\Web\WebClient
 	 *
 	 * @since   1.0
 	 */
-	public function detectRequestURI()
+	public function detectRequestUri()
 	{
-		return parent::detectRequestURI();
+		return parent::detectRequestUri();
 	}
 
 	/**
@@ -143,19 +143,31 @@ class JWebClientInspector extends Joomla\Application\Web\WebClient
 	}
 
 	/**
-	 * loadSystemURIs()
+	 * fetchConfigurationData()
 	 *
 	 * @return  void
 	 *
 	 * @since   1.0
 	 */
-	public function loadSystemURIs()
+	public function fetchConfigurationData()
 	{
-		return parent::loadSystemURIs();
+		return parent::fetchConfigurationData();
 	}
 
 	/**
-	 * loadSystemURIs()
+	 * loadSystemUris()
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 */
+	public function loadSystemUris()
+	{
+		return parent::loadSystemUris();
+	}
+
+	/**
+	 * loadSystemUris()
 	 *
 	 * @param   string  $ua  The user-agent string to parse.
 	 *
