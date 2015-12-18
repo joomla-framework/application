@@ -13,14 +13,18 @@ use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Joomla\DI\ContainerAwareInterface;
+use Joomla\DI\ContainerAwareTrait;
 
 /**
  * Joomla Framework Base Application Class
  *
  * @since  1.0
  */
-abstract class AbstractApplication implements LoggerAwareInterface
+abstract class AbstractApplication implements LoggerAwareInterface, ContainerAwareInterface
 {
+	use ContainerAwareTrait;
+
 	/**
 	 * The application configuration object.
 	 *
@@ -121,6 +125,18 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	public function get($key, $default = null)
 	{
 		return $this->config->get($key, $default);
+	}
+
+	/**
+	 * Returns the configuration of the application.
+	 *
+	 * @return  Registry $config
+	 *
+	 * @since   2.0
+	 */
+	public function getConfiguration()
+	{
+		return $this->config;
 	}
 
 	/**
