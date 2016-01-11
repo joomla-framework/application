@@ -101,7 +101,7 @@ class MyApplication extends AbstractApplication
 		if ($logPath)
 		{
 			// If the log path is set, configure a file logger.
-			$log->pushHandler(new StreamHandler($logPath, Logger::WARNING);
+			$log->pushHandler(new StreamHandler($logPath, Logger::WARNING));
 		}
 		else
 		{
