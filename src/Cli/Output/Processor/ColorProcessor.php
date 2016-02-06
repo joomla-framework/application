@@ -45,7 +45,7 @@ class ColorProcessor implements ProcessorInterface
 	/**
 	 * Array of ColorStyle objects
 	 *
-	 * @var    array
+	 * @var    ColorStyle[]
 	 * @since  1.0
 	 */
 	protected $styles = array();
@@ -79,7 +79,7 @@ class ColorProcessor implements ProcessorInterface
 	 * @param   string      $name   The style name.
 	 * @param   ColorStyle  $style  The color style.
 	 *
-	 * @return  ColorProcessor  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */
@@ -162,7 +162,7 @@ class ColorProcessor implements ProcessorInterface
 	/**
 	 * Adds predefined color styles to the ColorProcessor object
 	 *
-	 * @return  Stdout  Instance of $this to allow chaining.
+	 * @return  $this
 	 *
 	 * @since   1.0
 	 */

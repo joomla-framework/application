@@ -8,9 +8,8 @@
 
 namespace Joomla\Application;
 
-use Joomla\Registry\Registry;
 use Joomla\Input\Cli;
-use Psr\Log\LoggerAwareInterface;
+use Joomla\Registry\Registry;
 
 /**
  * Class to turn CLI applications into daemons.  It requires CLI and PCNTL support built into PHP.
@@ -19,7 +18,7 @@ use Psr\Log\LoggerAwareInterface;
  * @see    http://php.net/manual/en/features.commandline.php
  * @since  1.0
  */
-abstract class AbstractDaemonApplication extends AbstractCliApplication implements LoggerAwareInterface
+abstract class AbstractDaemonApplication extends AbstractCliApplication
 {
 	/**
 	 * The available POSIX signals to be caught by default.
@@ -115,7 +114,6 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication implemen
 	public function __construct(Cli $input = null, Registry $config = null)
 	{
 		// Verify that the process control extension for PHP is available.
-		// @codeCoverageIgnoreStart
 		if (!defined('SIGHUP'))
 		{
 			$this->getLogger()->error('The PCNTL extension for PHP is not available.');
@@ -130,8 +128,6 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication implemen
 
 			throw new \RuntimeException('The POSIX extension for PHP is not available.');
 		}
-
-		// @codeCoverageIgnoreEnd
 
 		// Call the parent constructor.
 		parent::__construct($input, $config);

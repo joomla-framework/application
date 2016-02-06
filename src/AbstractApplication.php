@@ -11,6 +11,7 @@ namespace Joomla\Application;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -21,6 +22,8 @@ use Psr\Log\NullLogger;
  */
 abstract class AbstractApplication implements LoggerAwareInterface
 {
+	use LoggerAwareTrait;
+
 	/**
 	 * The application configuration object.
 	 *
@@ -38,14 +41,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	public $input = null;
 
 	/**
-	 * A logger.
-	 *
-	 * @var    LoggerInterface
-	 * @since  1.0
-	 */
-	private $logger;
-
-	/**
 	 * Class constructor.
 	 *
 	 * @param   Input     $input   An optional argument to provide dependency injection for the application's
@@ -59,8 +54,8 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 */
 	public function __construct(Input $input = null, Registry $config = null)
 	{
-		$this->input = $input instanceof Input ? $input : new Input;
-		$this->config = $config instanceof Registry ? $config : new Registry;
+		$this->input  = $input ?: new Input;
+		$this->config = $config ?: new Registry;
 
 		$this->initialise();
 	}
@@ -135,7 +130,7 @@ abstract class AbstractApplication implements LoggerAwareInterface
 		// If a logger hasn't been set, use NullLogger
 		if (!($this->logger instanceof LoggerInterface))
 		{
-			$this->logger = new NullLogger;
+			$this->setLogger(new NullLogger);
 		}
 
 		return $this->logger;
@@ -186,22 +181,6 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	public function setConfiguration(Registry $config)
 	{
 		$this->config = $config;
-
-		return $this;
-	}
-
-	/**
-	 * Set the logger.
-	 *
-	 * @param   LoggerInterface  $logger  The logger.
-	 *
-	 * @return  $this
-	 *
-	 * @since   1.0
-	 */
-	public function setLogger(LoggerInterface $logger)
-	{
-		$this->logger = $logger;
 
 		return $this;
 	}

@@ -44,15 +44,12 @@ abstract class AbstractCliApplication extends AbstractApplication
 	public function __construct(Input\Cli $input = null, Registry $config = null, CliOutput $output = null)
 	{
 		// Close the application if we are not executed from the command line.
-		// @codeCoverageIgnoreStart
 		if (!defined('STDOUT') || !defined('STDIN') || !isset($_SERVER['argv']))
 		{
 			$this->close();
 		}
 
-		// @codeCoverageIgnoreEnd
-
-		$this->output = ($output instanceof CliOutput) ? $output : new Cli\Output\Stdout;
+		$this->output = $output ?: new Cli\Output\Stdout;
 
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input instanceof Input\Input ? $input : new Input\Cli, $config);

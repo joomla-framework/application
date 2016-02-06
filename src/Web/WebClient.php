@@ -517,7 +517,7 @@ class WebClient
 			$this->mobile = true;
 			$this->platform = self::ANDROID;
 
-			/**
+			/*
 			 * Attempt to distinguish between Android phones and tablets
 			 * There is no totally foolproof method but certain rules almost always hold
 			 *   Android 3.x is only used for tablets

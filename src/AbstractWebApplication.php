@@ -85,7 +85,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function __construct(Input $input = null, Registry $config = null, Web\WebClient $client = null)
 	{
-		$this->client = $client instanceof Web\WebClient ? $client : new Web\WebClient;
+		$this->client = $client ?: new Web\WebClient;
 
 		// Setup the response object.
 		$this->response = new \stdClass;
@@ -135,8 +135,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Checks the accept encoding of the browser and compresses the data before
-	 * sending it to the client if possible.
+	 * Checks the accept encoding of the browser and compresses the data before sending it to the client if possible.
 	 *
 	 * @return  void
 	 *
@@ -207,8 +206,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to send the application response to the client.  All headers will be sent prior to the main
-	 * application output data.
+	 * Method to send the application response to the client.  All headers will be sent prior to the main application output data.
 	 *
 	 * @return  void
 	 *
@@ -253,9 +251,8 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Redirect to another URL.
 	 *
-	 * If the headers have not been sent the redirect will be accomplished using a "301 Moved Permanently"
-	 * or "303 See Other" code in the header pointing to the new location. If the headers have already been
-	 * sent this will be accomplished using a JavaScript statement.
+	 * If the headers have not been sent the redirect will be accomplished using a "301 Moved Permanently" or "303 See Other" code in the header
+	 * pointing to the new location. If the headers have already been sent this will be accomplished using a JavaScript statement.
 	 *
 	 * @param   string   $url    The URL to redirect to. Can only be http/https URL
 	 * @param   boolean  $moved  True if the page is 301 Permanently Moved, otherwise 303 See Other is assumed.
@@ -397,8 +394,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	}
 
 	/**
-	 * Method to get the array of response headers to be sent when the response is sent
-	 * to the client.
+	 * Method to get the array of response headers to be sent when the response is sent to the client.
 	 *
 	 * @return  array
 	 *
@@ -606,10 +602,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * Method to send a header to the client.
 	 *
 	 * @param   string   $string   The header string.
-	 * @param   boolean  $replace  The optional replace parameter indicates whether the header should
-	 *                             replace a previous similar header, or add a second header of the same type.
-	 * @param   integer  $code     Forces the HTTP response code to the specified value. Note that
-	 *                             this parameter only has an effect if the string is not empty.
+	 * @param   boolean  $replace  The optional replace parameter indicates whether the header should replace a previous similar header, or add
+	 *                             a second header of the same type.
+	 * @param   integer  $code     Forces the HTTP response code to the specified value. Note that this parameter only has an effect if the string
+	 *                             is not empty.
 	 *
 	 * @return  void
 	 *
@@ -655,8 +651,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Method to load the system URI strings for the application.
 	 *
-	 * @param   string  $requestUri  An optional request URI to use instead of detecting one from the
-	 *                               server environment variables.
+	 * @param   string  $requestUri  An optional request URI to use instead of detecting one from the server environment variables.
 	 *
 	 * @return  void
 	 *
@@ -665,7 +660,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	protected function loadSystemUris($requestUri = null)
 	{
 		// Set the request URI.
-		// @codeCoverageIgnoreStart
 		if (!empty($requestUri))
 		{
 			$this->set('uri.request', $requestUri);
@@ -674,8 +668,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 		{
 			$this->set('uri.request', $this->detectRequestUri());
 		}
-
-		// @codeCoverageIgnoreEnd
 
 		// Check to see if an explicit base URI has been set.
 		$siteUri = trim($this->get('site_uri'));
@@ -777,7 +769,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 			{
 				// Redirect to login screen.
 				$this->redirect('index.php');
-				$this->close();
 			}
 
 			return false;
