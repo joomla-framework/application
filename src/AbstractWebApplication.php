@@ -599,7 +599,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	protected function detectRequestUri()
 	{
 		// First we need to detect the URI scheme.
-		if ($this->isSslConnection())
+		if ($this->isHttpsConnection())
 		{
 			$scheme = 'https://';
 		}
@@ -667,12 +667,27 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @return  boolean  True if using SSL, false if not.
 	 *
 	 * @since   1.0
+	 * @deprecated  2.0  Use isHttpsConnection instead.
 	 */
 	public function isSslConnection()
 	{
 		$serverSSLVar = $this->input->server->getString('HTTPS', '');
 
 		return (!empty($serverSSLVar) && strtolower($serverSSLVar) != 'off');
+	}
+
+	/**
+	 * Determine if we are using a secure (HTTPS) connection.
+	 *
+	 * @return  boolean  True if using HTTPS, false if not.
+	 *
+	 * @since   1.0
+	 */
+	public function isHttpsConnection()
+	{
+		$serverHttpsVar = $this->input->server->getString('HTTPS', '');
+
+		return (!empty($serverHttpsVar) && strtolower($serverHttpsVar) != 'off');
 	}
 
 	/**
