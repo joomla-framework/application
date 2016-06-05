@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -99,15 +99,8 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	{
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
 
-		// Validate default objects are created
-		$this->assertAttributeInstanceOf('Joomla\Input\Input', 'input', $object);
-		$this->assertAttributeInstanceOf('Joomla\Registry\Registry', 'config', $object);
+		// Validate default objects unique to the web application are created
 		$this->assertAttributeInstanceOf('Joomla\Application\Web\WebClient', 'client', $object);
-
-		// Validate default configuration data is written
-		$executionDateTime = new \DateTime($object->get('execution.datetime'));
-
-		$this->assertSame(date('Y'), $executionDateTime->format('Y'));
 	}
 
 	/**
@@ -560,6 +553,87 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$this->assertEmpty($object->getBody(true));
+	}
+
+	/**
+	 * @testdox  Tests that the application redirects successfully with the legacy behavior.
+	 *
+	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 */
+	public function testRedirectLegacyBehavior()
+	{
+		$mockInput  = $this->getMock('Joomla\Input\Input', array('get', 'getString'), array(), '', true, true, true, false, true);
+		$mockConfig = $this->getMock('Joomla\Registry\Registry', array('get', 'set'), array(), '', true, true, true, false, true);
+		$mockClient = $this->getMock('Joomla\Application\Web\WebClient', array(), array(), '', true, true, true, false, true);
+
+		// Mock the Input object internals
+		$mockServerInput = $this->getMock(
+			'Joomla\Input\Input',
+			array('get', 'set'),
+			array(
+				array(
+					'HTTP_HOST'   => self::TEST_HTTP_HOST,
+					'REQUEST_URI' => self::TEST_REQUEST_URI,
+					'SCRIPT_NAME' => '/index.php'
+				)
+			),
+			'',
+			true,
+			true,
+			true,
+			false,
+			true
+		);
+
+		$inputInternals = array(
+			'server' => $mockServerInput
+		);
+
+		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+
+		// Mock the client internals to show engine has been detected.
+		TestHelper::setValue(
+			$mockClient,
+			'detection',
+			array('engine' => true)
+		);
+		TestHelper::setValue(
+			$mockClient,
+			'engine',
+			WebClient::GECKO
+		);
+
+		$object = $this->getMockForAbstractClass(
+			'Joomla\Application\AbstractWebApplication',
+			array($mockInput, $mockConfig, $mockClient),
+			'',
+			true,
+			true,
+			true,
+			array('checkHeadersSent', 'close', 'header')
+		);
+
+		$object->expects($this->once())
+			->method('close');
+		$object->expects($this->any())
+			->method('checkHeadersSent')
+			->willReturn(false);
+		$object->expects($this->any())
+			->method('header')
+			->willReturnCallback(array($this, 'mockHeader'));
+
+		$url = 'index.php';
+
+		$object->redirect($url, false);
+
+		$this->assertSame(
+			self::$headers,
+			array(
+				array('HTTP/1.1 303 See other', true, null),
+				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
+				array('Content-Type: text/html; charset=utf-8', true, null),
+			)
+		);
 	}
 
 	/**
