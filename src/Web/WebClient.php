@@ -98,7 +98,7 @@ class WebClient
 	 * @var    array
 	 * @since  1.0
 	 */
-	protected $languages = array();
+	protected $languages = [];
 
 	/**
 	 * The priority order detected accepted encodings for the client.
@@ -106,7 +106,7 @@ class WebClient
 	 * @var    array
 	 * @since  1.0
 	 */
-	protected $encodings = array();
+	protected $encodings = [];
 
 	/**
 	 * The web client's user agent string.
@@ -146,7 +146,7 @@ class WebClient
 	 * @var    array
 	 * @since  1.0
 	 */
-	protected $detection = array();
+	protected $detection = [];
 
 	/**
 	 * An array of headers sent by client.
@@ -290,37 +290,37 @@ class WebClient
 		// Attempt to detect the browser type.  Obviously we are only worried about major browsers.
 		if ((stripos($userAgent, 'MSIE') !== false) && (stripos($userAgent, 'Opera') === false))
 		{
-			$this->browser = self::IE;
+			$this->browser  = self::IE;
 			$patternBrowser = 'MSIE';
 		}
 		elseif (stripos($userAgent, 'Trident') !== false)
 		{
-			$this->browser = self::IE;
+			$this->browser  = self::IE;
 			$patternBrowser = ' rv';
 		}
 		elseif ((stripos($userAgent, 'Firefox') !== false) && (stripos($userAgent, 'like Firefox') === false))
 		{
-			$this->browser = self::FIREFOX;
+			$this->browser  = self::FIREFOX;
 			$patternBrowser = 'Firefox';
 		}
 		elseif (stripos($userAgent, 'OPR') !== false)
 		{
-			$this->browser = self::OPERA;
+			$this->browser  = self::OPERA;
 			$patternBrowser = 'OPR';
 		}
 		elseif (stripos($userAgent, 'Chrome') !== false)
 		{
-			$this->browser = self::CHROME;
+			$this->browser  = self::CHROME;
 			$patternBrowser = 'Chrome';
 		}
 		elseif (stripos($userAgent, 'Safari') !== false)
 		{
-			$this->browser = self::SAFARI;
+			$this->browser  = self::SAFARI;
 			$patternBrowser = 'Safari';
 		}
 		elseif (stripos($userAgent, 'Opera') !== false)
 		{
-			$this->browser = self::OPERA;
+			$this->browser  = self::OPERA;
 			$patternBrowser = 'Opera';
 		}
 
@@ -331,7 +331,7 @@ class WebClient
 			$pattern = '#(?<browser>Version|' . $patternBrowser . ')[/ :]+(?<version>[0-9.|a-zA-Z.]*)#';
 
 			// Attempt to find version strings in the user agent string.
-			$matches = array();
+			$matches = [];
 
 			if (preg_match_all($pattern, $userAgent, $matches))
 			{
@@ -470,19 +470,19 @@ class WebClient
 			// Let's look at the specific mobile options in the Windows space.
 			if (stripos($userAgent, 'Windows Phone') !== false)
 			{
-				$this->mobile = true;
+				$this->mobile   = true;
 				$this->platform = self::WINDOWS_PHONE;
 			}
 			elseif (stripos($userAgent, 'Windows CE') !== false)
 			{
-				$this->mobile = true;
+				$this->mobile   = true;
 				$this->platform = self::WINDOWS_CE;
 			}
 		}
 		elseif (stripos($userAgent, 'iPhone') !== false)
 		{
 			// Interestingly 'iPhone' is present in all iOS devices so far including iPad and iPods.
-			$this->mobile = true;
+			$this->mobile   = true;
 			$this->platform = self::IPHONE;
 
 			// Let's look at the specific mobile options in the iOS space.
@@ -498,13 +498,13 @@ class WebClient
 		elseif (stripos($userAgent, 'iPad') !== false)
 		{
 			// In case where iPhone is not mentioed in iPad user agent string
-			$this->mobile = true;
+			$this->mobile   = true;
 			$this->platform = self::IPAD;
 		}
 		elseif (stripos($userAgent, 'iPod') !== false)
 		{
 			// In case where iPhone is not mentioed in iPod user agent string
-			$this->mobile = true;
+			$this->mobile   = true;
 			$this->platform = self::IPOD;
 		}
 		elseif (preg_match('/macintosh|mac os x/i', $userAgent))
@@ -514,12 +514,12 @@ class WebClient
 		}
 		elseif (stripos($userAgent, 'Blackberry') !== false)
 		{
-			$this->mobile = true;
+			$this->mobile   = true;
 			$this->platform = self::BLACKBERRY;
 		}
 		elseif (stripos($userAgent, 'Android') !== false)
 		{
-			$this->mobile = true;
+			$this->mobile   = true;
 			$this->platform = self::ANDROID;
 
 			/*
@@ -531,7 +531,7 @@ class WebClient
 			 *   In some modes Kindle Android devices include the string Mobile but they include the string Silk.
 			 */
 			if (stripos($userAgent, 'Android 3') !== false || stripos($userAgent, 'Tablet') !== false
-				|| stripos($userAgent, 'Mobile') === false || stripos($userAgent, 'Silk') !== false )
+				|| stripos($userAgent, 'Mobile') === false || stripos($userAgent, 'Silk') !== false)
 			{
 				$this->platform = self::ANDROIDTABLET;
 			}

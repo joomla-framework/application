@@ -48,7 +48,7 @@ class ColorProcessor implements ProcessorInterface
 	 * @var    ColorStyle[]
 	 * @since  1.0
 	 */
-	protected $styles = array();
+	protected $styles = [];
 
 	/**
 	 * Class constructor
@@ -150,7 +150,7 @@ class ColorProcessor implements ProcessorInterface
 	 *
 	 * @since   1.0
 	 */
-	private function replaceColors($text, $tag, $match, Colorstyle $style)
+	private function replaceColors($text, $tag, $match, ColorStyle $style)
 	{
 		$replace = $this->noColors
 			? $match
@@ -170,12 +170,12 @@ class ColorProcessor implements ProcessorInterface
 	{
 		$this->addStyle(
 			'info',
-			new ColorStyle('green', '', array('bold'))
+			new ColorStyle('green', '', ['bold'])
 		);
 
 		$this->addStyle(
 			'comment',
-			new ColorStyle('yellow', '', array('bold'))
+			new ColorStyle('yellow', '', ['bold'])
 		);
 
 		$this->addStyle(

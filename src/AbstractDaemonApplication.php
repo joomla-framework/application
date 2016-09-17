@@ -28,7 +28,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 	 * @see    http://php.net/manual/pcntl.constants.php
 	 * @since  1.0
 	 */
-	protected static $signals = array(
+	protected static $signals = [
 		'SIGHUP',
 		'SIGINT',
 		'SIGQUIT',
@@ -64,8 +64,8 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		'SIGBABY',
 		'SIG_BLOCK',
 		'SIG_UNBLOCK',
-		'SIG_SETMASK'
-	);
+		'SIG_SETMASK',
+	];
 
 	/**
 	 * True if the daemon is in the process of exiting.
@@ -248,7 +248,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		}
 
 		// Read the contents of the process id file as an integer.
-		$fp = fopen($pidFile, 'r');
+		$fp  = fopen($pidFile, 'r');
 		$pid = fread($fp, filesize($pidFile));
 		$pid = (int) $pid;
 		fclose($fp);
@@ -321,7 +321,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 
 		// The pid file location.  This defaults to a path inside the /tmp directory.
 		$name = $this->get('application_name');
-		$tmp = (string) $this->get('application_pid_file', strtolower('/tmp/' . $name . '/' . $name . '.pid'));
+		$tmp  = (string) $this->get('application_pid_file', strtolower('/tmp/' . $name . '/' . $name . '.pid'));
 		$this->set('application_pid_file', $tmp);
 
 		/*
@@ -331,13 +331,13 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		 */
 
 		// The user id under which to run the daemon.
-		$tmp = (int) $this->get('application_uid', 0);
-		$options = array('options' => array('min_range' => 0, 'max_range' => 65000));
+		$tmp     = (int) $this->get('application_uid', 0);
+		$options = ['options' => ['min_range' => 0, 'max_range' => 65000]];
 		$this->set('application_uid', filter_var($tmp, FILTER_VALIDATE_INT, $options));
 
 		// The group id under which to run the daemon.
-		$tmp = (int) $this->get('application_gid', 0);
-		$options = array('options' => array('min_range' => 0, 'max_range' => 65000));
+		$tmp     = (int) $this->get('application_gid', 0);
+		$options = ['options' => ['min_range' => 0, 'max_range' => 65000]];
 		$this->set('application_gid', filter_var($tmp, FILTER_VALIDATE_INT, $options));
 
 		// Option to kill the daemon if it cannot switch to the chosen identity.
@@ -485,7 +485,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		}
 
 		// Change the user id for the process necessary.
-		if ($uid && (posix_getuid($file) != $uid) && (!@ posix_setuid($uid)))
+		if ($uid && (posix_getuid() != $uid) && (!@ posix_setuid($uid)))
 		{
 			$this->getLogger()->error('Unable to change user ownership of the proccess.');
 
@@ -493,7 +493,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		}
 
 		// Change the group id for the process necessary.
-		if ($gid && (posix_getgid($file) != $gid) && (!@ posix_setgid($gid)))
+		if ($gid && (posix_getgid() != $gid) && (!@ posix_setgid($gid)))
 		{
 			$this->getLogger()->error('Unable to change group ownership of the proccess.');
 
@@ -501,7 +501,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		}
 
 		// Get the user and group information based on uid and gid.
-		$user = posix_getpwuid($uid);
+		$user  = posix_getpwuid($uid);
 		$group = posix_getgrgid($gid);
 
 		$this->getLogger()->info('Changed daemon identity to ' . $user['name'] . ':' . $group['name']);
@@ -528,9 +528,9 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		}
 
 		// Reset Process Information
-		$this->safeMode = !!@ ini_get('safe_mode');
+		$this->safeMode  = !!@ ini_get('safe_mode');
 		$this->processId = 0;
-		$this->running = false;
+		$this->running   = false;
 
 		// Detach process!
 		try
@@ -549,7 +549,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 
 				// Set the process id.
 				$this->processId = (int) posix_getpid();
-				$this->parentId = $this->processId;
+				$this->parentId  = $this->processId;
 			}
 		}
 		catch (\RuntimeException $e)
@@ -707,7 +707,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 	protected function setupSignalHandlers()
 	{
 		// We add the error suppression for the loop because on some platforms some constants are not defined.
-		foreach (self::$signals as $signal)
+		foreach (static::$signals as $signal)
 		{
 			// Ignore signals that are not defined.
 			if (!defined($signal) || !is_int(constant($signal)) || (constant($signal) === 0))
@@ -722,7 +722,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 			}
 
 			// Attach the signal handler for the signal.
-			if (!$this->pcntlSignal(constant($signal), array($this, 'signal')))
+			if (!$this->pcntlSignal(constant($signal), [$this, 'signal']))
 			{
 				$this->getLogger()->emergency(sprintf('Unable to reroute signal handler: %s', $signal));
 
@@ -765,7 +765,7 @@ abstract class AbstractDaemonApplication extends AbstractCliApplication
 		if ($this->parentId == $this->processId)
 		{
 			// Read the contents of the process id file as an integer.
-			$fp = fopen($this->get('application_pid_file'), 'r');
+			$fp  = fopen($this->get('application_pid_file'), 'r');
 			$pid = fread($fp, filesize($this->get('application_pid_file')));
 			$pid = (int) $pid;
 			fclose($fp);

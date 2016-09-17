@@ -8,10 +8,10 @@
 
 namespace Joomla\Application;
 
-use Joomla\Uri\Uri;
 use Joomla\Input\Input;
-use Joomla\Session\SessionInterface;
 use Joomla\Registry\Registry;
+use Joomla\Session\SessionInterface;
+use Joomla\Uri\Uri;
 
 /**
  * Base class for a Joomla! Web application.
@@ -75,7 +75,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @since  1.6.0
 	 * @see    https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 	 */
-	private $responseMap = array(
+	private $responseMap = [
 		300 => 'HTTP/1.1 300 Multiple Choices',
 		301 => 'HTTP/1.1 301 Moved Permanently',
 		302 => 'HTTP/1.1 302 Found',
@@ -84,8 +84,8 @@ abstract class AbstractWebApplication extends AbstractApplication
 		305 => 'HTTP/1.1 305 Use Proxy',
 		306 => 'HTTP/1.1 306 (Unused)',
 		307 => 'HTTP/1.1 307 Temporary Redirect',
-		308 => 'HTTP/1.1 308 Permanent Redirect'
-	);
+		308 => 'HTTP/1.1 308 Permanent Redirect',
+	];
 
 	/**
 	 * Class constructor.
@@ -107,10 +107,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 		$this->client = $client ?: new Web\WebClient;
 
 		// Setup the response object.
-		$this->response = new \stdClass;
+		$this->response           = new \stdClass;
 		$this->response->cachable = false;
-		$this->response->headers = array();
-		$this->response->body = array();
+		$this->response->headers  = [];
+		$this->response->body     = [];
 
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input, $config);
@@ -159,11 +159,11 @@ abstract class AbstractWebApplication extends AbstractApplication
 	protected function compress()
 	{
 		// Supported compression encodings.
-		$supported = array(
-			'x-gzip' => 'gz',
-			'gzip' => 'gz',
-			'deflate' => 'deflate'
-		);
+		$supported = [
+			'x-gzip'  => 'gz',
+			'gzip'    => 'gz',
+			'deflate' => 'deflate',
+		];
 
 		// Get the supported encoding.
 		$encodings = array_intersect($this->client->encodings, array_keys($supported));
@@ -195,7 +195,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 				// @codeCoverageIgnoreEnd
 
 				// Attempt to gzip encode the data with an optimal level 4.
-				$data = $this->getBody();
+				$data   = $this->getBody();
 				$gzdata = gzencode($data, 4, ($supported[$encoding] == 'gz') ? FORCE_GZIP : FORCE_DEFLATE);
 
 				// If there was a problem encoding the data just try the next encoding scheme.
@@ -300,7 +300,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 			$uri = new Uri($this->get('uri.request'));
 
 			// Get a base URL to prepend from the requested URI.
-			$prefix = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));
+			$prefix = $uri->toString(['scheme', 'user', 'pass', 'host', 'port']);
 
 			// We just need the prefix since we have a path relative to the root.
 			if ($url[0] == '/')
@@ -310,10 +310,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 			else
 			// It's relative to where we are now, so lets add that.
 			{
-				$parts = explode('/', $uri->toString(array('path')));
+				$parts = explode('/', $uri->toString(['path']));
 				array_pop($parts);
 				$path = implode('/', $parts) . '/';
-				$url = $prefix . $path . $url;
+				$url  = $prefix . $path . $url;
 			}
 		}
 
@@ -397,7 +397,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	public function setHeader($name, $value, $replace = false)
 	{
 		// Sanitize the input values.
-		$name = (string) $name;
+		$name  = (string) $name;
 		$value = (string) $value;
 
 		// If the replace flag is set, unset all known headers with the given name.
@@ -416,7 +416,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		}
 
 		// Add the header to the internal array.
-		$this->response->headers[] = array('name' => $name, 'value' => $value);
+		$this->response->headers[] = ['name' => $name, 'value' => $value];
 
 		return $this;
 	}
@@ -442,7 +442,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function clearHeaders()
 	{
-		$this->response->headers = array();
+		$this->response->headers = [];
 
 		return $this;
 	}
@@ -486,7 +486,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function setBody($content)
 	{
-		$this->response->body = array((string) $content);
+		$this->response->body = [(string) $content];
 
 		return $this;
 	}
@@ -592,7 +592,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	protected function detectRequestUri()
 	{
 		// First we need to detect the URI scheme.
-		$scheme = $this->isSSLConnection() ? 'https://' : 'http://';
+		$scheme = $this->isSslConnection() ? 'https://' : 'http://';
 
 		/*
 		 * There are some differences in the way that Apache and IIS populate server environment variables.  To
@@ -600,7 +600,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		 * information from Apache or IIS.
 		 */
 
-		$phpSelf = $this->input->server->getString('PHP_SELF', '');
+		$phpSelf    = $this->input->server->getString('PHP_SELF', '');
 		$requestUri = $this->input->server->getString('REQUEST_URI', '');
 
 		// If PHP_SELF and REQUEST_URI are both populated then we will assume "Apache Mode".
@@ -613,7 +613,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		// If not in "Apache Mode" we will assume that we are in an IIS environment and proceed.
 		{
 			// IIS uses the SCRIPT_NAME variable instead of a REQUEST_URI variable... thanks, MS
-			$uri = $scheme . $this->input->server->getString('HTTP_HOST') . $this->input->server->getString('SCRIPT_NAME');
+			$uri       = $scheme . $this->input->server->getString('HTTP_HOST') . $this->input->server->getString('SCRIPT_NAME');
 			$queryHost = $this->input->server->getString('QUERY_STRING', '');
 
 			// If the QUERY_STRING variable exists append it to the URI string.
@@ -702,8 +702,8 @@ abstract class AbstractWebApplication extends AbstractApplication
 
 		if ($siteUri != '')
 		{
-			$uri = new Uri($siteUri);
-			$path = $uri->toString(array('path'));
+			$uri  = new Uri($siteUri);
+			$path = $uri->toString(['path']);
 		}
 		else
 		// No explicit base URI was set so we need to detect it.
@@ -727,7 +727,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		}
 
 		// Get the host from the URI.
-		$host = $uri->toString(array('scheme', 'user', 'pass', 'host', 'port'));
+		$host = $uri->toString(['scheme', 'user', 'pass', 'host', 'port']);
 
 		// Check if the path includes "index.php".
 		if (strpos($path, 'index.php') !== false)
