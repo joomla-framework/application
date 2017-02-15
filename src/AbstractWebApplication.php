@@ -424,7 +424,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		// If the replace flag is set, unset all known headers with the given name.
 		if ($replace && $response->hasHeader($name))
 		{
-			$response->withoutHeader($name);
+			$response = $response->withoutHeader($name);
 		}
 
 		// Add the header to the internal array.
@@ -436,13 +436,23 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Method to get the array of response headers to be sent when the response is sent to the client.
 	 *
-	 * @return  array
+	 * @return  array|null
 	 *
 	 * @since   1.0
 	 */
 	public function getHeaders()
 	{
-		return $this->getResponse()->getHeaders();
+		$return = [];
+
+		foreach ($this->getResponse()->getHeaders() as $name => $values)
+		{
+			foreach ($values as $value)
+			{
+				$return[] = ['name' => $name, 'value' => $value];
+			}
+		}
+
+		return $return;
 	}
 
 	/**
@@ -477,7 +487,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		if (!$this->checkHeadersSent())
 		{
-			foreach ($this->getResponse()->getHeaders() as $header)
+			foreach ($this->getHeaders() as $header)
 			{
 				if ('status' == strtolower($header['name']))
 				{

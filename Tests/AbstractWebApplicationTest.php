@@ -8,6 +8,7 @@ namespace Joomla\Application\Tests;
 
 use Joomla\Application\Web\WebClient;
 use Joomla\Test\TestHelper;
+use Zend\Diactoros\Response;
 
 /**
  * Test class for Joomla\Application\AbstractWebApplication.
@@ -162,7 +163,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			$headers[0]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
@@ -202,7 +203,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			$headers[0]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
@@ -234,28 +235,25 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			->willReturn(false);
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.'),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertLessThan(
-			strlen($mockResponse->body[0]),
+			strlen($response->getBody()),
 			$object->getBody()
 		);
 
@@ -298,28 +296,25 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			->willReturn(false);
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.'),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertLessThan(
-			strlen($mockResponse->body[0]),
+			strlen($response->getBody()),
 			$object->getBody()
 		);
 
@@ -354,33 +349,30 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient), '', true, true, true, array('checkHeadersSent'));
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array(str_replace("\r\n", "\n", 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			strlen($mockResponse->body[0]),
+			strlen($response->getBody()),
 			strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
-		$this->assertNull($object->getHeaders());
+		$this->assertEmpty($object->getHeaders());
 	}
 
 	/**
@@ -409,33 +401,30 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient));
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array(str_replace("\r\n", "\n", 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			strlen($mockResponse->body[0]),
+			strlen($response->getBody()),
 			strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
-		$this->assertNull($object->getHeaders());
+		$this->assertEmpty($object->getHeaders());
 	}
 
 	/**
@@ -464,33 +453,30 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient));
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array(str_replace("\r\n", "\n", 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			strlen($mockResponse->body[0]),
+			strlen($response->getBody()),
 			strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
-		$this->assertNull($object->getHeaders());
+		$this->assertEmpty($object->getHeaders());
 	}
 
 	/**
@@ -519,7 +505,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			$headers[0]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
@@ -552,7 +538,7 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 			$headers[2]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
@@ -1273,7 +1259,6 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
 
 		$this->assertSame('', $object->getBody(), 'Returns an empty string by default');
-		$this->assertSame(array(), $object->getBody(true), 'Returns an empty array when requesting the body as an array');
 	}
 
 	/**
