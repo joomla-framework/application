@@ -13,6 +13,7 @@ use Joomla\Registry\Registry;
 use Joomla\Session\SessionInterface;
 use Joomla\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 /**
@@ -100,10 +101,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Class constructor.
 	 *
-	 * @param   ResponseInterface  $response  An optional argument to provide dependency injection for the application's
-	 *                                        input object.  If the argument is an Input object that object will become
-	 *                                        the application's input object, otherwise a default input object is
-	 *                                        created.
 	 * @param   Input              $input     An optional argument to provide dependency injection for the application's
 	 *                                        input object.  If the argument is an Input object that object will become
 	 *                                        the application's input object, otherwise a default input object is
@@ -116,14 +113,23 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *                                        client object.  If the argument is a Web\WebClient object that object will
 	 *                                        become the application's client object, otherwise a default client object
 	 *                                        is created.
+	 * @param   ResponseInterface  $response  An optional argument to provide dependency injection for the application's
+	 *                                        input object.  If the argument is an Input object that object will become
+	 *                                        the application's input object, otherwise a default input object is
+	 *                                        created.
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(ResponseInterface $response, Input $input = null, Registry $config = null, Web\WebClient $client = null)
+	public function __construct(Input $input = null, Registry $config = null, Web\WebClient $client = null, ResponseInterface $response = null)
 	{
 		$this->client = $client ?: new Web\WebClient;
 
 		// Setup the response object.
+		if (!$response)
+		{
+			$response = new Response;
+		}
+
 		$this->setResponse($response);
 
 		// Call the constructor as late as possible (it runs `initialise`).
