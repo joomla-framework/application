@@ -8,6 +8,11 @@
 
 namespace Joomla\Application\Exception;
 
+/**
+ * Exception thrown when the application can't write to the response body
+ *
+ * @since  __DEPLOY_VERSION__
+ */
 class UnableToWriteBody extends \DomainException
 {
 	/**

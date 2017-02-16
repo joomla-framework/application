@@ -76,7 +76,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * Is caching enabled?
 	 *
 	 * @var    boolean
-	 * @since  1.0
+	 * @since  __DEPLOY_VERSION__
 	 */
 	private $cacheable = false;
 
