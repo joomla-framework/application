@@ -436,7 +436,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Method to get the array of response headers to be sent when the response is sent to the client.
 	 *
-	 * @return  array|null
+	 * @return  array
 	 *
 	 * @since   1.0
 	 */
