@@ -8,6 +8,7 @@
 
 namespace Joomla\Application;
 
+use Joomla\Application\Exception\UnableToWriteBody;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Session\SessionInterface;
@@ -533,9 +534,15 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function prependBody($content)
 	{
-		$currentBody = $this->getBody();
+		$currentBody = $this->getResponse()->getBody();
+
+		if (!$currentBody->isReadable())
+		{
+			throw new UnableToWriteBody;
+		}
+
 		$stream = new Stream('php://memory', 'rw');
-		$stream->write((string) $content . $currentBody);
+		$stream->write((string) $content . (string) $currentBody);
 		$this->setResponse($this->getResponse()->withBody($stream));
 
 		return $this;
@@ -552,10 +559,23 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function appendBody($content)
 	{
-		$currentBody = $this->getBody();
-		$stream = new Stream('php://memory', 'rw');
-		$stream->write($currentBody . (string) $content);
-		$this->setResponse($this->getResponse()->withBody($stream));
+		$currentStream = $this->getResponse()->getBody();
+
+		if ($currentStream->isWritable())
+		{
+			$currentStream->write((string) $content);
+			$this->setResponse($this->getResponse()->withBody($currentStream));
+		}
+		elseif ($currentStream->isReadable())
+		{
+			$stream = new Stream('php://memory', 'rw');
+			$stream->write((string) $currentStream . (string) $content);
+			$this->setResponse($this->getResponse()->withBody($stream));
+		}
+		else
+		{
+			throw new UnableToWriteBody;
+		}
 
 		return $this;
 	}
