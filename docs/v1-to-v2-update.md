@@ -4,14 +4,9 @@ The following changes were made to the Application package between v1 and v2.
 
 ### PHP 5.3 and 5.4 support dropped
 
-The Session package now requires PHP 5.5 or newer.
+The Application package now requires PHP 5.5 or newer.
 
-### PSR-7 Responses now Supported
-In order to support PSR-7 responses there is a single break in backwards incompatibility.
-The `\Joomla\Application\AbstractWebApplication::getBody()` method does not have a
-`toBody` parameter. Joomla will default to use Zend Framework's Diactoros package
- if none is provided.
- 
- If you wish to provide another package's response object then simply inject it into the
- constructor of `\Joomla\Application\AbstractWebApplication`
+### PSR-7 Responses now supported
+In order to support PSR-7 responses there is a single break in backwards incompatibility. The `\Joomla\Application\AbstractWebApplication::getBody()` method does not have a `toBody` parameter.
 
+The package internals use the Zend Framework [Diactoros package](https://github.com/zendframework/zend-diactoros) for building the Response object. If you wish to use another PSR-7 compatible library you will need to extend the `setHeader`, `getHeaders`, `clearHeaders`, `setBody`, `prependBody`, and `appendBody` methods.
