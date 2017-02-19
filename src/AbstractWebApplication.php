@@ -8,10 +8,14 @@
 
 namespace Joomla\Application;
 
+use Joomla\Application\Exception\UnableToWriteBody;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Session\SessionInterface;
 use Joomla\Uri\Uri;
+use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\Stream;
 
 /**
  * Base class for a Joomla! Web application.
@@ -55,7 +59,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * The application response object.
 	 *
-	 * @var    object
+	 * @var    ResponseInterface
 	 * @since  1.0
 	 */
 	protected $response;
@@ -67,6 +71,14 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * @since  1.0
 	 */
 	private $session;
+
+	/**
+	 * Is caching enabled?
+	 *
+	 * @var    boolean
+	 * @since  __DEPLOY_VERSION__
+	 */
+	private $cacheable = false;
 
 	/**
 	 * A map of integer HTTP 1.1 response codes to the full HTTP Status for the headers.
@@ -90,27 +102,36 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Class constructor.
 	 *
-	 * @param   Input          $input   An optional argument to provide dependency injection for the application's input object.  If the argument
-	 *                                  is an Input object that object will become the application's input object, otherwise a default input
-	 *                                  object is created.
-	 * @param   Registry       $config  An optional argument to provide dependency injection for the application's config object.  If the argument
-	 *                                  is a Registry object that object will become the application's config object, otherwise a default config
-	 *                                  object is created.
-	 * @param   Web\WebClient  $client  An optional argument to provide dependency injection for the application's client object.  If the argument
-	 *                                  is a Web\WebClient object that object will become the application's client object, otherwise a default client
-	 *                                  object is created.
+	 * @param   Input              $input     An optional argument to provide dependency injection for the application's
+	 *                                        input object.  If the argument is an Input object that object will become
+	 *                                        the application's input object, otherwise a default input object is
+	 *                                        created.
+	 * @param   Registry           $config    An optional argument to provide dependency injection for the application's
+	 *                                        config object.  If the argument is a Registry object that object will
+	 *                                        become the application's config object, otherwise a default config object
+	 *                                        is created.
+	 * @param   Web\WebClient      $client    An optional argument to provide dependency injection for the application's
+	 *                                        client object.  If the argument is a Web\WebClient object that object will
+	 *                                        become the application's client object, otherwise a default client object
+	 *                                        is created.
+	 * @param   ResponseInterface  $response  An optional argument to provide dependency injection for the application's
+	 *                                        response object.  If the argument is a ResponseInterface object that object
+	 *                                        will become the application's response object, otherwise a default response
+	 *                                        object is created.
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(Input $input = null, Registry $config = null, Web\WebClient $client = null)
+	public function __construct(Input $input = null, Registry $config = null, Web\WebClient $client = null, ResponseInterface $response = null)
 	{
 		$this->client = $client ?: new Web\WebClient;
 
 		// Setup the response object.
-		$this->response           = new \stdClass;
-		$this->response->cachable = false;
-		$this->response->headers  = [];
-		$this->response->body     = [];
+		if (!$response)
+		{
+			$response = new Response;
+		}
+
+		$this->setResponse($response);
 
 		// Call the constructor as late as possible (it runs `initialise`).
 		parent::__construct($input, $config);
@@ -374,10 +395,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		if ($allow !== null)
 		{
-			$this->response->cachable = (bool) $allow;
+			$this->cacheable = (bool) $allow;
 		}
 
-		return $this->response->cachable;
+		return $this->cacheable;
 	}
 
 	/**
@@ -397,26 +418,18 @@ abstract class AbstractWebApplication extends AbstractApplication
 	public function setHeader($name, $value, $replace = false)
 	{
 		// Sanitize the input values.
-		$name  = (string) $name;
-		$value = (string) $value;
+		$name     = (string) $name;
+		$value    = (string) $value;
+		$response = $this->getResponse();
 
 		// If the replace flag is set, unset all known headers with the given name.
-		if ($replace)
+		if ($replace && $response->hasHeader($name))
 		{
-			foreach ($this->response->headers as $key => $header)
-			{
-				if ($name == $header['name'])
-				{
-					unset($this->response->headers[$key]);
-				}
-			}
-
-			// Clean up the array as unsetting nested arrays leaves some junk.
-			$this->response->headers = array_values($this->response->headers);
+			$response = $response->withoutHeader($name);
 		}
 
 		// Add the header to the internal array.
-		$this->response->headers[] = ['name' => $name, 'value' => $value];
+		$this->setResponse($response->withAddedHeader($name, $value));
 
 		return $this;
 	}
@@ -430,7 +443,17 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function getHeaders()
 	{
-		return $this->response->headers;
+		$return = [];
+
+		foreach ($this->getResponse()->getHeaders() as $name => $values)
+		{
+			foreach ($values as $value)
+			{
+				$return[] = ['name' => $name, 'value' => $value];
+			}
+		}
+
+		return $return;
 	}
 
 	/**
@@ -442,7 +465,14 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function clearHeaders()
 	{
-		$this->response->headers = [];
+		$response = $this->getResponse();
+
+		foreach ($response->getHeaders() as $name => $values)
+		{
+			$response = $response->withoutHeader($name);
+		}
+
+		$this->setResponse($response);
 
 		return $this;
 	}
@@ -458,7 +488,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		if (!$this->checkHeadersSent())
 		{
-			foreach ($this->response->headers as $header)
+			foreach ($this->getHeaders() as $header)
 			{
 				if ('status' == strtolower($header['name']))
 				{
@@ -486,7 +516,9 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function setBody($content)
 	{
-		$this->response->body = [(string) $content];
+		$stream = new Stream('php://memory', 'rw');
+		$stream->write((string) $content);
+		$this->setResponse($this->getResponse()->withBody($stream));
 
 		return $this;
 	}
@@ -502,7 +534,16 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function prependBody($content)
 	{
-		array_unshift($this->response->body, (string) $content);
+		$currentBody = $this->getResponse()->getBody();
+
+		if (!$currentBody->isReadable())
+		{
+			throw new UnableToWriteBody;
+		}
+
+		$stream = new Stream('php://memory', 'rw');
+		$stream->write((string) $content . (string) $currentBody);
+		$this->setResponse($this->getResponse()->withBody($stream));
 
 		return $this;
 	}
@@ -518,7 +559,23 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function appendBody($content)
 	{
-		array_push($this->response->body, (string) $content);
+		$currentStream = $this->getResponse()->getBody();
+
+		if ($currentStream->isWritable())
+		{
+			$currentStream->write((string) $content);
+			$this->setResponse($this->getResponse()->withBody($currentStream));
+		}
+		elseif ($currentStream->isReadable())
+		{
+			$stream = new Stream('php://memory', 'rw');
+			$stream->write((string) $currentStream . (string) $content);
+			$this->setResponse($this->getResponse()->withBody($stream));
+		}
+		else
+		{
+			throw new UnableToWriteBody;
+		}
 
 		return $this;
 	}
@@ -526,15 +583,25 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Return the body content
 	 *
-	 * @param   boolean  $asArray  True to return the body as an array of strings.
-	 *
-	 * @return  mixed  The response body either as an array or concatenated string.
+	 * @return  mixed  The response body as a string.
 	 *
 	 * @since   1.0
 	 */
-	public function getBody($asArray = false)
+	public function getBody()
 	{
-		return $asArray ? $this->response->body : implode((array) $this->response->body);
+		return (string) $this->getResponse()->getBody();
+	}
+
+	/**
+	 * Get the PSR-7 Response Object.
+	 *
+	 * @return  ResponseInterface
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getResponse()
+	{
+		return $this->response;
 	}
 
 	/**
@@ -644,6 +711,20 @@ abstract class AbstractWebApplication extends AbstractApplication
 	protected function header($string, $replace = true, $code = null)
 	{
 		header(str_replace(chr(0), '', $string), $replace, $code);
+	}
+
+	/**
+	 * Set the PSR-7 Response Object.
+	 *
+	 * @param   ResponseInterface  $response  The response object
+	 *
+	 * @return  void
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function setResponse(ResponseInterface $response)
+	{
+		$this->response = $response;
 	}
 
 	/**
@@ -814,13 +895,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   1.0
 	 */
-	public function getFormToken($forceNew = false)
-	{
-		// @todo we need the user id somehow here
-		$userId  = 0;
-
-		return md5($this->get('secret') . $userId . $this->getSession()->getToken($forceNew));
-	}
+	abstract public function getFormToken($forceNew = false);
 
 	/**
 	 * Tests whether a string contains only 7bit ASCII bytes.
