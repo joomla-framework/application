@@ -13,13 +13,15 @@ use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Joomla\DI\ContainerAwareInterface;
+use Joomla\DI\Container;
 
 /**
  * Joomla Framework Base Application Class
  *
  * @since  1.0
  */
-abstract class AbstractApplication implements LoggerAwareInterface
+abstract class AbstractApplication implements LoggerAwareInterface, ContainerAwareInterface
 {
 	/**
 	 * The application configuration object.
@@ -44,6 +46,14 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	 * @since  1.0
 	 */
 	private $logger;
+
+	/**
+	 * DI Container
+	 *
+	 * @var    Container
+	 * @since  1.5
+	 */
+	private $container;
 
 	/**
 	 * Class constructor.
@@ -145,6 +155,25 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	}
 
 	/**
+	 * Get the DI container.
+	 *
+	 * @return  Container
+	 *
+	 * @since   1.5
+	 *
+	 * @throws  \UnexpectedValueException May be thrown if the container has not been set.
+	 */
+	public function getContainer()
+	{
+		if ($this->container)
+		{
+			return $this->container;
+		}
+
+		throw new \UnexpectedValueException('Container not set in ' . __CLASS__);
+	}
+
+	/**
 	 * Custom initialisation method.
 	 *
 	 * Called at the end of the AbstractApplication::__construct method.
@@ -205,6 +234,22 @@ abstract class AbstractApplication implements LoggerAwareInterface
 	public function setLogger(LoggerInterface $logger)
 	{
 		$this->logger = $logger;
+
+		return $this;
+	}
+
+	/**
+	 * Set the DI container.
+	 *
+	 * @param   Container  $container  The DI container.
+	 *
+	 * @return  mixed  Returns itself to support chaining.
+	 *
+	 * @since   1.5
+	 */
+	public function setContainer(Container $container)
+	{
+		$this->container = $container;
 
 		return $this;
 	}
