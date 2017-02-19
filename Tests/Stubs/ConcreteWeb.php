@@ -122,4 +122,20 @@ class ConcreteWeb extends AbstractWebApplication
 	{
 		$this->headers[] = array($string, $replace, $code);
 	}
+
+	/**
+	 * Method to determine a hash for anti-spoofing variable names
+	 *
+	 * @param   boolean  $forceNew  If true, force a new token to be created
+	 *
+	 * @return  string  Hashed var name
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getFormToken($forceNew = false)
+	{
+		$userId  = 0;
+
+		return md5($this->get('secret') . $userId . $this->getSession()->getToken($forceNew));
+	}
 }

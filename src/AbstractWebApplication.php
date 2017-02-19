@@ -895,13 +895,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   1.0
 	 */
-	public function getFormToken($forceNew = false)
-	{
-		// @todo we need the user id somehow here
-		$userId  = 0;
-
-		return md5($this->get('secret') . $userId . $this->getSession()->getToken($forceNew));
-	}
+	abstract public function getFormToken($forceNew = false);
 
 	/**
 	 * Tests whether a string contains only 7bit ASCII bytes.
