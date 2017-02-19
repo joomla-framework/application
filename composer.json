@@ -7,14 +7,14 @@
     "license": "GPL-2.0+",
     "require": {
         "php": "^5.5.9|~7.0",
-        "joomla/input": "~1.2",
-        "joomla/registry": "~2.0@dev",
+        "joomla/input": "~1.2|~2.0",
+        "joomla/registry": "~1.1|~2.0",
         "psr/log": "~1.0"
     },
     "require-dev": {
         "joomla/test": "~1.1",
-        "joomla/event": "~2.0@dev",
-        "joomla/session": "~2.0@dev",
+        "joomla/event": "~2.0",
+        "joomla/session": "~2.0",
         "joomla/uri": "~1.1",
         "phpunit/phpunit": "~4.8|>=5.0 <5.4",
         "squizlabs/php_codesniffer": "1.*"
@@ -33,6 +33,7 @@
             "Joomla\\Application\\Tests\\": "Tests/"
         }
     },
+    "minimum-stability": "dev",
     "extra": {
         "branch-alias": {
             "dev-2.0-dev": "2.0-dev"
