@@ -115,9 +115,9 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *                                        become the application's client object, otherwise a default client object
 	 *                                        is created.
 	 * @param   ResponseInterface  $response  An optional argument to provide dependency injection for the application's
-	 *                                        input object.  If the argument is an Input object that object will become
-	 *                                        the application's input object, otherwise a default input object is
-	 *                                        created.
+	 *                                        response object.  If the argument is a ResponseInterface object that object
+	 *                                        will become the application's response object, otherwise a default response
+	 *                                        object is created.
 	 *
 	 * @since   1.0
 	 */
