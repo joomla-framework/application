@@ -282,12 +282,6 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function redirect($url, $status = 303)
 	{
-		// Check for relative internal links.
-		if (preg_match('#^index\.php#', $url))
-		{
-			$url = $this->get('uri.base.full') . $url;
-		}
-
 		// Perform a basic sanity check to make sure we don't have any CRLF garbage.
 		$url = preg_split("/[\r\n]/", $url);
 		$url = $url[0];
