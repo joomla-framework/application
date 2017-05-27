@@ -1,6 +1,6 @@
 language: php
-
 sudo: false
+dist: trusty
 
 env:
   global:
@@ -8,6 +8,7 @@ env:
     - COMPOSER_FLAGS="--prefer-stable"
 
 matrix:
+  fast_finish: true
   include:
     - php: 5.5
     - php: 5.5
@@ -20,10 +21,8 @@ matrix:
       env: COMPOSER_FLAGS=""
     - php: 7.1
     - php: nightly
-    - php: hhvm
   allow_failures:
     - php: nightly
-    - php: hhvm
 
 before_script:
   - composer self-update
