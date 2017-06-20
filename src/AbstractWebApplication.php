@@ -285,6 +285,12 @@ abstract class AbstractWebApplication extends AbstractApplication
 			}
 		}
 
+		// Make sure there is a status header already otherwise generate it from the response
+		if (!$this->getResponse()->hasHeader('Status'))
+		{
+			$this->setHeader('Status', $this->getResponse()->getStatusCode());
+		}
+
 		$this->sendHeaders();
 
 		echo $this->getBody();
