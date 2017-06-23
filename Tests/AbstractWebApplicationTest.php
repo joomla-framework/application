@@ -795,7 +795,6 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame(
 			self::$headers,
 			array(
-				array('HTTP/1.1 201 Created', true, 201),
 				array('HTTP/1.1 303 See other', true, 303),
 				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
 				array('Content-Type: text/html; charset=utf-8', true, null),
