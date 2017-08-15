@@ -664,7 +664,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function getResponse()
+	public function getResponse(): ResponseInterface
 	{
 		return $this->response;
 	}
