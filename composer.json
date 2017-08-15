@@ -6,7 +6,7 @@
     "homepage": "https://github.com/joomla-framework/application",
     "license": "GPL-2.0+",
     "require": {
-        "php": "^5.5.9|~7.0",
+        "php": "~7.0",
         "joomla/input": "~1.2|~2.0",
         "joomla/registry": "^1.4.5|~2.0",
         "psr/log": "~1.0",
@@ -18,7 +18,7 @@
         "joomla/event": "~2.0",
         "joomla/session": "~2.0",
         "joomla/uri": "~1.1",
-        "phpunit/phpunit": "~4.8|>=5.0 <5.4",
+        "phpunit/phpunit": ">=5.0 <5.4",
         "squizlabs/php_codesniffer": "1.*"
     },
     "suggest": {
