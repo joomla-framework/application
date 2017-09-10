@@ -167,6 +167,44 @@ class AbstractWebApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @testdox  Tests that the application is executed successfully when an event dispatcher is registered.
+	 *
+	 * @covers  Joomla\Application\AbstractWebApplication::execute
+	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
+	 * @uses    Joomla\Application\AbstractWebApplication::getBody
+	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 */
+	public function testExecuteWithEvents()
+	{
+		$dispatcher = $this->getMockBuilder('Joomla\Event\DispatcherInterface')->getMock();
+		$dispatcher->expects($this->exactly(4))
+			->method('dispatch');
+
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object->expects($this->once())
+			->method('doExecute');
+
+		$object->setDispatcher($dispatcher);
+
+		// execute() has no return, with our mock nothing should happen but ensuring that the mock's doExecute() stub is triggered
+		$this->assertNull($object->execute());
+
+		$this->assertFalse($object->allowCache());
+
+		$headers = $object->getHeaders();
+
+		$this->assertSame(
+			array(
+				'name'  => 'Content-Type',
+				'value' => 'text/html; charset=utf-8'
+			),
+			$headers[0]
+		);
+
+		$this->assertEmpty($object->getBody());
+	}
+
+	/**
 	 * @testdox  Tests that the application with compression enabled is executed successfully.
 	 *
 	 * @covers  Joomla\Application\AbstractWebApplication::execute
