@@ -16,6 +16,6 @@ The method `\Joomla\Application\AbstractWebApplication::getFormToken` has been m
 abstract method. Application's should specify their own logic here to generate a form
 token.
 
-### ColorStyle method typing
+### CLI Classes Removed
 
-The method parameters for the `\Joomla\Application\Cli\ColorStyle` are now all typehinted (including scalar types) and return type declarations added.  As this is a final class, there is no B/C concern for subclasses.
+The `\Joomla\Application\AbstractCliApplication` and all `Joomla\Application\Cli` namespace classes have been removed. The new `joomla/console` package should be used going forward.
