@@ -80,6 +80,27 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @testdox  Tests that the application is executed successfully when an event dispatcher is registered.
+	 *
+	 * @covers  Joomla\Application\AbstractApplication::execute
+	 */
+	public function testExecuteWithEvents()
+	{
+		$dispatcher = $this->getMockBuilder('Joomla\Event\DispatcherInterface')->getMock();
+		$dispatcher->expects($this->exactly(2))
+			->method('dispatch');
+
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication');
+		$object->expects($this->once())
+			->method('doExecute');
+
+		$object->setDispatcher($dispatcher);
+
+		// execute() has no return, with our mock nothing should happen but ensuring that the mock's doExecute() stub is triggered
+		$this->assertNull($object->execute());
+	}
+
+	/**
 	 * @testdox  Tests that data is read from the application configuration successfully.
 	 *
 	 * @covers  Joomla\Application\AbstractApplication::get
