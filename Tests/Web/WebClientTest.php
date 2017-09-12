@@ -4,6 +4,8 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
+use PHPUnit\Framework\TestCase;
+
 require_once __DIR__ . '/Stubs/JWebClientInspector.php';
 
 /**
@@ -11,7 +13,7 @@ require_once __DIR__ . '/Stubs/JWebClientInspector.php';
  *
  * @since  1.0
  */
-class JApplicationWebClientTest extends PHPUnit_Framework_TestCase
+class JApplicationWebClientTest extends TestCase
 {
 	/**
 	 * An instance of a JWebClient inspector.

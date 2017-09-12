@@ -6,10 +6,12 @@
 
 namespace Joomla\Application\Tests;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test class for Joomla\Application\AbstractApplication.
  */
-class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
+class AbstractApplicationTest extends TestCase
 {
 	/**
 	 * @testdox  Tests the constructor creates default object instances
@@ -41,8 +43,8 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function test__constructDependencyInjection()
 	{
-		$mockInput  = $this->getMock('Joomla\Input\Input');
-		$mockConfig = $this->getMock('Joomla\Registry\Registry');
+		$mockInput  = $this->createMock('Joomla\Input\Input');
+		$mockConfig = $this->createMock('Joomla\Registry\Registry');
 		$object     = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array($mockInput, $mockConfig));
 
 		$this->assertAttributeSame($mockInput, 'input', $object);
@@ -107,9 +109,16 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGet()
 	{
-		$mockInput  = $this->getMock('Joomla\Input\Input');
-		$mockConfig = $this->getMock('Joomla\Registry\Registry', array('get'), array(array('foo' => 'bar')), '', true, true, true, false, true);
-		$object     = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array($mockInput, $mockConfig));
+		$mockInput = $this->createMock('Joomla\Input\Input');
+
+		$mockConfig = $this->createMock('Joomla\Registry\Registry');
+
+		// The first three calls are for constructor internals, we don't care about those values here but have to fake them anyway
+		$mockConfig->expects($this->exactly(5))
+			->method('get')
+			->willReturnOnConsecutiveCalls(null, null, null, 'bar', 'car');
+
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', [$mockInput, $mockConfig]);
 
 		$this->assertSame('bar', $object->get('foo', 'car'), 'Checks a known configuration setting is returned.');
 		$this->assertSame('car', $object->get('goo', 'car'), 'Checks an unknown configuration setting returns the default.');
@@ -135,11 +144,22 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSet()
 	{
-		$mockInput  = $this->getMock('Joomla\Input\Input');
-		$mockConfig = $this->getMock('Joomla\Registry\Registry', array('get', 'set'), array(array('foo' => 'bar')), '', true, true, true, false, true);
-		$object     = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array($mockInput, $mockConfig));
+		$mockInput = $this->createMock('Joomla\Input\Input');
 
-		$this->assertEquals('bar', $object->set('foo', 'car'), 'Checks set returns the previous value.');
+		$mockConfig = $this->createMock('Joomla\Registry\Registry');
+
+		// The first three calls are for constructor internals, we don't care about those values here but have to fake them anyway
+		$mockConfig->expects($this->exactly(5))
+			->method('get')
+			->willReturnOnConsecutiveCalls(null, null, null, null, 'car');
+
+		$mockConfig->expects($this->exactly(4))
+			->method('set')
+			->willReturnOnConsecutiveCalls(null, null, null, null);
+
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', [$mockInput, $mockConfig]);
+
+		$this->assertNull($object->set('foo', 'car'), 'Checks set returns the previous value.');
 		$this->assertEquals('car', $object->get('foo'), 'Checks the new value has been set.');
 	}
 
@@ -151,7 +171,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 	public function testSetConfiguration()
 	{
 		$object     = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication');
-		$mockConfig = $this->getMock('Joomla\Registry\Registry');
+		$mockConfig = $this->createMock('Joomla\Registry\Registry');
 
 		// First validate the two objects are different
 		$this->assertAttributeNotSame($mockConfig, 'config', $object);
