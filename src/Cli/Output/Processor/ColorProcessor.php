@@ -14,7 +14,8 @@ use Joomla\Application\Cli\Output\Stdout;
 /**
  * Command line output processor supporting ANSI-colored output
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  2.0  Use the `joomla/console` package instead
  */
 class ColorProcessor implements ProcessorInterface
 {

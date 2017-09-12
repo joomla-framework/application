@@ -11,7 +11,8 @@ namespace Joomla\Application\Cli;
 /**
  * Class defining ANSI-color styles for command line output
  *
- * @since  1.0
+ * @since       1.0
+ * @deprecated  2.0  Use the `joomla/console` package instead
  */
 final class ColorStyle
 {
