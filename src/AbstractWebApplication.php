@@ -423,6 +423,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 			// @deprecated 3.0
 			if (is_bool($status))
 			{
+				@trigger_error('Passing a boolean value for the $status argument and will not be supported as of 3.0.', E_USER_DEPRECATED);
 				$status = $status ? 301 : 303;
 			}
 
