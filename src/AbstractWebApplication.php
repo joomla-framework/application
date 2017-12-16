@@ -718,11 +718,11 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Check if the value is a valid HTTP 1.1 status code
 	 *
-	 * @param   int  $code  The potential status code
+	 * @param   integer  $code  The potential status code
 	 *
-	 * @return  bool
+	 * @return  boolean
 	 *
-	 * @since  1.8.1
+	 * @since   1.8.1
 	 */
 	public function isValidHttpStatus($code)
 	{
@@ -841,9 +841,9 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @param   integer  $state  The HTTP 1.1 status code.
 	 *
-	 * @return  bool
+	 * @return  boolean
 	 *
-	 * @since  1.8.0
+	 * @since   1.8.0
 	 */
 	protected function isRedirectState($state)
 	{
