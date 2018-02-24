@@ -997,11 +997,9 @@ abstract class AbstractWebApplication extends AbstractApplication
 	/**
 	 * Checks for a form token in the request.
 	 *
-	 * Use in conjunction with getFormToken.
-	 *
 	 * @param   string  $method  The request method in which to look for the token key.
 	 *
-	 * @return  boolean  True if found and valid, false otherwise.
+	 * @return  boolean
 	 *
 	 * @since   1.0
 	 */
@@ -1011,16 +1009,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 
 		if (!$this->input->$method->get($token, '', 'alnum'))
 		{
-			if ($this->getSession()->isNew())
-			{
-				// Redirect to login screen.
-				$this->redirect('index.php');
-			}
-
 			return false;
 		}
 
-		return true;
+		return $this->getSession()->hasToken($token);
 	}
 
 	/**
