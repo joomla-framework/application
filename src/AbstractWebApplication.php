@@ -1032,7 +1032,10 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   1.0
 	 */
-	abstract public function getFormToken($forceNew = false);
+	public function getFormToken($forceNew = false)
+	{
+		return $this->getSession()->getToken($forceNew);
+	}
 
 	/**
 	 * Tests whether a string contains only 7bit ASCII bytes.

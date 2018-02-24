@@ -11,11 +11,6 @@ In order to support PSR-7 responses there is a single break in backwards incompa
 
 The package internals use the Zend Framework [Diactoros package](https://github.com/zendframework/zend-diactoros) for building the Response object. If you wish to use another PSR-7 compatible library you will need to extend the `setHeader`, `getHeaders`, `clearHeaders`, `setBody`, `prependBody`, and `appendBody` methods.
 
-### AbstractWebApplication::getFormToken is now an abstract method
-The method `\Joomla\Application\AbstractWebApplication::getFormToken` has been made an
-abstract method. Application's should specify their own logic here to generate a form
-token.
-
 ### CLI Classes Removed
 
 The `\Joomla\Application\AbstractCliApplication` and all `Joomla\Application\Cli` namespace classes have been removed. The new `joomla/console` package should be used going forward.
