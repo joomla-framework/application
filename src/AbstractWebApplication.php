@@ -1007,7 +1007,14 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		$token = $this->getFormToken();
 
-		if (!$this->input->$method->get($token, '', 'alnum'))
+		// Support a token sent via the X-CSRF-Token header, then fall back to a token in the request
+		$requestToken = $this->input->server->get(
+			'HTTP_X_CSRF_TOKEN',
+			$this->input->$method->get($token, '', 'alnum'),
+			'alnum'
+		);
+
+		if (!$requestToken)
 		{
 			return false;
 		}
