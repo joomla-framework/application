@@ -290,6 +290,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 
 				// Set the encoding headers.
 				$this->setHeader('Content-Encoding', $encoding);
+				$this->setHeader('Vary', 'Accept-Encoding');
 				$this->setHeader('X-Content-Encoded-By', 'Joomla');
 
 				// Replace the output with the encoded data.
@@ -416,7 +417,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 			echo "<script>document.location.href='$url';</script>\n";
 		}
 		// We have to use a JavaScript redirect here because MSIE doesn't play nice with UTF-8 URLs.
-		elseif (($this->client->engine == Web\WebClient::TRIDENT) && !$this->isAscii($url))
+		elseif (($this->client->engine == Web\WebClient::TRIDENT) && !static::isAscii($url))
 		{
 			$html = '<html><head>';
 			$html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';

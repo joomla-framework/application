@@ -43,8 +43,8 @@ class AbstractApplicationTest extends TestCase
 	 */
 	public function test__constructDependencyInjection()
 	{
-		$mockInput  = $this->createMock('Joomla\Input\Input');
-		$mockConfig = $this->createMock('Joomla\Registry\Registry');
+		$mockInput  = $this->getMockBuilder('Joomla\Input\Input')->getMock();
+		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->getMock();
 		$object     = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array($mockInput, $mockConfig));
 
 		$this->assertAttributeSame($mockInput, 'input', $object);
@@ -111,12 +111,10 @@ class AbstractApplicationTest extends TestCase
 	{
 		$mockInput = $this->createMock('Joomla\Input\Input');
 
-		$mockConfig = $this->createMock('Joomla\Registry\Registry');
-
-		// The first three calls are for constructor internals, we don't care about those values here but have to fake them anyway
-		$mockConfig->expects($this->exactly(5))
-			->method('get')
-			->willReturnOnConsecutiveCalls(null, null, null, 'bar', 'car');
+		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+			->setConstructorArgs([['foo' => 'bar']])
+			->enableProxyingToOriginalMethods()
+			->getMock();
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', [$mockInput, $mockConfig]);
 
@@ -144,18 +142,11 @@ class AbstractApplicationTest extends TestCase
 	 */
 	public function testSet()
 	{
-		$mockInput = $this->createMock('Joomla\Input\Input');
+		$mockInput = $this->getMockBuilder('Joomla\Input\Input')->getMock();
 
-		$mockConfig = $this->createMock('Joomla\Registry\Registry');
-
-		// The first three calls are for constructor internals, we don't care about those values here but have to fake them anyway
-		$mockConfig->expects($this->exactly(5))
-			->method('get')
-			->willReturnOnConsecutiveCalls(null, null, null, null, 'car');
-
-		$mockConfig->expects($this->exactly(4))
-			->method('set')
-			->willReturnOnConsecutiveCalls(null, null, null, null);
+		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+			->enableProxyingToOriginalMethods()
+			->getMock();
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', [$mockInput, $mockConfig]);
 
@@ -171,7 +162,7 @@ class AbstractApplicationTest extends TestCase
 	public function testSetConfiguration()
 	{
 		$object     = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication');
-		$mockConfig = $this->createMock('Joomla\Registry\Registry');
+		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->getMock();
 
 		// First validate the two objects are different
 		$this->assertAttributeNotSame($mockConfig, 'config', $object);
