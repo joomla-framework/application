@@ -26,9 +26,10 @@
     },
     "suggest": {
         "joomla/controller": "To support resolving ControllerInterface objects in ControllerResolverInterface, install joomla/controller",
-        "joomla/router": "To use ControllerResolverInterface implementations, install joomla/router",
+        "joomla/router": "To use WebApplication or ControllerResolverInterface implementations, install joomla/router",
         "joomla/session": "To use AbstractWebApplication with session support, install joomla/session",
-        "joomla/uri": "To use AbstractWebApplication, install joomla/uri"
+        "joomla/uri": "To use AbstractWebApplication, install joomla/uri",
+        "psr/container": "To use the ContainerControllerResolver, install any PSR-11 compatible container"
     },
     "autoload": {
         "psr-4": {
