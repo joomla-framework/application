@@ -226,7 +226,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		}
 		catch (\Throwable $throwable)
 		{
-			$this->dispatchEvent(ApplicationEvents::ERROR, new Event\ApplicationErrorEvent($thrown, $this));
+			$this->dispatchEvent(ApplicationEvents::ERROR, new Event\ApplicationErrorEvent($throwable, $this));
 		}
 
 		$this->dispatchEvent(ApplicationEvents::BEFORE_RESPOND);
