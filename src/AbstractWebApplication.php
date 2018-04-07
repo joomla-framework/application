@@ -209,17 +209,24 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	public function execute()
 	{
-		$this->dispatchEvent(ApplicationEvents::BEFORE_EXECUTE);
-
-		// Perform application routines.
-		$this->doExecute();
-
-		$this->dispatchEvent(ApplicationEvents::AFTER_EXECUTE);
-
-		// If gzip compression is enabled in configuration and the server is compliant, compress the output.
-		if ($this->get('gzip') && !ini_get('zlib.output_compression') && (ini_get('output_handler') != 'ob_gzhandler'))
+		try
 		{
-			$this->compress();
+			$this->dispatchEvent(ApplicationEvents::BEFORE_EXECUTE);
+
+			// Perform application routines.
+			$this->doExecute();
+
+			$this->dispatchEvent(ApplicationEvents::AFTER_EXECUTE);
+
+			// If gzip compression is enabled in configuration and the server is compliant, compress the output.
+			if ($this->get('gzip') && !ini_get('zlib.output_compression') && (ini_get('output_handler') != 'ob_gzhandler'))
+			{
+				$this->compress();
+			}
+		}
+		catch (\Throwable $throwable)
+		{
+			$this->dispatchEvent(ApplicationEvents::ERROR, new Event\ApplicationErrorEvent($thrown, $this));
 		}
 
 		$this->dispatchEvent(ApplicationEvents::BEFORE_RESPOND);
