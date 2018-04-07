@@ -31,7 +31,6 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 * Event constructor.
 	 *
 	 * @param   \Throwable           $error        The Throwable object with the error data.
-	 * @param   string               $name         The event name.
 	 * @param   AbstractApplication  $application  The active application.
 	 *
 	 * @since   __DEPLOY_VERSION__
