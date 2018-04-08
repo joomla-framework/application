@@ -8,8 +8,10 @@ namespace Joomla\Application\Tests;
 
 use Joomla\Application\Controller\ControllerResolverInterface;
 use Joomla\Application\WebApplication;
+use Joomla\Input\Input;
 use Joomla\Router\ResolvedRoute;
 use Joomla\Router\Router;
+use Joomla\Test\TestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,6 +19,22 @@ use PHPUnit\Framework\TestCase;
  */
 class WebApplicationTest extends TestCase
 {
+	/**
+	 * Enable or disable the backup and restoration of the $GLOBALS array.
+	 * Overwrite this attribute in a child class of TestCase.
+	 * Setting this attribute in setUp() has no effect!
+	 *
+	 * @var bool
+	 */
+	protected $backupGlobals = true;
+
+	/**
+	 * This method is called before the first test of this test class is run.
+	 */
+	public static function setUpBeforeClass()
+	{
+	}
+
 	/**
 	 * @testdox  Tests that the application is executed successfully.
 	 *
@@ -56,7 +74,26 @@ class WebApplicationTest extends TestCase
 			->with($route)
 			->willReturn($controller);
 
-		(new WebApplication($resolver, $router))->execute();
+		// For joomla/input 2.0
+		$mockInput = new Input([]);
+
+		// Mock the Input object internals
+		$mockServerInput = new Input(
+			[
+				'REQUEST_METHOD' => 'GET',
+			]
+		);
+
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
+
+		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+
+		// For joomla/input 1.0
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+
+		(new WebApplication($resolver, $router, $mockInput))->execute();
 
 		$this->assertTrue($controller->isExecuted());
 	}
