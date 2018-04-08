@@ -6,9 +6,9 @@
 
 namespace Joomla\Application\Tests\Stubs;
 
-use Joomla\Controller\ControllerInterface;
+use Joomla\Controller\AbstractController;
 
-class HasArgumentsController implements ControllerInterface
+class HasArgumentsController extends AbstractController
 {
 	private $name;
 
