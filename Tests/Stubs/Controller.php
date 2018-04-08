@@ -6,9 +6,9 @@
 
 namespace Joomla\Application\Tests\Stubs;
 
-use Joomla\Controller\ControllerInterface;
+use Joomla\Controller\AbstractController;
 
-class Controller implements ControllerInterface
+class Controller extends AbstractController
 {
 	public function execute()
 	{
