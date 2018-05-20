@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -44,7 +44,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * HTTP protocol version.
 	 *
 	 * @var    string
-	 * @since  1.0
+	 * @since  1.9.0
 	 */
 	public $httpVersion = '1.1';
 
@@ -421,14 +421,14 @@ abstract class AbstractWebApplication extends AbstractApplication
 		// If the headers have already been sent we need to send the redirect statement via JavaScript.
 		if ($this->checkHeadersSent())
 		{
-			echo "<script>document.location.href='$url';</script>\n";
+			echo "<script>document.location.href=" . json_encode($url) . ";</script>\n";
 		}
 		// We have to use a JavaScript redirect here because MSIE doesn't play nice with UTF-8 URLs.
 		elseif (($this->client->engine == Web\WebClient::TRIDENT) && !static::isAscii($url))
 		{
 			$html = '<html><head>';
 			$html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';
-			$html .= '<script>document.location.href=\'' . $url . '\';</script>';
+			$html .= '<script>document.location.href=' . json_encode($url) . ';</script>';
 			$html .= '</head><body></body></html>';
 
 			echo $html;
@@ -883,7 +883,14 @@ abstract class AbstractWebApplication extends AbstractApplication
 	{
 		$serverSSLVar = $this->input->server->getString('HTTPS', '');
 
-		return (!empty($serverSSLVar) && strtolower($serverSSLVar) != 'off');
+		if (!empty($serverSSLVar) && strtolower($serverSSLVar) !== 'off')
+		{
+			return true;
+		}
+
+		$serverForwarderProtoVar = $this->input->server->getString('HTTP_X_FORWARDED_PROTO', '');
+
+		return !empty($serverForwarderProtoVar) && strtolower($serverForwarderProtoVar) === 'https';
 	}
 
 	/**

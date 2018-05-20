@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -987,7 +987,7 @@ class AbstractWebApplicationTest extends TestCase
 		$buffer = ob_get_clean();
 
 		$this->assertSame(
-			"<script>document.location.href='http://" . self::TEST_HTTP_HOST . "/$url';</script>\n",
+			"<script>document.location.href=" . json_encode('http://' . self::TEST_HTTP_HOST . "/$url") . ";</script>\n",
 			$buffer
 		);
 	}
@@ -1061,7 +1061,7 @@ class AbstractWebApplicationTest extends TestCase
 
 		$this->assertSame(
 			'<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8" />'
-			. "<script>document.location.href='{$url}';</script></head><body></body></html>",
+			. "<script>document.location.href=" . json_encode($url) . ";</script></head><body></body></html>",
 			trim($buffer)
 		);
 	}
