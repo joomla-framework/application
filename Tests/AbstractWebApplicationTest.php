@@ -303,7 +303,7 @@ class AbstractWebApplicationTest extends TestCase
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertLessThan(
-			strlen($response->getBody()),
+			\strlen($response->getBody()),
 			$object->getBody()
 		);
 
@@ -368,7 +368,7 @@ class AbstractWebApplicationTest extends TestCase
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertLessThan(
-			strlen($response->getBody()),
+			\strlen($response->getBody()),
 			$object->getBody()
 		);
 
@@ -424,8 +424,8 @@ class AbstractWebApplicationTest extends TestCase
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			strlen($response->getBody()),
-			strlen($object->getBody())
+			\strlen($response->getBody()),
+			\strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
@@ -479,8 +479,8 @@ class AbstractWebApplicationTest extends TestCase
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			strlen($response->getBody()),
-			strlen($object->getBody())
+			\strlen($response->getBody()),
+			\strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
@@ -533,8 +533,8 @@ class AbstractWebApplicationTest extends TestCase
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			strlen($response->getBody()),
-			strlen($object->getBody())
+			\strlen($response->getBody()),
+			\strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.

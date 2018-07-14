@@ -450,7 +450,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 				$status = $status ? 301 : 303;
 			}
 
-			if (!is_int($status) && !$this->isRedirectState($status))
+			if (!\is_int($status) && !$this->isRedirectState($status))
 			{
 				throw new \InvalidArgumentException('You have not supplied a valid HTTP status code');
 			}
@@ -839,7 +839,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 */
 	protected function header($string, $replace = true, $code = null)
 	{
-		header(str_replace(chr(0), '', $string), $replace, $code);
+		header(str_replace(\chr(0), '', $string), $replace, $code);
 	}
 
 	/**
@@ -979,7 +979,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		// Set the extended (non-base) part of the request URI as the route.
 		if (stripos($this->get('uri.request'), $this->get('uri.base.full')) === 0)
 		{
-			$this->set('uri.route', substr_replace($this->get('uri.request'), '', 0, strlen($this->get('uri.base.full'))));
+			$this->set('uri.route', substr_replace($this->get('uri.request'), '', 0, \strlen($this->get('uri.base.full'))));
 		}
 
 		// Get an explicitly set media URI is present.
