@@ -41,7 +41,7 @@ abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAw
 	 * @var    Input
 	 * @since  1.0
 	 */
-	public $input = null;
+	public $input;
 
 	/**
 	 * Class constructor.

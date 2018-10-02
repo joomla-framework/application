@@ -29,30 +29,30 @@ namespace Joomla\Application\Web;
  */
 class WebClient
 {
-	const WINDOWS = 1;
+	const WINDOWS       = 1;
 	const WINDOWS_PHONE = 2;
-	const WINDOWS_CE = 3;
-	const IPHONE = 4;
-	const IPAD = 5;
-	const IPOD = 6;
-	const MAC = 7;
-	const BLACKBERRY = 8;
-	const ANDROID = 9;
-	const LINUX = 10;
-	const TRIDENT = 11;
-	const WEBKIT = 12;
-	const GECKO = 13;
-	const PRESTO = 14;
-	const KHTML = 15;
-	const AMAYA = 16;
-	const IE = 17;
-	const FIREFOX = 18;
-	const CHROME = 19;
-	const SAFARI = 20;
-	const OPERA = 21;
+	const WINDOWS_CE    = 3;
+	const IPHONE        = 4;
+	const IPAD          = 5;
+	const IPOD          = 6;
+	const MAC           = 7;
+	const BLACKBERRY    = 8;
+	const ANDROID       = 9;
+	const LINUX         = 10;
+	const TRIDENT       = 11;
+	const WEBKIT        = 12;
+	const GECKO         = 13;
+	const PRESTO        = 14;
+	const KHTML         = 15;
+	const AMAYA         = 16;
+	const IE            = 17;
+	const FIREFOX       = 18;
+	const CHROME        = 19;
+	const SAFARI        = 20;
+	const OPERA         = 21;
 	const ANDROIDTABLET = 22;
-	const EDGE = 23;
-	const BLINK = 24;
+	const EDGE          = 23;
+	const BLINK         = 24;
 
 	/**
 	 * The detected platform on which the web client runs.
@@ -219,6 +219,7 @@ class WebClient
 				{
 					$this->detectPlatform($this->userAgent);
 				}
+
 				break;
 
 			case 'engine':
@@ -226,6 +227,7 @@ class WebClient
 				{
 					$this->detectEngine($this->userAgent);
 				}
+
 				break;
 
 			case 'browser':
@@ -234,6 +236,7 @@ class WebClient
 				{
 					$this->detectBrowser($this->userAgent);
 				}
+
 				break;
 
 			case 'languages':
@@ -241,6 +244,7 @@ class WebClient
 				{
 					$this->detectLanguage($this->acceptLanguage);
 				}
+
 				break;
 
 			case 'encodings':
@@ -248,6 +252,7 @@ class WebClient
 				{
 					$this->detectEncoding($this->acceptEncoding);
 				}
+
 				break;
 
 			case 'robot':
@@ -255,6 +260,7 @@ class WebClient
 				{
 					$this->detectRobot($this->userAgent);
 				}
+
 				break;
 
 			case 'headers':
@@ -262,6 +268,7 @@ class WebClient
 				{
 					$this->detectHeaders();
 				}
+
 				break;
 		}
 
@@ -302,7 +309,7 @@ class WebClient
 		}
 		elseif (stripos($userAgent, 'Edge') !== false)
 		{
-			$this->browser = self::EDGE;
+			$this->browser  = self::EDGE;
 			$patternBrowser = 'Edge';
 		}
 		elseif ((stripos($userAgent, 'Firefox') !== false) && (stripos($userAgent, 'like Firefox') === false))
@@ -365,8 +372,8 @@ class WebClient
 					}
 				}
 				else
-				// We only have a Version or a browser so use what we have.
 				{
+					// We only have a Version or a browser so use what we have.
 					$this->browserVersion = $matches['version'][0];
 				}
 			}
@@ -628,14 +635,14 @@ class WebClient
 	 */
 	protected function detectHeaders()
 	{
-		if (function_exists('getallheaders'))
-		// If php is working under Apache, there is a special function
+		if (\function_exists('getallheaders'))
 		{
+			// If php is working under Apache, there is a special function
 			$this->headers = getallheaders();
 		}
 		else
-		// Else we fill headers from $_SERVER variable
 		{
+			// Else we fill headers from $_SERVER variable
 			$this->headers = array();
 
 			foreach ($_SERVER as $name => $value)
