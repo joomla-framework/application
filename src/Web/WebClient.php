@@ -463,14 +463,14 @@ class WebClient
 
 			if (preg_match('/Opera[\/| ]?([0-9.]+)/u', $userAgent, $match))
 			{
-				$version = \floatval($match[1]);
+				$version = (float) ($match[1]);
 			}
 
 			if (preg_match('/Version\/([0-9.]+)/u', $userAgent, $match))
 			{
-				if (\floatval($match[1]) >= 10)
+				if ((float) ($match[1]) >= 10)
 				{
-					$version = \floatval($match[1]);
+					$version = (float) ($match[1]);
 				}
 			}
 
@@ -643,7 +643,7 @@ class WebClient
 		else
 		{
 			// Else we fill headers from $_SERVER variable
-			$this->headers = array();
+			$this->headers = [];
 
 			foreach ($_SERVER as $name => $value)
 			{

@@ -94,6 +94,6 @@ class WebApplication extends AbstractWebApplication
 			$this->input->def($key, $value);
 		}
 
-		call_user_func($this->controllerResolver->resolve($route));
+		\call_user_func($this->controllerResolver->resolve($route));
 	}
 }

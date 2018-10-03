@@ -33,9 +33,9 @@ class ControllerResolver implements ControllerResolverInterface
 		$controller = $route->getController();
 
 		// Try to resolve a callable defined as an array
-		if (is_array($controller))
+		if (\is_array($controller))
 		{
-			if (isset($controller[0]) && is_string($controller[0]) && isset($controller[1]))
+			if (isset($controller[0]) && \is_string($controller[0]) && isset($controller[1]))
 			{
 				if (!class_exists($controller[0]))
 				{
@@ -59,7 +59,7 @@ class ControllerResolver implements ControllerResolverInterface
 				}
 			}
 
-			if (!is_callable($controller))
+			if (!\is_callable($controller))
 			{
 				throw new \InvalidArgumentException(sprintf('Cannot resolve controller for URI `%s`', $route->getUri()));
 			}
@@ -68,9 +68,9 @@ class ControllerResolver implements ControllerResolverInterface
 		}
 
 		// Try to resolve an invokable object
-		if (is_object($controller))
+		if (\is_object($controller))
 		{
-			if (!is_callable($controller))
+			if (!\is_callable($controller))
 			{
 				throw new \InvalidArgumentException(sprintf('Cannot resolve controller for URI `%s`', $route->getUri()));
 			}
@@ -79,13 +79,13 @@ class ControllerResolver implements ControllerResolverInterface
 		}
 
 		// Try to resolve a known function
-		if (function_exists($controller))
+		if (\function_exists($controller))
 		{
 			return $controller;
 		}
 
 		// Try to resolve a class name if it implements our ControllerInterface
-		if (is_string($controller) && interface_exists(ControllerInterface::class))
+		if (\is_string($controller) && interface_exists(ControllerInterface::class))
 		{
 			if (!class_exists($controller))
 			{

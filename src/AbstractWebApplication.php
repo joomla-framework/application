@@ -437,7 +437,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		{
 			// Check if we have a boolean for the status variable for compatability with v1 of the framework
 			// @deprecated 3.0
-			if (is_bool($status))
+			if (\is_bool($status))
 			{
 				@trigger_error(
 					sprintf(
