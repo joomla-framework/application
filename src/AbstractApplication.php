@@ -23,7 +23,7 @@ use Psr\Log\NullLogger;
  *
  * @since  1.0
  */
-abstract class AbstractApplication implements ConfigurationAwareApplicationInterface, LoggerAwareInterface, DispatcherAwareInterface
+abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAwareInterface
 {
 	use LoggerAwareTrait, DispatcherAwareTrait;
 
@@ -111,7 +111,7 @@ abstract class AbstractApplication implements ConfigurationAwareApplicationInter
 	 *
 	 * Most likely you will want to instantiate a controller and execute it, or perform some sort of task directly.
 	 *
-	 * @return  void
+	 * @return  mixed
 	 *
 	 * @since   1.0
 	 */
