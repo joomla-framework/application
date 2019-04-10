@@ -460,8 +460,12 @@ abstract class AbstractWebApplication extends AbstractApplication
 			$this->setHeader('Location', $url, true);
 		}
 
+		$this->dispatchEvent(ApplicationEvents::BEFORE_RESPOND);
+
 		// Set appropriate headers
 		$this->respond();
+
+		$this->dispatchEvent(ApplicationEvents::AFTER_RESPOND);
 
 		// Close the application after the redirect.
 		$this->close();
