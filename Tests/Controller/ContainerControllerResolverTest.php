@@ -63,7 +63,6 @@ class ContainerControllerResolverTest extends TestCase
 	 * @testdox  Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments
 	 *
 	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
-	 * @requires  PHP 7.1
 	 *
 	 * @expectedException  \InvalidArgumentException
 	 * @expectedExceptionMessage  Controller `Joomla\Application\Tests\Stubs\HasArgumentsController` has required constructor arguments, cannot instantiate the class

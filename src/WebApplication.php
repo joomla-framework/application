@@ -84,7 +84,7 @@ class WebApplication extends AbstractWebApplication
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function doExecute()
+	protected function doExecute(): void
 	{
 		$route = $this->router->parseRoute($this->get('uri.route'), $this->input->getMethod());
 

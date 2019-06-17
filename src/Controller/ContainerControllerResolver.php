@@ -48,7 +48,7 @@ class ContainerControllerResolver extends ControllerResolver
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function instantiateController(string $class)
+	protected function instantiateController(string $class): object
 	{
 		if ($this->container->has($class))
 		{

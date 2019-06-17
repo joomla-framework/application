@@ -855,7 +855,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function setResponse(ResponseInterface $response)
+	public function setResponse(ResponseInterface $response): void
 	{
 		$this->response = $response;
 	}

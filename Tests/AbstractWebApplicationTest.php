@@ -22,28 +22,28 @@ class AbstractWebApplicationTest extends TestCase
 	 *
 	 * @var  string
 	 */
-	const TEST_HTTP_HOST = 'mydomain.com';
+	private const TEST_HTTP_HOST = 'mydomain.com';
 
 	/**
 	 * Value for test user agent.
 	 *
 	 * @var  string
 	 */
-	const TEST_USER_AGENT = 'Mozilla/5.0';
+	private const TEST_USER_AGENT = 'Mozilla/5.0';
 
 	/**
 	 * Value for test user agent.
 	 *
 	 * @var  string
 	 */
-	const TEST_REQUEST_URI = '/index.php';
+	private const TEST_REQUEST_URI = '/index.php';
 
 	/**
 	 * List of sent headers for inspection. array($string, $replace, $code).
 	 *
 	 * @var  array
 	 */
-	private static $headers = array();
+	private static $headers = [];
 
 	/**
 	 * Data for detectRequestUri method.
@@ -54,13 +54,13 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public function getDetectRequestUriData()
 	{
-		return array(
+		return [
 			// HTTPS, PHP_SELF, REQUEST_URI, HTTP_HOST, SCRIPT_NAME, QUERY_STRING, (resulting uri)
-			array(null, '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php?foo=bar'),
-			array('on', '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'https://joom.la:3/j/index.php?foo=bar'),
-			array(null, '', '', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php'),
-			array(null, '', '', 'joom.la:3', '/j/index.php', 'foo=bar', 'http://joom.la:3/j/index.php?foo=bar'),
-		);
+			[null, '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php?foo=bar'],
+			['on', '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'https://joom.la:3/j/index.php?foo=bar'],
+			[null, '', '', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php'],
+			[null, '', '', 'joom.la:3', '/j/index.php', 'foo=bar', 'http://joom.la:3/j/index.php?foo=bar'],
+		];
 	}
 
 	/**
@@ -70,11 +70,11 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public function getRedirectData()
 	{
-		return array(
+		return [
 			// Note: url, (expected result)
-			'with_leading_slash' => array('/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'),
-			'without_leading_slash' => array('foo', 'http://' . self::TEST_HTTP_HOST . '/foo'),
-		);
+			'with_leading_slash'    => ['/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'],
+			'without_leading_slash' => ['foo', 'http://' . self::TEST_HTTP_HOST . '/foo'],
+		];
 	}
 
 	/**
@@ -90,7 +90,7 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public static function mockHeader($string, $replace = true, $code = null)
 	{
-		self::$headers[] = array($string, $replace, $code);
+		self::$headers[] = [$string, $replace, $code];
 	}
 
 	/**
@@ -131,7 +131,7 @@ class AbstractWebApplicationTest extends TestCase
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig, $mockClient));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput, $mockConfig, $mockClient]);
 
 		$this->assertAttributeSame($mockInput, 'input', $object);
 		$this->assertAttributeSame($mockConfig, 'config', $object);
@@ -162,10 +162,10 @@ class AbstractWebApplicationTest extends TestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Content-Type',
-				'value' => 'text/html; charset=utf-8'
-			),
+				'value' => 'text/html; charset=utf-8',
+			],
 			$headers[0]
 		);
 
@@ -200,10 +200,10 @@ class AbstractWebApplicationTest extends TestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Content-Type',
-				'value' => 'text/html; charset=utf-8'
-			),
+				'value' => 'text/html; charset=utf-8',
+			],
 			$headers[0]
 		);
 
@@ -243,10 +243,10 @@ class AbstractWebApplicationTest extends TestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Content-Type',
-				'value' => 'text/html; charset=utf-8'
-			),
+				'value' => 'text/html; charset=utf-8',
+			],
 			$headers[0]
 		);
 
@@ -271,15 +271,15 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('gzip', 'deflate')
+			['gzip', 'deflate']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient), '', true, true, true, array('checkHeadersSent'));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, null, $mockClient], '', true, true, true, ['checkHeadersSent']);
 		$object->expects($this->once())
 			->method('checkHeadersSent')
 			->willReturn(false);
@@ -309,11 +309,11 @@ class AbstractWebApplicationTest extends TestCase
 
 		// Ensure that the compression headers were set.
 		$this->assertSame(
-			array(
-				0 => array('name' => 'Content-Encoding', 'value' => 'gzip'),
-				1 => array('name' => 'Vary', 'value' => 'Accept-Encoding'),
-				2 => array('name' => 'X-Content-Encoded-By', 'value' => 'Joomla')
-			),
+			[
+				0 => ['name' => 'Content-Encoding', 'value' => 'gzip'],
+				1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
+				2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
+			],
 			$object->getHeaders()
 		);
 	}
@@ -336,15 +336,15 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('deflate', 'gzip')
+			['deflate', 'gzip']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient), '', true, true, true, array('checkHeadersSent'));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, null, $mockClient], '', true, true, true, ['checkHeadersSent']);
 		$object->expects($this->once())
 			->method('checkHeadersSent')
 			->willReturn(false);
@@ -374,11 +374,11 @@ class AbstractWebApplicationTest extends TestCase
 
 		// Ensure that the compression headers were set.
 		$this->assertSame(
-			array(
-				0 => array('name' => 'Content-Encoding', 'value' => 'deflate'),
-				1 => array('name' => 'Vary', 'value' => 'Accept-Encoding'),
-				2 => array('name' => 'X-Content-Encoded-By', 'value' => 'Joomla')
-			),
+			[
+				0 => ['name' => 'Content-Encoding', 'value' => 'deflate'],
+				1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
+				2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
+			],
 			$object->getHeaders()
 		);
 	}
@@ -400,10 +400,10 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient), '', true, true, true, array('checkHeadersSent'));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, null, $mockClient], '', true, true, true, ['checkHeadersSent']);
 
 		// Mock a response.
 		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -450,15 +450,15 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('deflate', 'gzip')
+			['deflate', 'gzip']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, null, $mockClient]);
 
 		// Mock a response.
 		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -504,15 +504,15 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('foo', 'bar')
+			['foo', 'bar']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, null, $mockClient]);
 
 		// Mock a response.
 		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -560,10 +560,10 @@ class AbstractWebApplicationTest extends TestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Content-Type',
-				'value' => 'text/html; charset=utf-8'
-			),
+				'value' => 'text/html; charset=utf-8',
+			],
 			$headers[0]
 		);
 
@@ -593,10 +593,10 @@ class AbstractWebApplicationTest extends TestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Last-Modified',
-				'value' => $modifiedDate->format('D, d M Y H:i:s') . ' GMT'
-			),
+				'value' => $modifiedDate->format('D, d M Y H:i:s') . ' GMT',
+			],
 			$headers[2]
 		);
 
@@ -627,9 +627,9 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
@@ -637,7 +637,7 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -647,12 +647,12 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -662,7 +662,7 @@ class AbstractWebApplicationTest extends TestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
@@ -673,15 +673,15 @@ class AbstractWebApplicationTest extends TestCase
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
@@ -709,9 +709,9 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
@@ -719,7 +719,7 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -729,12 +729,12 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -744,7 +744,7 @@ class AbstractWebApplicationTest extends TestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
@@ -754,15 +754,15 @@ class AbstractWebApplicationTest extends TestCase
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
@@ -790,9 +790,9 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
@@ -800,7 +800,7 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -810,12 +810,12 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -825,11 +825,11 @@ class AbstractWebApplicationTest extends TestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('GMT'));
+		$date                 = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 		$object->setHeader('status', 201);
 
@@ -837,15 +837,15 @@ class AbstractWebApplicationTest extends TestCase
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
@@ -873,9 +873,9 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
@@ -883,7 +883,7 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -893,12 +893,12 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -908,26 +908,26 @@ class AbstractWebApplicationTest extends TestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('GMT'));
+		$date                 = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 
 		$object->redirect($url);
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
@@ -941,7 +941,7 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public function testRedirectWithHeadersSent()
 	{
-		$mockInput = new Input(array());
+		$mockInput = new Input([]);
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
 			->enableProxyingToOriginalMethods()
@@ -956,20 +956,20 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig),
+			[$mockInput, $mockConfig],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close')
+			['checkHeadersSent', 'close']
 		);
 
 		$object->expects($this->once())
@@ -999,7 +999,7 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public function testRedirectWithJavascriptRedirect()
 	{
-		$mockInput = new Input(array());
+		$mockInput = new Input([]);
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
 			->enableProxyingToOriginalMethods()
@@ -1018,9 +1018,9 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
@@ -1028,7 +1028,7 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -1038,12 +1038,12 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -1089,9 +1089,9 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
@@ -1099,7 +1099,7 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -1109,12 +1109,12 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -1124,26 +1124,26 @@ class AbstractWebApplicationTest extends TestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'http://j.org/index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('GMT'));
+		$date                 = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 
 		$object->redirect($url, true);
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 301 Moved Permanently', true, 301),
-				array('Location: ' . $url, true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 301 Moved Permanently', true, 301],
+				['Location: ' . $url, true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
@@ -1174,9 +1174,9 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
@@ -1184,7 +1184,7 @@ class AbstractWebApplicationTest extends TestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -1194,12 +1194,12 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -1209,7 +1209,7 @@ class AbstractWebApplicationTest extends TestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$object->redirect($url);
 
@@ -1246,18 +1246,18 @@ class AbstractWebApplicationTest extends TestCase
 
 		$this->assertSame(
 			$object->getHeaders(),
-			array(
-				array('name' => 'foo', 'value' => 'bar')
-			)
+			[
+				['name' => 'foo', 'value' => 'bar'],
+			]
 		);
 
 		$object->setHeader('foo', 'car', true);
 
 		$this->assertSame(
 			$object->getHeaders(),
-			array(
-				array('name' => 'foo', 'value' => 'car')
-			),
+			[
+				['name' => 'foo', 'value' => 'car'],
+			],
 			'A header with the same name should be replaced.'
 		);
 	}
@@ -1301,12 +1301,12 @@ class AbstractWebApplicationTest extends TestCase
 	{
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			array(),
+			[],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'header')
+			['checkHeadersSent', 'header']
 		);
 
 		$object->expects($this->any())
@@ -1314,7 +1314,7 @@ class AbstractWebApplicationTest extends TestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$object->setHeader('foo', 'bar');
 		$object->setHeader('Status', 200);
@@ -1322,10 +1322,10 @@ class AbstractWebApplicationTest extends TestCase
 		$this->assertSame($object, $object->sendHeaders());
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('foo: bar', true, null),
-				array('HTTP/1.1 200 OK', true, 200)
-			)
+			[
+				['foo: bar', true, null],
+				['HTTP/1.1 200 OK', true, 200],
+			]
 		);
 	}
 
@@ -1421,13 +1421,13 @@ class AbstractWebApplicationTest extends TestCase
 		// Mock the Input object internals
 		$mockServerInput = new Input($serverInputData);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput]);
 
 		$this->assertSame(
 			$expects,
@@ -1448,7 +1448,7 @@ class AbstractWebApplicationTest extends TestCase
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, $mockConfig));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, $mockConfig]);
 
 		TestHelper::invoke($object, 'loadSystemUris');
 
@@ -1495,13 +1495,13 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput]);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1549,17 +1549,17 @@ class AbstractWebApplicationTest extends TestCase
 		// Mock the Input object internals
 		$mockServerInput = new Input(
 			[
-				'SCRIPT_NAME' => '/index.php'
+				'SCRIPT_NAME' => '/index.php',
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput, $mockConfig]);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1611,13 +1611,13 @@ class AbstractWebApplicationTest extends TestCase
 			]
 		);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$inputInternals = [
+			'server' => $mockServerInput,
+		];
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig));
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput, $mockConfig]);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1725,7 +1725,7 @@ class AbstractWebApplicationTest extends TestCase
 	protected function tearDown()
 	{
 		// Reset the $headers array
-		self::$headers = array();
+		self::$headers = [];
 
 		parent::tearDown();
 	}

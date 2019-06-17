@@ -63,7 +63,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	public function setError(\Throwable $error)
+	public function setError(\Throwable $error): void
 	{
 		$this->error = $error;
 	}

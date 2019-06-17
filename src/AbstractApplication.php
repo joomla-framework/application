@@ -92,7 +92,7 @@ abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAw
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function dispatchEvent(string $eventName, EventInterface $event = null)
+	protected function dispatchEvent(string $eventName, ?EventInterface $event = null): ?EventInterface
 	{
 		try
 		{

@@ -48,7 +48,6 @@ class ControllerResolver implements ControllerResolverInterface
 				}
 				catch (\ArgumentCountError $error)
 				{
-					// On PHP 7.1, we can catch missing argument errors to provide a more useful error message
 					throw new \InvalidArgumentException(
 						sprintf(
 							'Controller `%s` has required constructor arguments, cannot instantiate the class', $controller[0]
@@ -98,7 +97,6 @@ class ControllerResolver implements ControllerResolverInterface
 			}
 			catch (\ArgumentCountError $error)
 			{
-				// On PHP 7.1, we can catch missing argument errors to provide a more useful error message
 				throw new \InvalidArgumentException(
 					sprintf(
 						'Controller `%s` has required constructor arguments, cannot instantiate the class', $controller
@@ -122,7 +120,7 @@ class ControllerResolver implements ControllerResolverInterface
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
-	protected function instantiateController(string $class)
+	protected function instantiateController(string $class): object
 	{
 		return new $class;
 	}
