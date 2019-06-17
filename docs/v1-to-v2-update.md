@@ -2,9 +2,9 @@
 
 The following changes were made to the Application package between v1 and v2.
 
-### PHP 5 support dropped
+### Minimum supported PHP version raised
 
-The Application package now requires PHP 7.0 or newer.
+All Framework packages now require PHP 7.2 or newer.
 
 ### PSR-7 Responses now supported
 In order to support PSR-7 responses there is a single break in backwards incompatibility. The `\Joomla\Application\AbstractWebApplication::getBody()` method does not have a `toBody` parameter.
