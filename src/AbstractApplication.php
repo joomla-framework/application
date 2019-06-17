@@ -100,7 +100,7 @@ abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAw
 		}
 		catch (\UnexpectedValueException $exception)
 		{
-			return;
+			return null;
 		}
 
 		return $dispatcher->dispatch($eventName, $event ?: new Event\ApplicationEvent($eventName, $this));
