@@ -21,18 +21,4 @@ class HasArgumentsController extends AbstractController
 	{
 		return 'Hello ' . $this->name . '!';
 	}
-
-	public function serialize()
-	{
-		return serialize(
-			[
-				'name' => $this->name,
-			]
-		);
-	}
-
-	public function unserialize($serialized)
-	{
-		list($this->name) = unserialize($serialized);
-	}
 }

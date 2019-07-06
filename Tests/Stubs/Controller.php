@@ -14,14 +14,4 @@ class Controller extends AbstractController
 	{
 		return 'Hello world!';
 	}
-
-	public function serialize()
-	{
-		return serialize('');
-	}
-
-	public function unserialize($serialized)
-	{
-		// Nothing to unserialize
-	}
 }
