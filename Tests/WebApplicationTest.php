@@ -16,25 +16,11 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\WebApplication.
+ *
+ * @backupGlobals enabled
  */
 class WebApplicationTest extends TestCase
 {
-	/**
-	 * Enable or disable the backup and restoration of the $GLOBALS array.
-	 * Overwrite this attribute in a child class of TestCase.
-	 * Setting this attribute in setUp() has no effect!
-	 *
-	 * @var bool
-	 */
-	protected $backupGlobals = true;
-
-	/**
-	 * This method is called before the first test of this test class is run.
-	 */
-	public static function setUpBeforeClass()
-	{
-	}
-
 	/**
 	 * @testdox  Tests that the application is executed successfully.
 	 *
@@ -42,6 +28,8 @@ class WebApplicationTest extends TestCase
 	 */
 	public function testExecute()
 	{
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+
 		$controller = new class
 		{
 			private $executed = false;
@@ -59,39 +47,20 @@ class WebApplicationTest extends TestCase
 
 		$route = new ResolvedRoute($controller, [], '/');
 
-		$router = $this->getMockBuilder(Router::class)
-			->getMock();
+		$router = $this->createMock(Router::class);
 
 		$router->expects($this->once())
 			->method('parseRoute')
 			->willReturn($route);
 
-		$resolver = $this->getMockBuilder(ControllerResolverInterface::class)
-			->getMock();
+		$resolver = $this->createMock(ControllerResolverInterface::class);
 
 		$resolver->expects($this->once())
 			->method('resolve')
 			->with($route)
 			->willReturn($controller);
 
-		// For joomla/input 2.0
 		$mockInput = new Input([]);
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			[
-				'REQUEST_METHOD' => 'GET',
-			]
-		);
-
-		$inputInternals = [
-			'server' => $mockServerInput,
-		];
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
-
-		// For joomla/input 1.0
-		$_SERVER['REQUEST_METHOD'] = 'GET';
 
 		(new WebApplication($resolver, $router, $mockInput))->execute();
 

@@ -32,7 +32,7 @@ class ContainerControllerResolverTest extends TestCase
 	 * Sets up the fixture, for example, open a network connection.
 	 * This method is called before a test is executed.
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		$container = new Container;
 		$container->set(
@@ -63,12 +63,12 @@ class ContainerControllerResolverTest extends TestCase
 	 * @testdox  Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments
 	 *
 	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
-	 *
-	 * @expectedException  \InvalidArgumentException
-	 * @expectedExceptionMessage  Controller `Joomla\Application\Tests\Stubs\HasArgumentsController` has required constructor arguments, cannot instantiate the class
 	 */
 	public function testResolvingControllerInterfaceFailsOnAClassWithRequiredArguments()
 	{
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Controller `Joomla\Application\Tests\Stubs\HasArgumentsController` has required constructor arguments, cannot instantiate the class');
+
 		$this->resolver->resolve(new ResolvedRoute(HasArgumentsController::class, [], '/'));
 	}
 }

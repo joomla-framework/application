@@ -36,12 +36,12 @@ class ControllerResolverTest extends TestCase
 	 * @testdox  Tests the resolver fails to resolve an array that is not callable
 	 *
 	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
-	 *
-	 * @expectedException  \InvalidArgumentException
-	 * @expectedExceptionMessage  Cannot resolve controller for URI `/`
 	 */
 	public function testResolvingAnArrayFailsWhenNonCollable()
 	{
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Cannot resolve controller for URI `/`');
+
 		(new ControllerResolver)->resolve(new ResolvedRoute([Registry::class, 'noWayThisWillEverExist'], [], '/'));
 	}
 
@@ -49,13 +49,13 @@ class ControllerResolverTest extends TestCase
 	 * @testdox  Tests the resolver resolves a callable array but fails instantiating a class with required arguments
 	 *
 	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
-	 *
-	 * @expectedException  \InvalidArgumentException
-	 * @expectedExceptionMessage  Controller `Joomla\Application\Event\ApplicationEvent` has required constructor arguments, cannot instantiate the class
 	 */
 	public function testResolvingACallableArrayFailsOnAClassWithRequiredArguments()
 	{
-		(new ControllerResolver)->resolve(new ResolvedRoute([ApplicationEvent::class, 'getApplication'], [], '/'));
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Controller `Joomla\Application\Tests\Stubs\HasArgumentsController` has required constructor arguments, cannot instantiate the class');
+
+		(new ControllerResolver)->resolve(new ResolvedRoute([HasArgumentsController::class, 'execute'], [], '/'));
 	}
 
 	/**
@@ -100,12 +100,12 @@ class ControllerResolverTest extends TestCase
 	 * @testdox  Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments
 	 *
 	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
-	 *
-	 * @expectedException  \InvalidArgumentException
-	 * @expectedExceptionMessage  Controller `Joomla\Application\Tests\Stubs\HasArgumentsController` has required constructor arguments, cannot instantiate the class
 	 */
 	public function testResolvingControllerInterfaceFailsOnAClassWithRequiredArguments()
 	{
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Controller `Joomla\Application\Tests\Stubs\HasArgumentsController` has required constructor arguments, cannot instantiate the class');
+
 		(new ControllerResolver)->resolve(new ResolvedRoute(HasArgumentsController::class, [], '/'));
 	}
 }
