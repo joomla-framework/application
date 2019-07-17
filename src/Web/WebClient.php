@@ -296,6 +296,8 @@ class WebClient
 	 */
 	protected function detectBrowser($userAgent)
 	{
+		$patternBrowser = '';
+
 		// Attempt to detect the browser type.  Obviously we are only worried about major browsers.
 		if ((stripos($userAgent, 'MSIE') !== false) && (stripos($userAgent, 'Opera') === false))
 		{
