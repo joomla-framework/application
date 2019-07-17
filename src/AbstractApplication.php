@@ -85,10 +85,10 @@ abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAw
 	/**
 	 * Dispatches an application event if the dispatcher has been set.
 	 *
-	 * @param   string      $eventName  The event to dispatch.
-	 * @param   Event|null  $event      The event object.
+	 * @param   string               $eventName  The event to dispatch.
+	 * @param   EventInterface|null  $event      The event object.
 	 *
-	 * @return  EventInterface|void  The dispatched event or null if no dispatcher is set
+	 * @return  EventInterface|null  The dispatched event or null if no dispatcher is set
 	 *
 	 * @since   __DEPLOY_VERSION__
 	 */
