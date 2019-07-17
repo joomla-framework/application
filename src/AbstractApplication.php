@@ -137,7 +137,7 @@ abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAw
 		}
 		catch (\Throwable $throwable)
 		{
-			$this->dispatchEvent(ApplicationEvents::ERROR, new Event\ApplicationErrorEvent($thrown, $this));
+			$this->dispatchEvent(ApplicationEvents::ERROR, new Event\ApplicationErrorEvent($throwable, $this));
 		}
 	}
 
