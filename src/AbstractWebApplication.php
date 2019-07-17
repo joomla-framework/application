@@ -370,8 +370,8 @@ abstract class AbstractWebApplication extends AbstractApplication
 	 * If the headers have not been sent the redirect will be accomplished using a "301 Moved Permanently" or "303 See Other" code in the header
 	 * pointing to the new location. If the headers have already been sent this will be accomplished using a JavaScript statement.
 	 *
-	 * @param   string   $url     The URL to redirect to. Can only be http/https URL
-	 * @param   integer  $status  The HTTP status code to be provided. 303 is assumed by default.
+	 * @param   string           $url     The URL to redirect to. Can only be http/https URL
+	 * @param   integer|boolean  $status  The HTTP status code to be provided. 303 is assumed by default.
 	 *
 	 * @return  void
 	 *
