@@ -356,7 +356,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		// Make sure there is a status header already otherwise generate it from the response
 		if (!$this->getResponse()->hasHeader('Status'))
 		{
-			$this->setHeader('Status', $this->getResponse()->getStatusCode());
+			$this->setHeader('Status', (string) $this->getResponse()->getStatusCode());
 		}
 
 		$this->sendHeaders();
@@ -456,7 +456,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 			}
 
 			// All other cases use the more efficient HTTP header for redirection.
-			$this->setHeader('Status', $status, true);
+			$this->setHeader('Status', (string) $status, true);
 			$this->setHeader('Location', $url, true);
 		}
 
