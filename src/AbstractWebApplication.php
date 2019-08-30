@@ -25,6 +25,14 @@ use Zend\Diactoros\Stream;
 abstract class AbstractWebApplication extends AbstractApplication
 {
 	/**
+	 * The application input object.
+	 *
+	 * @var    Input
+	 * @since  1.0
+	 */
+	public $input;
+
+	/**
 	 * Character encoding string.
 	 *
 	 * @var    string
@@ -194,7 +202,7 @@ abstract class AbstractWebApplication extends AbstractApplication
 		$this->setResponse($response);
 
 		// Call the constructor as late as possible (it runs `initialise`).
-		parent::__construct($input, $config);
+		parent::__construct($config);
 
 		// Set the system URIs.
 		$this->loadSystemUris();

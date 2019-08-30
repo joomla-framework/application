@@ -17,3 +17,7 @@ The method `\Joomla\Application\AbstractWebApplication::checkToken` has been cha
 ### CLI Classes Removed
 
 The `\Joomla\Application\AbstractCliApplication` and all `Joomla\Application\Cli` namespace classes have been removed. The new `joomla/console` package should be used going forward.
+
+### `$input` property moved to web application classes
+
+The `$input` property of `\Joomla\Application\AbstractApplication` has been moved to `\Joomla\Application\AbstractWebApplication` and is no longer required to create a minimal application. With the introduction of the `joomla/console` package, which does not use the `joomla/input` package to read the console input, it is no longer practical to require all application classes support this input API.
