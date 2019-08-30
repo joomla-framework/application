@@ -11,7 +11,6 @@ namespace Joomla\Application;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Event\DispatcherAwareTrait;
 use Joomla\Event\EventInterface;
-use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -36,27 +35,16 @@ abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAw
 	protected $config;
 
 	/**
-	 * The application input object.
-	 *
-	 * @var    Input
-	 * @since  1.0
-	 */
-	public $input;
-
-	/**
 	 * Class constructor.
 	 *
-	 * @param   Input     $input   An optional argument to provide dependency injection for the application's input object.  If the argument is an
-	 *                             Input object that object will become the application's input object, otherwise a default input object is created.
 	 * @param   Registry  $config  An optional argument to provide dependency injection for the application's config object.  If the argument
 	 *                             is a Registry object that object will become the application's config object, otherwise a default config
 	 *                             object is created.
 	 *
 	 * @since   1.0
 	 */
-	public function __construct(Input $input = null, Registry $config = null)
+	public function __construct(Registry $config = null)
 	{
-		$this->input  = $input ?: new Input;
 		$this->config = $config ?: new Registry;
 
 		// Set the execution datetime and timestamp;
