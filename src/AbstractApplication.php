@@ -22,7 +22,7 @@ use Psr\Log\NullLogger;
  *
  * @since  1.0
  */
-abstract class AbstractApplication implements LoggerAwareInterface, DispatcherAwareInterface
+abstract class AbstractApplication implements ConfigurationAwareApplicationInterface, LoggerAwareInterface, DispatcherAwareInterface
 {
 	use LoggerAwareTrait, DispatcherAwareTrait;
 
