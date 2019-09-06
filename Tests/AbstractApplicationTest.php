@@ -8,7 +8,6 @@ namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractApplication;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -31,7 +30,6 @@ class AbstractApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(AbstractApplication::class);
 
-		$this->assertAttributeInstanceOf(Input::class, 'input', $object);
 		$this->assertAttributeInstanceOf(Registry::class, 'config', $object);
 
 		// Validate default configuration data is written
@@ -49,11 +47,9 @@ class AbstractApplicationTest extends TestCase
 	 */
 	public function test__constructDependencyInjection()
 	{
-		$mockInput  = $this->createMock(Input::class);
 		$mockConfig = $this->createMock(Registry::class);
-		$object     = $this->getMockForAbstractClass(AbstractApplication::class, [$mockInput, $mockConfig]);
+		$object     = $this->getMockForAbstractClass(AbstractApplication::class, [$mockConfig]);
 
-		$this->assertAttributeSame($mockInput, 'input', $object);
 		$this->assertAttributeSame($mockConfig, 'config', $object);
 	}
 
@@ -117,14 +113,12 @@ class AbstractApplicationTest extends TestCase
 	 */
 	public function testGet()
 	{
-		$mockInput = $this->createMock(Input::class);
-
 		$mockConfig = $this->getMockBuilder(Registry::class)
 			->setConstructorArgs([['foo' => 'bar']])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$object = $this->getMockForAbstractClass(AbstractApplication::class, [$mockInput, $mockConfig]);
+		$object = $this->getMockForAbstractClass(AbstractApplication::class, [$mockConfig]);
 
 		$this->assertSame('bar', $object->get('foo', 'car'), 'Checks a known configuration setting is returned.');
 		$this->assertSame('car', $object->get('goo', 'car'), 'Checks an unknown configuration setting returns the default.');
@@ -150,13 +144,11 @@ class AbstractApplicationTest extends TestCase
 	 */
 	public function testSet()
 	{
-		$mockInput = $this->createMock(Input::class);
-
 		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$object = $this->getMockForAbstractClass(AbstractApplication::class, [$mockInput, $mockConfig]);
+		$object = $this->getMockForAbstractClass(AbstractApplication::class, [$mockConfig]);
 
 		$this->assertNull($object->set('foo', 'car'), 'Checks set returns the previous value.');
 		$this->assertEquals('car', $object->get('foo'), 'Checks the new value has been set.');
