@@ -8,6 +8,7 @@
 
 namespace Joomla\Application;
 
+use Joomla\Input\Input;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -17,6 +18,15 @@ use Psr\Http\Message\ResponseInterface;
  */
 interface WebApplicationInterface extends ApplicationInterface
 {
+	/**
+	 * Method to get the application input object.
+	 *
+	 * @return  Input
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getInput(): Input;
+
 	/**
 	 * Redirect to another URL.
 	 *
