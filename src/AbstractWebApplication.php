@@ -20,6 +20,8 @@ use Zend\Diactoros\Stream;
  * Base class for a Joomla! Web application.
  *
  * @since  1.0
+ *
+ * @property-read  Input  $input  The application input object
  */
 abstract class AbstractWebApplication extends AbstractApplication implements WebApplicationInterface
 {
@@ -29,7 +31,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 * @var    Input
 	 * @since  1.0
 	 */
-	public $input;
+	protected $input;
 
 	/**
 	 * Character encoding string.
@@ -201,6 +203,42 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	}
 
 	/**
+	 * Magic method to access properties of the application.
+	 *
+	 * @param   string  $name  The name of the property.
+	 *
+	 * @return  mixed   A value if the property name is valid, null otherwise.
+	 *
+	 * @since       __DEPLOY_VERSION__
+	 * @deprecated  3.0  This is a B/C proxy for deprecated read accesses
+	 */
+	public function __get($name)
+	{
+		switch ($name)
+		{
+			case 'input':
+				@trigger_error(
+					'Accessing the input property of the application is deprecated, use the getInput() method instead.',
+					E_USER_DEPRECATED
+				);
+
+				return $this->getInput();
+
+			default:
+				$trace = debug_backtrace();
+				trigger_error(
+					sprintf(
+						'Undefined property via __get(): %1$s in %2$s on line %3$s',
+						$name,
+						$trace[0]['file'],
+						$trace[0]['line']
+					),
+					E_USER_NOTICE
+				);
+		}
+	}
+
+	/**
 	 * Execute the application.
 	 *
 	 * @return  void
@@ -362,6 +400,18 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 		$this->sendHeaders();
 
 		echo $this->getBody();
+	}
+
+	/**
+	 * Method to get the application input object.
+	 *
+	 * @return  Input
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	public function getInput(): Input
+	{
+		return $this->input;
 	}
 
 	/**
