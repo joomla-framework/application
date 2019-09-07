@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @since  __DEPLOY_VERSION__
  */
-class WebApplication extends AbstractWebApplication
+class WebApplication extends AbstractSessionAwareWebApplication
 {
 	/**
 	 * The application's controller resolver.

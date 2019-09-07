@@ -11,7 +11,6 @@ namespace Joomla\Application;
 use Joomla\Application\Exception\UnableToWriteBody;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
-use Joomla\Session\SessionInterface;
 use Joomla\Uri\Uri;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
@@ -22,7 +21,7 @@ use Zend\Diactoros\Stream;
  *
  * @since  1.0
  */
-abstract class AbstractWebApplication extends AbstractApplication implements SessionAwareWebApplicationInterface
+abstract class AbstractWebApplication extends AbstractApplication implements WebApplicationInterface
 {
 	/**
 	 * The application input object.
@@ -79,14 +78,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Ses
 	 * @since  1.0
 	 */
 	protected $response;
-
-	/**
-	 * The application session object.
-	 *
-	 * @var    SessionInterface
-	 * @since  1.0
-	 */
-	private $session;
 
 	/**
 	 * Is caching enabled?
@@ -707,23 +698,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Ses
 	}
 
 	/**
-	 * Method to get the application session object.
-	 *
-	 * @return  SessionInterface  The session object
-	 *
-	 * @since   1.0
-	 */
-	public function getSession()
-	{
-		if ($this->session === null)
-		{
-			throw new \RuntimeException('A \Joomla\Session\SessionInterface object has not been set.');
-		}
-
-		return $this->session;
-	}
-
-	/**
 	 * Check if a given value can be successfully mapped to a valid http status value
 	 *
 	 * @param   string|int  $value  The given status as int or string
@@ -907,22 +881,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Ses
 	}
 
 	/**
-	 * Sets the session for the application to use, if required.
-	 *
-	 * @param   SessionInterface  $session  A session object.
-	 *
-	 * @return  $this
-	 *
-	 * @since   1.0
-	 */
-	public function setSession(SessionInterface $session)
-	{
-		$this->session = $session;
-
-		return $this;
-	}
-
-	/**
 	 * Method to load the system URI strings for the application.
 	 *
 	 * @param   string  $requestUri  An optional request URI to use instead of detecting one from the server environment variables.
@@ -1019,48 +977,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Ses
 			$this->set('uri.media.full', $this->get('uri.base.full') . 'media/');
 			$this->set('uri.media.path', $this->get('uri.base.path') . 'media/');
 		}
-	}
-
-	/**
-	 * Checks for a form token in the request.
-	 *
-	 * @param   string  $method  The request method in which to look for the token key.
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.0
-	 */
-	public function checkToken($method = 'post')
-	{
-		$token = $this->getFormToken();
-
-		// Support a token sent via the X-CSRF-Token header, then fall back to a token in the request
-		$requestToken = $this->input->server->get(
-			'HTTP_X_CSRF_TOKEN',
-			$this->input->$method->get($token, '', 'alnum'),
-			'alnum'
-		);
-
-		if (!$requestToken)
-		{
-			return false;
-		}
-
-		return $this->getSession()->hasToken($token);
-	}
-
-	/**
-	 * Method to determine a hash for anti-spoofing variable names
-	 *
-	 * @param   boolean  $forceNew  If true, force a new token to be created
-	 *
-	 * @return  string  Hashed var name
-	 *
-	 * @since   1.0
-	 */
-	public function getFormToken($forceNew = false)
-	{
-		return $this->getSession()->getToken($forceNew);
 	}
 
 	/**

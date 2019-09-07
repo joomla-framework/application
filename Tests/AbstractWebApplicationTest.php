@@ -11,7 +11,6 @@ use Joomla\Application\Web\WebClient;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
-use Joomla\Session\SessionInterface;
 use Joomla\Test\TestHelper;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Response;
@@ -1546,34 +1545,6 @@ class AbstractWebApplicationTest extends TestCase
 			'/media/',
 			$object->get('uri.media.path')
 		);
-	}
-
-	/**
-	 * @testdox  Tests a session object is correctly injected into the application and retrieved
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getSession
-	 * @covers  Joomla\Application\AbstractWebApplication::setSession
-	 */
-	public function testSetSession()
-	{
-		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
-		$mockSession = $this->createMock(SessionInterface::class);
-
-		$this->assertSame($object, $object->setSession($mockSession));
-		$this->assertSame($mockSession, $object->getSession());
-	}
-
-	/**
-	 * @testdox  Tests a RuntimeException is thrown when a Session object is not set to the application
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getSession
-	 */
-	public function testGetSessionForAnException()
-	{
-		$this->expectException(\RuntimeException::class);
-
-		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
-		$object->getSession();
 	}
 
 	/**
