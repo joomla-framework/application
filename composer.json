@@ -26,9 +26,9 @@
     },
     "suggest": {
         "joomla/controller": "~1.0|~2.0 To support resolving ControllerInterface objects in ControllerResolverInterface, install joomla/controller",
-        "joomla/input": "~1.2|~2.0 To use AbstractWebApplication, install joomla/input",
+        "joomla/input": "~1.2|~2.0 To use WebApplicationInterface, install joomla/input",
         "joomla/router": "~2.0 To use WebApplication or ControllerResolverInterface implementations, install joomla/router",
-        "joomla/session": "~2.0 To use AbstractWebApplication with session support, install joomla/session",
+        "joomla/session": "~2.0 To use SessionAwareWebApplicationInterface, install joomla/session",
         "joomla/uri": "~1.1|~2.0 To use AbstractWebApplication, install joomla/uri",
         "psr/container": "~1.0 To use the ContainerControllerResolver, install any PSR-11 compatible container"
     },
