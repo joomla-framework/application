@@ -22,7 +22,7 @@ use Zend\Diactoros\Stream;
  *
  * @since  1.0
  */
-abstract class AbstractWebApplication extends AbstractApplication
+abstract class AbstractWebApplication extends AbstractApplication implements SessionAwareWebApplicationInterface
 {
 	/**
 	 * The application input object.
