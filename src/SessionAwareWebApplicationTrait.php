@@ -18,11 +18,11 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 /**
- * Base class for a session aware Joomla! Web application.
+ * Trait which helps implementing `Joomla\Application\SessionAwareWebApplicationInterface` in a web application class.
  *
  * @since  __DEPLOY_VERSION__
  */
-abstract class AbstractSessionAwareWebApplication extends AbstractWebApplication implements SessionAwareWebApplicationInterface
+trait SessionAwareWebApplicationTrait
 {
 	/**
 	 * The application session object.

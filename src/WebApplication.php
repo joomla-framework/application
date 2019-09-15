@@ -19,8 +19,10 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @since  __DEPLOY_VERSION__
  */
-class WebApplication extends AbstractSessionAwareWebApplication
+class WebApplication extends AbstractWebApplication implements SessionAwareWebApplicationInterface
 {
+	use SessionAwareWebApplicationTrait;
+
 	/**
 	 * The application's controller resolver.
 	 *
