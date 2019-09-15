@@ -20,7 +20,7 @@ The `\Joomla\Application\AbstractCliApplication` and all `Joomla\Application\Cli
 
 ### Added a concrete web application
 
-There is a new `\Joomla\Application\WebApplication` class available which serves as a minimal but functional web application class. This class extends `\Joomla\Application\AbbstractSessionAwareWebApplication` and therefore makes all application features available out-of-the-box.
+There is a new `\Joomla\Application\WebApplication` class available which serves as a minimal but functional web application class. This class extends `\Joomla\Application\AbstractWebApplication` and implements `\Joomla\Application\SessionAwareWebApplicationInterface` and therefore makes all application features available out-of-the-box.
 
 ### `$input` property moved to web application classes
 
@@ -28,9 +28,9 @@ The `$input` property of `\Joomla\Application\AbstractApplication` has been move
 
 Additionally, direct access to the property has been deprecated. To access the input, you should use the `\Joomla\Application\AbstractWebApplication::getInput()` method. Direct read access to the property will be removed in 3.0.
 
-### Session functionality moved to new application subclass
+### Session functionality moved to new application interface/trait
 
-As sessions are not a mandatory function of web applications, session related functionality has been moved to a new `\Joomla\Application\AbbstractSessionAwareWebApplication` class extending `\Joomla\Application\AbstractWebApplication`. If your application requires session support, you should extend the new class.
+As sessions are not a mandatory function of web applications, session related functionality has been moved to a new `\Joomla\Application\SessionAwareWebApplicationInterface` extending `\Joomla\Application\WebApplicationInterface`. `\Joomla\Application\SessionAwareWebApplicationTrait` is provided to simplify implementing this interface in your application.
 
 ### Interfaces for application classes
 

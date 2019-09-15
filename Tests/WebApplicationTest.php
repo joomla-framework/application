@@ -11,7 +11,6 @@ use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
 use Joomla\Router\ResolvedRoute;
 use Joomla\Router\Router;
-use Joomla\Test\TestHelper;
 use PHPUnit\Framework\TestCase;
 
 /**
