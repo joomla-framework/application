@@ -10,7 +10,7 @@ use Joomla\Application\Controller\ControllerResolverInterface;
 use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
 use Joomla\Router\ResolvedRoute;
-use Joomla\Router\Router;
+use Joomla\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -46,7 +46,7 @@ class WebApplicationTest extends TestCase
 
 		$route = new ResolvedRoute($controller, [], '/');
 
-		$router = $this->createMock(Router::class);
+		$router = $this->createMock(RouterInterface::class);
 
 		$router->expects($this->once())
 			->method('parseRoute')

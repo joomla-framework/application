@@ -11,7 +11,7 @@ namespace Joomla\Application;
 use Joomla\Application\Controller\ControllerResolverInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
-use Joomla\Router\Router;
+use Joomla\Router\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -34,7 +34,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	/**
 	 * The application's router.
 	 *
-	 * @var    Router
+	 * @var    RouterInterface
 	 * @since  __DEPLOY_VERSION__
 	 */
 	protected $router;
@@ -43,7 +43,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 * Class constructor.
 	 *
 	 * @param   ControllerResolverInterface  $controllerResolver  The application's controller resolver
-	 * @param   Router                       $router              The application's router
+	 * @param   RouterInterface              $router              The application's router
 	 * @param   Input                        $input               An optional argument to provide dependency injection for the application's
 	 *                                                            input object.  If the argument is an Input object that object will become
 	 *                                                            the application's input object, otherwise a default input object is
@@ -65,7 +65,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 */
 	public function __construct(
 		ControllerResolverInterface $controllerResolver,
-		Router $router,
+		RouterInterface $router,
 		Input $input = null,
 		Registry $config = null,
 		Web\WebClient $client = null,
