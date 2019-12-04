@@ -34,7 +34,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'10',
+				'10.0',
 				'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
 			],
 			[
@@ -42,7 +42,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'9',
+				'9.0',
 				'Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))',
 			],
 			[
@@ -58,7 +58,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'8',
+				'8.0',
 				'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 1.0.3705; .NET CLR 1.1.4322)',
 			],
 			[
@@ -82,7 +82,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'7',
+				'7.0',
 				'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 5.2)',
 			],
 			[
@@ -98,7 +98,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'6',
+				'6.0',
 				'Mozilla/4.0 (compatible;MSIE 6.0;Windows 98;Q312461)',
 			],
 			[
@@ -106,7 +106,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'7',
+				'7.0',
 				'Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.6; AOLBuild 4340.128; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)',
 			],
 			[
@@ -114,7 +114,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'8',
+				'8.0',
 				'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET4.0C; Maxthon 2.0)',
 			],
 			[
@@ -122,7 +122,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::TRIDENT,
 				WebClient::IE,
-				'7',
+				'7.0',
 				'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; SlimBrowser)',
 			],
 			[
@@ -194,7 +194,7 @@ class WebClientTest extends TestCase
 				true,
 				WebClient::WEBKIT,
 				WebClient::SAFARI,
-				'4',
+				'4.0',
 				'Mozilla/5.0 (Linux; U; Android 2.2.1; en-ca; LG-P505R Build/FRG83) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
 			],
 			[
@@ -202,7 +202,7 @@ class WebClientTest extends TestCase
 				true,
 				WebClient::WEBKIT,
 				WebClient::SAFARI,
-				'4',
+				'4.0',
 				'Mozilla/5.0 (Linux; U; Android 3.0; en-us; Xoom Build/HRI39) AppleWebKit/534.13 (KHTML, like Gecko) Version/4.0 Safari/534.13',
 			],
 			[
@@ -210,7 +210,7 @@ class WebClientTest extends TestCase
 				true,
 				WebClient::WEBKIT,
 				WebClient::SAFARI,
-				'4',
+				'4.0',
 				'Mozilla/5.0 (Linux; U; Android 2.3.4; en-us; Silk/1.1.0-84) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 Silk-Accelerated=false',
 			],
 			[
@@ -218,7 +218,7 @@ class WebClientTest extends TestCase
 				true,
 				WebClient::GECKO,
 				WebClient::FIREFOX,
-				'12',
+				'12.0',
 				' Mozilla/5.0 (Android; Tablet; rv:12.0) Gecko/12.0 Firefox/12.0',
 			],
 			[
@@ -298,7 +298,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::GECKO,
 				WebClient::FIREFOX,
-				'5',
+				'5.0',
 				'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:5.0) Gecko/20100101 Firefox/5.0',
 			],
 			[
@@ -306,7 +306,7 @@ class WebClientTest extends TestCase
 				false,
 				WebClient::GECKO,
 				WebClient::FIREFOX,
-				'6',
+				'6.0',
 				'Mozilla/5.0 (Windows NT 5.0; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0',
 			],
 			[
