@@ -226,7 +226,7 @@ class WebClientTest extends TestCase
 				true,
 				WebClient::PRESTO,
 				WebClient::OPERA,
-				'11.5',
+				'11.50',
 				'Opera/9.80 (Android 3.2.1; Linux; Opera Tablet/ADR-1111101157; U; en) Presto/2.9.201 Version/11.50',
 			],
 			[
