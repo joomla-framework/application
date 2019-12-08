@@ -8,14 +8,7 @@
 
 namespace Joomla\Application;
 
-use Joomla\Application\Exception\UnableToWriteBody;
-use Joomla\Input\Input;
-use Joomla\Registry\Registry;
 use Joomla\Session\SessionInterface;
-use Joomla\Uri\Uri;
-use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 /**
  * Trait which helps implementing `Joomla\Application\SessionAwareWebApplicationInterface` in a web application class.
