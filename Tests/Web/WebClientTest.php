@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -340,6 +340,14 @@ class WebClientTest extends TestCase
 				WebClient::OPERA,
 				'8.50',
 				'Mozilla/5.0 (Windows NT 5.1; U; de) Opera 8.50'
+			],
+			[
+				WebClient::WINDOWS,
+				false,
+				WebClient::BLINK,
+				WebClient::EDG,
+				'75.0.107.0',
+				'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3738.0 Safari/537.36 Edg/75.0.107.0'
 			],
 		];
 	}
