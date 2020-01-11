@@ -12,9 +12,9 @@ use Joomla\Application\Exception\UnableToWriteBody;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Uri\Uri;
+use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Stream;
 
 /**
  * Base class for a Joomla! Web application.

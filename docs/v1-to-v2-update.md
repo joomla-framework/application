@@ -9,7 +9,7 @@ All Framework packages now require PHP 7.2 or newer.
 ### PSR-7 Responses now supported
 In order to support PSR-7 responses there is a single break in backwards incompatibility. The `\Joomla\Application\AbstractWebApplication::getBody()` method does not have a `toBody` parameter.
 
-The package internals use the Zend Framework [Diactoros package](https://github.com/zendframework/zend-diactoros) for building the Response object. If you wish to use another PSR-7 compatible library you will need to extend the `setHeader`, `getHeaders`, `clearHeaders`, `setBody`, `prependBody`, and `appendBody` methods.
+The package internals use the Laminas [Diactoros package](https://github.com/laminas/laminas-diactoros) for building the Response object. If you wish to use another PSR-7 compatible library you will need to extend the `setHeader`, `getHeaders`, `clearHeaders`, `setBody`, `prependBody`, and `appendBody` methods.
 
 ### AbstractWebApplication::checkToken now validates a token
 The method `\Joomla\Application\AbstractWebApplication::checkToken` has been changed to validate a token in addition to checking if it is present in the request. Additionally, the homepage redirect on an invalid token has been removed.

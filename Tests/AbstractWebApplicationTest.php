@@ -12,8 +12,8 @@ use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
+use Laminas\Diactoros\Response;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
 
 /**
  * Test class for Joomla\Application\AbstractWebApplication.
