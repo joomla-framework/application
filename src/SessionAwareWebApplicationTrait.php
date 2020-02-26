@@ -8,6 +8,7 @@
 
 namespace Joomla\Application;
 
+use Joomla\Input\Input;
 use Joomla\Session\SessionInterface;
 
 /**
