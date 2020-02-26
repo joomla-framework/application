@@ -26,6 +26,15 @@ trait SessionAwareWebApplicationTrait
 	protected $session;
 
 	/**
+	 * Method to get the application input object.
+	 *
+	 * @return  Input
+	 *
+	 * @since   __DEPLOY_VERSION__
+	 */
+	abstract public function getInput(): Input;
+
+	/**
 	 * Method to get the application session object.
 	 *
 	 * @return  SessionInterface  The session object
@@ -36,12 +45,7 @@ trait SessionAwareWebApplicationTrait
 	{
 		if ($this->session === null)
 		{
-			throw new \RuntimeException(
-				\sprintf(
-					'A %s object has not been set.',
-					SessionInterface::class
-				)
-			);
+			throw new \RuntimeException(\sprintf('A %s object has not been set.', SessionInterface::class));
 		}
 
 		return $this->session;
@@ -77,9 +81,9 @@ trait SessionAwareWebApplicationTrait
 		$token = $this->getFormToken();
 
 		// Support a token sent via the X-CSRF-Token header, then fall back to a token in the request
-		$requestToken = $this->input->server->get(
+		$requestToken = $this->getInput()->server->get(
 			'HTTP_X_CSRF_TOKEN',
-			$this->input->$method->get($token, '', 'alnum'),
+			$this->getInput()->$method->get($token, '', 'alnum'),
 			'alnum'
 		);
 
@@ -88,7 +92,7 @@ trait SessionAwareWebApplicationTrait
 			return false;
 		}
 
-		return $this->session->hasToken($token);
+		return $this->getSession()->hasToken($token);
 	}
 
 	/**
@@ -102,6 +106,6 @@ trait SessionAwareWebApplicationTrait
 	 */
 	public function getFormToken($forceNew = false)
 	{
-		return $this->session->getToken($forceNew);
+		return $this->getSession()->getToken($forceNew);
 	}
 }
