@@ -51,33 +51,62 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * Data for detectRequestUri method.
 	 *
-	 * @return  array
-	 *
-	 * @since   1.0
+	 * @return  \Generator
 	 */
-	public function getDetectRequestUriData()
+	public function getDetectRequestUriData(): \Generator
 	{
-		return [
-			// HTTPS, PHP_SELF, REQUEST_URI, HTTP_HOST, SCRIPT_NAME, QUERY_STRING, (resulting uri)
-			[null, '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php?foo=bar'],
-			['on', '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'https://joom.la:3/j/index.php?foo=bar'],
-			[null, '', '', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php'],
-			[null, '', '', 'joom.la:3', '/j/index.php', 'foo=bar', 'http://joom.la:3/j/index.php?foo=bar'],
+		// HTTPS, PHP_SELF, REQUEST_URI, HTTP_HOST, SCRIPT_NAME, QUERY_STRING, (resulting uri)
+		yield 'HTTP connection with path in PHP_SELF and query string set in REQUEST_URI' => [
+			null,
+			'/j/index.php',
+			'/j/index.php?foo=bar',
+			'joom.la:3',
+			'/j/index.php',
+			'',
+			'http://joom.la:3/j/index.php?foo=bar'
+		];
+
+		yield 'HTTPS connection with path in PHP_SELF and query string set in REQUEST_URI' => [
+			'on',
+			'/j/index.php',
+			'/j/index.php?foo=bar',
+			'joom.la:3',
+			'/j/index.php',
+			'',
+			'https://joom.la:3/j/index.php?foo=bar'
+		];
+
+		yield 'HTTP connection with path in SCRIPT_NAME and no query string' => [
+			null,
+			'',
+			'',
+			'joom.la:3',
+			'/j/index.php',
+			'',
+			'http://joom.la:3/j/index.php'
+		];
+
+		yield 'HTTP connection with path in SCRIPT_NAME and query string set in QUERY_STRING' => [
+			null,
+			'',
+			'',
+			'joom.la:3',
+			'/j/index.php',
+			'foo=bar',
+			'http://joom.la:3/j/index.php?foo=bar'
 		];
 	}
 
 	/**
 	 * Data for testRedirectWithUrl method.
 	 *
-	 * @return  array
+	 * @return  \Generator
 	 */
-	public function getRedirectData()
+	public function getRedirectData(): \Generator
 	{
-		return [
-			// Note: url, (expected result)
-			'with_leading_slash'    => ['/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'],
-			'without_leading_slash' => ['foo', 'http://' . self::TEST_HTTP_HOST . '/foo'],
-		];
+		// Note: url, (expected result)
+		yield 'with_leading_slash'    => ['/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'];
+		yield 'without_leading_slash' => ['foo', 'http://' . self::TEST_HTTP_HOST . '/foo'];
 	}
 
 	/**
@@ -99,7 +128,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the constructor creates default object instances
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::__construct
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function test__constructDefaultBehaviour()
 	{
@@ -112,8 +143,8 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the correct objects are stored when injected
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::__construct
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -149,10 +180,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application is executed successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::execute
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testExecute()
 	{
@@ -180,10 +210,10 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application is executed successfully when an event dispatcher is registered.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::execute
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Event\ApplicationEvent
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testExecuteWithEvents()
 	{
@@ -217,10 +247,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application with compression enabled is executed successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::execute
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testExecuteWithCompression()
 	{
@@ -259,9 +288,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the compress() method correctly compresses data with gzip encoding
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithGzipEncoding()
 	{
@@ -328,9 +357,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the compress() method correctly compresses data with deflate encoding
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithDeflateEncoding()
 	{
@@ -397,9 +426,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the compress() method does not compress data when no encoding methods are supported
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithNoAcceptEncodings()
 	{
@@ -449,9 +478,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the compress() method does not compress data when the response headers have already been sent
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithHeadersSent()
 	{
@@ -504,9 +533,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the compress() method does not compress data when the application does not support the client's encoding methods
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithUnsupportedEncodings()
 	{
@@ -558,10 +587,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application sends the response successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::respond
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testRespond()
 	{
@@ -587,10 +615,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application sends the response successfully with allowed caching.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::respond
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testRespondWithAllowedCaching()
 	{
@@ -620,7 +647,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully with the legacy behavior.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -693,7 +722,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -765,11 +796,13 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully when there is already a status code set.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
-	public function testRedirectWithExistingStatusCode1()
+	public function testRedirectWithExistingStatusCode()
 	{
 		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
 		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
@@ -839,7 +872,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application redirects and sends additional headers successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -912,7 +947,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully when the headers have already been sent.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
@@ -963,7 +1000,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully with a JavaScript redirect.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -1029,7 +1068,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully with the moved parameter set to true.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -1105,11 +1146,14 @@ class AbstractWebApplicationTest extends TestCase
 	 * @param   string  $url       The URL to redirect to
 	 * @param   string  $expected  The expected redirect URL
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
 	 * @dataProvider  getRedirectData
 	 * @backupGlobals enabled
 	 */
-	public function testRedirectWithUrl($url, $expected)
+	public function testRedirectWithUrl(string $url, string $expected)
 	{
 		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
 		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
@@ -1165,7 +1209,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the allowCache() method returns the allowed cache state
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::allowCache
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testAllowCache()
 	{
@@ -1178,8 +1224,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the setHeader() method correctly sets and replaces a specified header
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::setHeader
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testSetHeader()
 	{
@@ -1206,23 +1253,11 @@ class AbstractWebApplicationTest extends TestCase
 	}
 
 	/**
-	 * @testdox  Tests the getHeaders() method return an array
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getHeaders
-	 */
-	public function testGetHeaders()
-	{
-		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
-
-		$this->assertEmpty($object->getHeaders());
-	}
-
-	/**
 	 * @testdox  Tests the clearHeaders() method resets the internal headers array
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::clearHeaders
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
-	 * @uses    Joomla\Application\AbstractWebApplication::setHeader
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testClearHeaders()
 	{
@@ -1237,8 +1272,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the sendHeaders() method correctly sends the response headers
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::sendHeaders
-	 * @uses    Joomla\Application\AbstractWebApplication::setHeader
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testSendHeaders()
 	{
@@ -1275,8 +1311,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the setBody() method correctly sets the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::setBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testSetBody()
 	{
@@ -1289,9 +1326,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the prependBody() method correctly prepends content to the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::prependBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::setBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testPrependBody()
 	{
@@ -1305,9 +1342,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the appendBody() method correctly appends content to the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::appendBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::setBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testAppendBody()
 	{
@@ -1321,7 +1358,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the getBody() method correctly retrieves the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testGetBody()
 	{
@@ -1333,19 +1372,30 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application correcty detects the request URI based on the injected data
 	 *
-	 * @param   string  $https        Value for $_SERVER['HTTPS'] or null to not set it
-	 * @param   string  $phpSelf      Value for $_SERVER['PHP_SELF']
-	 * @param   string  $requestUri   Value for $_SERVER['REQUEST_URI']
-	 * @param   string  $httpHost     Value for $_SERVER['HTTP_HOST']
-	 * @param   string  $scriptName   Value for $_SERVER['SCRIPT_NAME']
-	 * @param   string  $queryString  Value for $_SERVER['QUERY_STRING']
-	 * @param   string  $expects      Expected full URI string
+	 * @param   string|null  $https        Value for $_SERVER['HTTPS'] or null to not set it
+	 * @param   string       $phpSelf      Value for $_SERVER['PHP_SELF']
+	 * @param   string       $requestUri   Value for $_SERVER['REQUEST_URI']
+	 * @param   string       $httpHost     Value for $_SERVER['HTTP_HOST']
+	 * @param   string       $scriptName   Value for $_SERVER['SCRIPT_NAME']
+	 * @param   string       $queryString  Value for $_SERVER['QUERY_STRING']
+	 * @param   string       $expects      Expected full URI string
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::detectRequestUri
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
 	 * @dataProvider  getDetectRequestUriData
 	 * @backupGlobals enabled
 	 */
-	public function testDetectRequestUri($https, $phpSelf, $requestUri, $httpHost, $scriptName, $queryString, $expects)
+	public function testDetectRequestUri(
+		?string $https,
+		string $phpSelf,
+		string $requestUri,
+		string $httpHost,
+		string $scriptName,
+		string $queryString,
+		string $expects
+	)
 	{
 		$mockInput = new Input([]);
 
@@ -1371,8 +1421,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a URI is set in the application configuration
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testLoadSystemUrisWithSiteUriSet()
 	{
@@ -1414,8 +1465,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a URI is passed into the method
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -1459,8 +1511,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a media URI is set in the application configuration
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -1509,8 +1562,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a relative media URI is set in the application configuration
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -1559,7 +1613,9 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the application correctly detects if a SSL connection is active
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::isSslConnection
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 *
 	 * @backupGlobals enabled
 	 */
@@ -1577,29 +1633,29 @@ class AbstractWebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the application correctly approves a valid HTTP Status Code
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::isValidHttpStatus
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testGetHttpStatusValue()
 	{
 		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
-		$this->assertTrue(
-			$object->isValidHttpStatus(500)
-		);
+		$this->assertTrue($object->isValidHttpStatus(500));
 	}
 
 	/**
 	 * @testdox  Tests the application correctly rejects a valid HTTP Status Code
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::isValidHttpStatus
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testInvalidHttpStatusValue()
 	{
 		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
-		$this->assertFalse(
-			$object->isValidHttpStatus(460)
-		);
+		$this->assertFalse($object->isValidHttpStatus(460));
 	}
 
 	/**

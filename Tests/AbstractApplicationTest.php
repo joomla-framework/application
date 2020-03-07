@@ -22,7 +22,9 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the constructor creates default object instances
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::__construct
+	 * @covers  Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function test__constructDefaultBehaviour()
 	{
@@ -48,7 +50,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests the correct objects are stored when injected
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::__construct
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function test__constructDependencyInjection()
 	{
@@ -65,7 +67,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that close() exits the application with the given code
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::close
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function testClose()
 	{
@@ -84,7 +86,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application is executed successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::execute
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function testExecute()
 	{
@@ -98,7 +100,8 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application is executed successfully when an event dispatcher is registered.
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::execute
+	 * @covers  Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Event\ApplicationEvent
 	 */
 	public function testExecuteWithEvents()
 	{
@@ -118,7 +121,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that data is read from the application configuration successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function testGet()
 	{
@@ -136,7 +139,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that a default LoggerInterface object is returned.
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::getLogger
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function testGetLogger()
 	{
@@ -148,8 +151,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that data is set to the application configuration successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::set
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function testSet()
 	{
@@ -166,7 +168,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application configuration is overwritten successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::setConfiguration
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function testSetConfiguration()
 	{
@@ -185,7 +187,7 @@ class AbstractApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that a LoggerInterface object is correctly set to the application.
 	 *
-	 * @covers  Joomla\Application\AbstractApplication::setLogger
+	 * @covers  Joomla\Application\AbstractApplication
 	 */
 	public function testSetLogger()
 	{

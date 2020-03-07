@@ -23,7 +23,10 @@ class WebApplicationTest extends TestCase
 	/**
 	 * @testdox  Tests that the application is executed successfully.
 	 *
-	 * @covers  Joomla\Application\WebApplication::doExecute
+	 * @covers  Joomla\Application\WebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testExecute()
 	{

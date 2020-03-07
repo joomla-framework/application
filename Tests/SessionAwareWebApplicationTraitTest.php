@@ -18,8 +18,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
 	/**
 	 * @testdox  Tests a session object is correctly injected into the application and retrieved
 	 *
-	 * @covers  Joomla\Application\SessionAwareWebApplicationTrait::getSession
-	 * @covers  Joomla\Application\SessionAwareWebApplicationTrait::setSession
+	 * @covers  Joomla\Application\SessionAwareWebApplicationTrait
 	 */
 	public function testSetSession()
 	{
@@ -33,7 +32,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
 	/**
 	 * @testdox  Tests a RuntimeException is thrown when a Session object is not set to the application
 	 *
-	 * @covers  Joomla\Application\SessionAwareWebApplicationTrait::getSession
+	 * @covers  Joomla\Application\SessionAwareWebApplicationTrait
 	 */
 	public function testGetSessionForAnException()
 	{

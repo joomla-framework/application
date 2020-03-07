@@ -22,7 +22,7 @@ class ControllerResolverTest extends TestCase
 	/**
 	 * @testdox  Tests the resolver resolves a callable array
 	 *
-	 * @covers  Joomla\Application\Controller\ControllerResolver::resolve
+	 * @covers  Joomla\Application\Controller\ControllerResolver
 	 */
 	public function testResolvingACallableArray()
 	{
@@ -35,7 +35,7 @@ class ControllerResolverTest extends TestCase
 	/**
 	 * @testdox  Tests the resolver fails to resolve an array that is not callable
 	 *
-	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
+	 * @covers   Joomla\Application\Controller\ControllerResolver
 	 */
 	public function testResolvingAnArrayFailsWhenNonCollable()
 	{
@@ -48,7 +48,7 @@ class ControllerResolverTest extends TestCase
 	/**
 	 * @testdox  Tests the resolver resolves a callable array but fails instantiating a class with required arguments
 	 *
-	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
+	 * @covers   Joomla\Application\Controller\ControllerResolver
 	 */
 	public function testResolvingACallableArrayFailsOnAClassWithRequiredArguments()
 	{
@@ -61,7 +61,7 @@ class ControllerResolverTest extends TestCase
 	/**
 	 * @testdox  Tests the resolver resolves a callable object
 	 *
-	 * @covers  Joomla\Application\Controller\ControllerResolver::resolve
+	 * @covers  Joomla\Application\Controller\ControllerResolver
 	 */
 	public function testResolvingACallableObject()
 	{
@@ -76,7 +76,7 @@ class ControllerResolverTest extends TestCase
 	/**
 	 * @testdox  Tests the resolver resolves a callable function
 	 *
-	 * @covers  Joomla\Application\Controller\ControllerResolver::resolve
+	 * @covers  Joomla\Application\Controller\ControllerResolver
 	 */
 	public function testResolvingACallableFunction()
 	{
@@ -86,7 +86,7 @@ class ControllerResolverTest extends TestCase
 	/**
 	 * @testdox  Tests the resolver resolves a ControllerInterface
 	 *
-	 * @covers  Joomla\Application\Controller\ControllerResolver::resolve
+	 * @covers  Joomla\Application\Controller\ControllerResolver
 	 */
 	public function testResolvingAControllerInterface()
 	{
@@ -99,7 +99,7 @@ class ControllerResolverTest extends TestCase
 	/**
 	 * @testdox  Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments
 	 *
-	 * @covers   Joomla\Application\Controller\ControllerResolver::resolve
+	 * @covers   Joomla\Application\Controller\ControllerResolver
 	 */
 	public function testResolvingControllerInterfaceFailsOnAClassWithRequiredArguments()
 	{
