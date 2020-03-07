@@ -178,6 +178,21 @@ class AbstractWebApplicationTest extends TestCase
 	}
 
 	/**
+	 * @testdox  Tests access to the input property is allowed
+	 *
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 */
+	public function test__getDeprecatedInputReadAccess()
+	{
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+
+		// Validate default objects unique to the web application are created
+		$this->assertInstanceOf(Input::class, $object->input);
+	}
+
+	/**
 	 * @testdox  Tests that the application is executed successfully.
 	 *
 	 * @covers  Joomla\Application\AbstractWebApplication
