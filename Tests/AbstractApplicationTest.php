@@ -9,6 +9,7 @@ namespace Joomla\Application\Tests;
 use Joomla\Application\AbstractApplication;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Registry\Registry;
+use Joomla\Test\TestHelper;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -30,7 +31,11 @@ class AbstractApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(AbstractApplication::class);
 
-		$this->assertAttributeInstanceOf(Registry::class, 'config', $object);
+		$this->assertInstanceOf(
+			Registry::class,
+			TestHelper::getValue($object, 'config'),
+			'A default configuration Registry is created when one is not supplied'
+		);
 
 		// Validate default configuration data is written
 		$executionDateTime = new \DateTime($object->get('execution.datetime'));
@@ -50,7 +55,11 @@ class AbstractApplicationTest extends TestCase
 		$mockConfig = $this->createMock(Registry::class);
 		$object     = $this->getMockForAbstractClass(AbstractApplication::class, [$mockConfig]);
 
-		$this->assertAttributeSame($mockConfig, 'config', $object);
+		$this->assertSame(
+			$mockConfig,
+			TestHelper::getValue($object, 'config'),
+			'A configuration Registry can be injected'
+		);
 	}
 
 	/**
@@ -61,7 +70,7 @@ class AbstractApplicationTest extends TestCase
 	public function testClose()
 	{
 		$object = $this->getMockBuilder(AbstractApplication::class)
-			->setMethods(['close'])
+			->onlyMethods(['close'])
 			->disableOriginalConstructor()
 			->getMockForAbstractClass();
 
@@ -164,14 +173,13 @@ class AbstractApplicationTest extends TestCase
 		$object     = $this->getMockForAbstractClass(AbstractApplication::class);
 		$mockConfig = $this->createMock(Registry::class);
 
-		// First validate the two objects are different
-		$this->assertAttributeNotSame($mockConfig, 'config', $object);
+		$this->assertSame($object, $object->setConfiguration($mockConfig), 'The setConfiguration method has a fluent interface');
 
-		// Now inject the config
-		$object->setConfiguration($mockConfig);
-
-		// Now the config objects should match
-		$this->assertAttributeSame($mockConfig, 'config', $object);
+		$this->assertSame(
+			$mockConfig,
+			TestHelper::getValue($object, 'config'),
+			'The configuration Registry is overwritten'
+		);
 	}
 
 	/**
@@ -186,6 +194,10 @@ class AbstractApplicationTest extends TestCase
 
 		$object->setLogger($mockLogger);
 
-		$this->assertAttributeSame($mockLogger, 'logger', $object);
+		$this->assertSame(
+			$mockLogger,
+			TestHelper::getValue($object, 'logger'),
+			'The logger is overwritten'
+		);
 	}
 }

@@ -133,8 +133,14 @@ class AbstractWebApplicationTest extends TestCase
 
 		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig, $mockClient]);
 
-		$this->assertSame($mockInput, $object->input);
-		$this->assertAttributeSame($mockConfig, 'config', $object);
+		$this->assertSame($mockInput, $object->getInput());
+
+		$this->assertSame(
+			$mockConfig,
+			TestHelper::getValue($object, 'config'),
+			'A configuration Registry can be injected'
+		);
+
 		$this->assertSame($mockClient, $object->client);
 
 		$this->assertEquals('http://' . self::TEST_HTTP_HOST, $object->get('uri.base.host'));
@@ -1415,6 +1421,7 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public function testLoadSystemUrisWithoutSiteUriSet()
 	{
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
 		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
 		$mockInput = new Input([]);
@@ -1459,6 +1466,7 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public function testLoadSystemUrisWithoutSiteUriWithMediaUriSet()
 	{
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
 		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
 		$mockInput = new Input([]);
@@ -1508,6 +1516,7 @@ class AbstractWebApplicationTest extends TestCase
 	 */
 	public function testLoadSystemUrisWithoutSiteUriWithRelativeMediaUriSet()
 	{
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
 		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
 		$mockInput = new Input([]);
@@ -1560,7 +1569,7 @@ class AbstractWebApplicationTest extends TestCase
 
 		$this->assertFalse($object->isSslConnection());
 
-		$object->input->server->set('HTTPS', 'on');
+		$object->getInput()->server->set('HTTPS', 'on');
 
 		$this->assertTrue($object->isSslConnection());
 	}
