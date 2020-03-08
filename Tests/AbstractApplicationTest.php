@@ -10,13 +10,14 @@ use Joomla\Application\AbstractApplication;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
  * Test class for Joomla\Application\AbstractApplication.
  */
-class AbstractApplicationTest extends CompatTestCase
+class AbstractApplicationTest extends TestCase
 {
 	/**
 	 * @testdox  Tests the constructor creates default object instances

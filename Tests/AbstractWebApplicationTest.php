@@ -13,11 +13,12 @@ use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
 use Laminas\Diactoros\Response;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\AbstractWebApplication.
  */
-class AbstractWebApplicationTest extends CompatTestCase
+class AbstractWebApplicationTest extends TestCase
 {
 	/**
 	 * Value for test host.
@@ -50,12 +51,12 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function doTearDown()
+	protected function tearDown(): void
 	{
 		// Reset the $headers array
 		self::$headers = [];
 
-		parent::doTearDown();
+		parent::tearDown();
 	}
 
 	/**
