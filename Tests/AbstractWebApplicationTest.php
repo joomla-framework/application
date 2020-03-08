@@ -13,12 +13,11 @@ use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
 use Laminas\Diactoros\Response;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\AbstractWebApplication.
  */
-class AbstractWebApplicationTest extends TestCase
+class AbstractWebApplicationTest extends CompatTestCase
 {
 	/**
 	 * Value for test host.
@@ -47,6 +46,17 @@ class AbstractWebApplicationTest extends TestCase
 	 * @var  array
 	 */
 	private static $headers = [];
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function doTearDown()
+	{
+		// Reset the $headers array
+		self::$headers = [];
+
+		parent::doTearDown();
+	}
 
 	/**
 	 * Data for detectRequestUri method.
@@ -1671,16 +1681,5 @@ class AbstractWebApplicationTest extends TestCase
 		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$this->assertFalse($object->isValidHttpStatus(460));
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function tearDown(): void
-	{
-		// Reset the $headers array
-		self::$headers = [];
-
-		parent::tearDown();
 	}
 }

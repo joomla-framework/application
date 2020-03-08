@@ -6,8 +6,8 @@
 
 namespace Joomla\Application\Tests\Web;
 
+use Joomla\Application\Tests\CompatTestCase;
 use Joomla\Application\Web\WebClient;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\Web\WebClient.
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @backupGlobals enabled
  */
-class WebClientTest extends TestCase
+class WebClientTest extends CompatTestCase
 {
 	/**
 	 * Provides test data for user agent parsing.
@@ -426,9 +426,9 @@ class WebClientTest extends TestCase
 	 *
 	 * @since   1.0
 	 */
-	public function setUp(): void
+	public function doSetUp()
 	{
-		parent::setUp();
+		parent::doSetUp();
 
 		$_SERVER['HTTP_HOST'] = 'mydomain.com';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0';
