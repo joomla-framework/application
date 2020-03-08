@@ -23,8 +23,7 @@
         "joomla/test": "^2.0",
         "joomla/uri": "^1.1|^2.0",
         "phpunit/phpunit": "^8.5|^9.0",
-        "symfony/phpunit-bridge": "^3.4|^4.4|^5.0",
-        "symfony/polyfill-php72": "^1.5"
+        "symfony/phpunit-bridge": "^3.4|^4.4|^5.0"
     },
     "conflict": {
         "joomla/di": "<1.5",
