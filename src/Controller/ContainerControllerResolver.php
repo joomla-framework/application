@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -15,7 +15,7 @@ use Psr\Container\ContainerInterface;
  *
  * Controllers must be registered in the container using their FQCN as a service key
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 class ContainerControllerResolver extends ControllerResolver
 {
@@ -23,7 +23,7 @@ class ContainerControllerResolver extends ControllerResolver
 	 * The container to search for controllers in
 	 *
 	 * @var    ContainerInterface
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	private $container;
 
@@ -32,7 +32,7 @@ class ContainerControllerResolver extends ControllerResolver
 	 *
 	 * @param   ContainerInterface  $container  The container to search for controllers in
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function __construct(ContainerInterface $container)
 	{
@@ -46,7 +46,7 @@ class ContainerControllerResolver extends ControllerResolver
 	 *
 	 * @return  object  Controller class instance
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	protected function instantiateController(string $class): object
 	{

@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2016 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -17,7 +17,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * A basic web application class for handing HTTP requests.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 class WebApplication extends AbstractWebApplication implements SessionAwareWebApplicationInterface
 {
@@ -27,7 +27,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 * The application's controller resolver.
 	 *
 	 * @var    ControllerResolverInterface
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	protected $controllerResolver;
 
@@ -35,7 +35,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 * The application's router.
 	 *
 	 * @var    RouterInterface
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	protected $router;
 
@@ -61,7 +61,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 *                                                            will become the application's response object, otherwise a default response
 	 *                                                            object is created.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function __construct(
 		ControllerResolverInterface $controllerResolver,
@@ -84,7 +84,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	protected function doExecute(): void
 	{

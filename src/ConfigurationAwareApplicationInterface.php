@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -13,7 +13,7 @@ use Joomla\Registry\Registry;
 /**
  * Application sub-interface defining an application class which is aware of its configuration
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 interface ConfigurationAwareApplicationInterface extends ApplicationInterface
 {
@@ -25,7 +25,7 @@ interface ConfigurationAwareApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  mixed   The value of the configuration.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function get($key, $default = null);
 
@@ -37,7 +37,7 @@ interface ConfigurationAwareApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  mixed   Previous value of the property
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function set($key, $value = null);
 
@@ -48,7 +48,7 @@ interface ConfigurationAwareApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function setConfiguration(Registry $config);
 }

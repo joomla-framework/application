@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Application sub-interface defining a web application class
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 interface WebApplicationInterface extends ApplicationInterface
 {
@@ -23,7 +23,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  Input
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getInput(): Input;
 
@@ -38,7 +38,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 * @throws  \InvalidArgumentException
 	 */
 	public function redirect($url, $status = 303);
@@ -52,7 +52,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  boolean
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function allowCache($allow = null);
 
@@ -68,7 +68,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function setHeader($name, $value, $replace = false);
 
@@ -77,7 +77,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  array
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getHeaders();
 
@@ -86,7 +86,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function clearHeaders();
 
@@ -95,7 +95,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function sendHeaders();
 
@@ -106,7 +106,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function setBody($content);
 
@@ -117,7 +117,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function prependBody($content);
 
@@ -128,7 +128,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function appendBody($content);
 
@@ -137,7 +137,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  mixed  The response body as a string.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getBody();
 
@@ -146,7 +146,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  ResponseInterface
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getResponse(): ResponseInterface;
 
@@ -157,7 +157,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  boolean
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function isValidHttpStatus($code);
 
@@ -168,7 +168,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function setResponse(ResponseInterface $response): void;
 
@@ -177,7 +177,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  boolean  True if using SSL, false if not.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function isSslConnection();
 }

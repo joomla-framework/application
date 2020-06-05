@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -15,7 +15,7 @@ use Joomla\Event\Event;
 /**
  * Event class thrown when an application error occurs.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 class ApplicationErrorEvent extends ApplicationEvent
 {
@@ -23,7 +23,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 * The Throwable object with the error data.
 	 *
 	 * @var    \Throwable
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	private $error;
 
@@ -33,7 +33,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 * @param   \Throwable           $error        The Throwable object with the error data.
 	 * @param   AbstractApplication  $application  The active application.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function __construct(\Throwable $error, AbstractApplication $application)
 	{
@@ -47,7 +47,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 *
 	 * @return  \Throwable
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getError(): \Throwable
 	{
@@ -61,7 +61,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function setError(\Throwable $error): void
 	{

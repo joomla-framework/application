@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -14,7 +14,7 @@ use Joomla\Event\Event;
 /**
  * Base event class for application events.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 class ApplicationEvent extends Event
 {
@@ -22,7 +22,7 @@ class ApplicationEvent extends Event
 	 * The active application.
 	 *
 	 * @var    AbstractApplication
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	private $application;
 
@@ -32,7 +32,7 @@ class ApplicationEvent extends Event
 	 * @param   string               $name         The event name.
 	 * @param   AbstractApplication  $application  The active application.
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function __construct(string $name, AbstractApplication $application)
 	{
@@ -46,7 +46,7 @@ class ApplicationEvent extends Event
 	 *
 	 * @return  AbstractApplication
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getApplication(): AbstractApplication
 	{

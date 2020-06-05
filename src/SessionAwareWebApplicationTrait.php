@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -14,7 +14,7 @@ use Joomla\Session\SessionInterface;
 /**
  * Trait which helps implementing `Joomla\Application\SessionAwareWebApplicationInterface` in a web application class.
  *
- * @since  __DEPLOY_VERSION__
+ * @since  2.0.0-beta
  */
 trait SessionAwareWebApplicationTrait
 {
@@ -22,7 +22,7 @@ trait SessionAwareWebApplicationTrait
 	 * The application session object.
 	 *
 	 * @var    SessionInterface
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	protected $session;
 
@@ -31,7 +31,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  Input
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	abstract public function getInput(): Input;
 
@@ -40,7 +40,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  SessionInterface  The session object
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getSession()
 	{
@@ -59,7 +59,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  $this
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function setSession(SessionInterface $session)
 	{
@@ -75,7 +75,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  boolean
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function checkToken($method = 'post')
 	{
@@ -103,7 +103,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  string  Hashed var name
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getFormToken($forceNew = false)
 	{

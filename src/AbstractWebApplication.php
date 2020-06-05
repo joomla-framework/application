@@ -2,7 +2,7 @@
 /**
  * Part of the Joomla Framework Application Package
  *
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2020 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -85,7 +85,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 * Is caching enabled?
 	 *
 	 * @var    boolean
-	 * @since  __DEPLOY_VERSION__
+	 * @since  2.0.0-beta
 	 */
 	private $cacheable = false;
 
@@ -209,7 +209,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  mixed   A value if the property name is valid, null otherwise.
 	 *
-	 * @since       __DEPLOY_VERSION__
+	 * @since       2.0.0-beta
 	 * @deprecated  3.0  This is a B/C proxy for deprecated read accesses
 	 */
 	public function __get($name)
@@ -407,7 +407,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  Input
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getInput(): Input
 	{
@@ -740,7 +740,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  ResponseInterface
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function getResponse(): ResponseInterface
 	{
@@ -886,7 +886,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  void
 	 *
-	 * @since   __DEPLOY_VERSION__
+	 * @since   2.0.0-beta
 	 */
 	public function setResponse(ResponseInterface $response): void
 	{
