@@ -217,9 +217,12 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 		switch ($name)
 		{
 			case 'input':
-				@trigger_error(
-					'Accessing the input property of the application is deprecated, use the getInput() method instead.',
-					E_USER_DEPRECATED
+				trigger_deprecation(
+					'joomla/application',
+					'2.0.0',
+					'Accessing the input property of %s is deprecated, use the %s::getInput() method instead.',
+					self::class,
+					self::class
 				);
 
 				return $this->getInput();
