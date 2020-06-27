@@ -85,7 +85,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 * Is caching enabled?
 	 *
 	 * @var    boolean
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $cacheable = false;
 
@@ -209,7 +209,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  mixed   A value if the property name is valid, null otherwise.
 	 *
-	 * @since       2.0.0-beta
+	 * @since       2.0.0
 	 * @deprecated  3.0  This is a B/C proxy for deprecated read accesses
 	 */
 	public function __get($name)
@@ -407,7 +407,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  Input
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getInput(): Input
 	{
@@ -740,7 +740,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  ResponseInterface
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getResponse(): ResponseInterface
 	{
@@ -886,7 +886,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setResponse(ResponseInterface $response): void
 	{

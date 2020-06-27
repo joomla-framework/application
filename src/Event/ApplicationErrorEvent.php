@@ -15,7 +15,7 @@ use Joomla\Event\Event;
 /**
  * Event class thrown when an application error occurs.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class ApplicationErrorEvent extends ApplicationEvent
 {
@@ -23,7 +23,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 * The Throwable object with the error data.
 	 *
 	 * @var    \Throwable
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $error;
 
@@ -33,7 +33,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 * @param   \Throwable           $error        The Throwable object with the error data.
 	 * @param   AbstractApplication  $application  The active application.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __construct(\Throwable $error, AbstractApplication $application)
 	{
@@ -47,7 +47,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 *
 	 * @return  \Throwable
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getError(): \Throwable
 	{
@@ -61,7 +61,7 @@ class ApplicationErrorEvent extends ApplicationEvent
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setError(\Throwable $error): void
 	{

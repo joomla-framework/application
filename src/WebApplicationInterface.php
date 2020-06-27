@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Application sub-interface defining a web application class
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 interface WebApplicationInterface extends ApplicationInterface
 {
@@ -23,7 +23,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  Input
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getInput(): Input;
 
@@ -38,7 +38,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 * @throws  \InvalidArgumentException
 	 */
 	public function redirect($url, $status = 303);
@@ -52,7 +52,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  boolean
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function allowCache($allow = null);
 
@@ -68,7 +68,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setHeader($name, $value, $replace = false);
 
@@ -77,7 +77,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  array
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getHeaders();
 
@@ -86,7 +86,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function clearHeaders();
 
@@ -95,7 +95,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function sendHeaders();
 
@@ -106,7 +106,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setBody($content);
 
@@ -117,7 +117,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function prependBody($content);
 
@@ -128,7 +128,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function appendBody($content);
 
@@ -137,7 +137,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  mixed  The response body as a string.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getBody();
 
@@ -146,7 +146,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  ResponseInterface
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getResponse(): ResponseInterface;
 
@@ -157,7 +157,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  boolean
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function isValidHttpStatus($code);
 
@@ -168,7 +168,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setResponse(ResponseInterface $response): void;
 
@@ -177,7 +177,7 @@ interface WebApplicationInterface extends ApplicationInterface
 	 *
 	 * @return  boolean  True if using SSL, false if not.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function isSslConnection();
 }

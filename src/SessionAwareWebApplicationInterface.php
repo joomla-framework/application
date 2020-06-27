@@ -13,7 +13,7 @@ use Joomla\Session\SessionInterface;
 /**
  * Application sub-interface defining a web application class which supports sessions
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 interface SessionAwareWebApplicationInterface extends WebApplicationInterface
 {
@@ -22,7 +22,7 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
 	 *
 	 * @return  SessionInterface  The session object
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getSession();
 
@@ -33,7 +33,7 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setSession(SessionInterface $session);
 
@@ -44,7 +44,7 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
 	 *
 	 * @return  boolean
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function checkToken($method = 'post');
 
@@ -55,7 +55,7 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
 	 *
 	 * @return  string  Hashed var name
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getFormToken($forceNew = false);
 }

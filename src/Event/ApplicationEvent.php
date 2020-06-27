@@ -14,7 +14,7 @@ use Joomla\Event\Event;
 /**
  * Base event class for application events.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class ApplicationEvent extends Event
 {
@@ -22,7 +22,7 @@ class ApplicationEvent extends Event
 	 * The active application.
 	 *
 	 * @var    AbstractApplication
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $application;
 
@@ -32,7 +32,7 @@ class ApplicationEvent extends Event
 	 * @param   string               $name         The event name.
 	 * @param   AbstractApplication  $application  The active application.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __construct(string $name, AbstractApplication $application)
 	{
@@ -46,7 +46,7 @@ class ApplicationEvent extends Event
 	 *
 	 * @return  AbstractApplication
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getApplication(): AbstractApplication
 	{

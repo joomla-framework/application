@@ -14,7 +14,7 @@ use Joomla\Session\SessionInterface;
 /**
  * Trait which helps implementing `Joomla\Application\SessionAwareWebApplicationInterface` in a web application class.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 trait SessionAwareWebApplicationTrait
 {
@@ -22,7 +22,7 @@ trait SessionAwareWebApplicationTrait
 	 * The application session object.
 	 *
 	 * @var    SessionInterface
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	protected $session;
 
@@ -31,7 +31,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  Input
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	abstract public function getInput(): Input;
 
@@ -40,7 +40,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  SessionInterface  The session object
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getSession()
 	{
@@ -59,7 +59,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  $this
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function setSession(SessionInterface $session)
 	{
@@ -75,7 +75,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  boolean
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function checkToken($method = 'post')
 	{
@@ -103,7 +103,7 @@ trait SessionAwareWebApplicationTrait
 	 *
 	 * @return  string  Hashed var name
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function getFormToken($forceNew = false)
 	{

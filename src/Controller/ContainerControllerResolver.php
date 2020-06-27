@@ -15,7 +15,7 @@ use Psr\Container\ContainerInterface;
  *
  * Controllers must be registered in the container using their FQCN as a service key
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class ContainerControllerResolver extends ControllerResolver
 {
@@ -23,7 +23,7 @@ class ContainerControllerResolver extends ControllerResolver
 	 * The container to search for controllers in
 	 *
 	 * @var    ContainerInterface
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	private $container;
 
@@ -32,7 +32,7 @@ class ContainerControllerResolver extends ControllerResolver
 	 *
 	 * @param   ContainerInterface  $container  The container to search for controllers in
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __construct(ContainerInterface $container)
 	{
@@ -46,7 +46,7 @@ class ContainerControllerResolver extends ControllerResolver
 	 *
 	 * @return  object  Controller class instance
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	protected function instantiateController(string $class): object
 	{

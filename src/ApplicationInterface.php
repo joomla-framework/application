@@ -11,7 +11,7 @@ namespace Joomla\Application;
 /**
  * Joomla Framework Application Interface
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 interface ApplicationInterface
 {
@@ -22,7 +22,7 @@ interface ApplicationInterface
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function close($code = 0);
 
@@ -31,7 +31,7 @@ interface ApplicationInterface
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function execute();
 }

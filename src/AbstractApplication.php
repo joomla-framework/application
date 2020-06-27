@@ -78,7 +78,7 @@ abstract class AbstractApplication implements ConfigurationAwareApplicationInter
 	 *
 	 * @return  EventInterface|null  The dispatched event or null if no dispatcher is set
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	protected function dispatchEvent(string $eventName, ?EventInterface $event = null): ?EventInterface
 	{

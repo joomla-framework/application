@@ -17,7 +17,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * A basic web application class for handing HTTP requests.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 class WebApplication extends AbstractWebApplication implements SessionAwareWebApplicationInterface
 {
@@ -27,7 +27,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 * The application's controller resolver.
 	 *
 	 * @var    ControllerResolverInterface
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	protected $controllerResolver;
 
@@ -35,7 +35,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 * The application's router.
 	 *
 	 * @var    RouterInterface
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	protected $router;
 
@@ -61,7 +61,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 *                                                            will become the application's response object, otherwise a default response
 	 *                                                            object is created.
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	public function __construct(
 		ControllerResolverInterface $controllerResolver,
@@ -84,7 +84,7 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
 	 *
 	 * @return  void
 	 *
-	 * @since   2.0.0-beta
+	 * @since   2.0.0
 	 */
 	protected function doExecute(): void
 	{

@@ -11,7 +11,7 @@ namespace Joomla\Application;
 /**
  * Class defining the events available in the application.
  *
- * @since  2.0.0-beta
+ * @since  2.0.0
  */
 final class ApplicationEvents
 {
@@ -21,7 +21,7 @@ final class ApplicationEvents
 	 * This event allows you to inspect the Throwable and implement additional error handling/reporting mechanisms.
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	const ERROR = 'application.error';
 
@@ -29,7 +29,7 @@ final class ApplicationEvents
 	 * The BEFORE_EXECUTE event is an event triggered before the application is executed.
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	const BEFORE_EXECUTE = 'application.before_execute';
 
@@ -37,7 +37,7 @@ final class ApplicationEvents
 	 * The AFTER_EXECUTE event is an event triggered after the application is executed.
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	const AFTER_EXECUTE = 'application.after_execute';
 
@@ -45,7 +45,7 @@ final class ApplicationEvents
 	 * The BEFORE_RESPOND event is an event triggered before the application response is sent.
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	const BEFORE_RESPOND = 'application.before_respond';
 
@@ -53,7 +53,7 @@ final class ApplicationEvents
 	 * The AFTER_RESPOND event is an event triggered after the application response is sent.
 	 *
 	 * @var    string
-	 * @since  2.0.0-beta
+	 * @since  2.0.0
 	 */
 	const AFTER_RESPOND = 'application.after_respond';
 }
