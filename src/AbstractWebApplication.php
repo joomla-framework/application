@@ -492,12 +492,11 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 			// @deprecated 3.0
 			if (\is_bool($status))
 			{
-				@trigger_error(
-					sprintf(
-						'Passing a boolean value for the $status argument in %1$s() is deprecated, an integer should be passed instead.',
-						__METHOD__
-					),
-					E_USER_DEPRECATED
+				trigger_deprecation(
+					'joomla/application',
+					'2.0.0',
+					'Passing a boolean value for the $status argument in %s() is deprecated, an integer should be passed instead.',
+					__METHOD__
 				);
 
 				$status = $status ? 301 : 303;
