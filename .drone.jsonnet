@@ -18,7 +18,7 @@ local composer(phpversion, params) = {
     volumes: volumes,
     commands: [
         "php -v",
-        "composer update " + params,
+        "composer update " + params
     ]
 };
 
