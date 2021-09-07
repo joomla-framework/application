@@ -5,3 +5,4 @@ Tests/ export-ignore
 .gitattributes export-ignore
 .gitignore export-ignore
 .phpunit.xml.dist export-ignore
+.editorconfig export-ignore
