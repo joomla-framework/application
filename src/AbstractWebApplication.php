@@ -373,10 +373,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
 			// Always modified.
 			$this->setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT', true);
-			$this->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0', false);
-
-			// HTTP 1.0
-			$this->setHeader('Pragma', 'no-cache');
+			$this->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate', false);
 		}
 		else
 		{
