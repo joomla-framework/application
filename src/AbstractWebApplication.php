@@ -882,6 +882,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 		{
 			$code = 0;
 		}
+
 		header(str_replace(\chr(0), '', $string), $replace, $code);
 	}
 
