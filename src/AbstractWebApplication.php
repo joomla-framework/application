@@ -878,6 +878,11 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 	 */
 	protected function header($string, $replace = true, $code = null)
 	{
+		if ($code === null)
+		{
+			$code = 0;
+		}
+
 		header(str_replace(\chr(0), '', $string), $replace, $code);
 	}
 
