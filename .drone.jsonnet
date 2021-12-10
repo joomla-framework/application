@@ -25,7 +25,7 @@ local composer(phpversion, params) = {
 local phpunit(phpversion) = {
     name: "PHPUnit",
     image: "joomlaprojects/docker-images:php" + phpversion,
-    [if phpversion == "8.0" then "failure"]: "ignore",
+    [if phpversion == "8.2" then "failure"]: "ignore",
     commands: ["vendor/bin/phpunit"]
 };
 
@@ -81,7 +81,6 @@ local pipeline(name, phpversion, params) = {
                 name: "phpstan",
                 image: "joomlaprojects/docker-images:php7.4",
                 depends: [ "composer" ],
-                failure: "ignore",
                 commands: [
                     "vendor/bin/phpstan analyse src",
                 ]
@@ -90,7 +89,6 @@ local pipeline(name, phpversion, params) = {
                 name: "phploc",
                 image: "joomlaprojects/docker-images:php7.4",
                 depends: [ "composer" ],
-                failure: "ignore",
                 commands: [
                     "phploc src",
                 ]
@@ -99,7 +97,6 @@ local pipeline(name, phpversion, params) = {
                 name: "phpcpd",
                 image: "joomlaprojects/docker-images:php7.4",
                 depends: [ "composer" ],
-                failure: "ignore",
                 commands: [
                     "phpcpd src",
                 ]
