@@ -1,4 +1,4 @@
-# The Application Package [![Build Status](https://ci.joomla.org/api/badges/joomla-framework/application/status.svg)](https://ci.joomla.org/joomla-framework/application)
+# The Application Package [![Build Status](https://ci.joomla.org/api/badges/joomla-framework/application/status.svg?ref=refs/heads/2.0-dev)](https://ci.joomla.org/joomla-framework/application)
 
 [![Latest Stable Version](https://poser.pugx.org/joomla/application/v/stable.svg)](https://packagist.org/packages/joomla/application) [![Total Downloads](https://poser.pugx.org/joomla/application/downloads.svg)](https://packagist.org/packages/joomla/application) [![Latest Unstable Version](https://poser.pugx.org/joomla/application/v/unstable.svg)](https://packagist.org/packages/joomla/application) [![License](https://poser.pugx.org/joomla/application/license.svg)](https://packagist.org/packages/joomla/application)
 
@@ -352,12 +352,12 @@ class MyCli extends AbstractCliApplication
 
 ## Installation via Composer
 
-Add `"joomla/application": "~1.0"` to the require block in your composer.json and then run `composer install`.
+Add `"joomla/application": "~2.0"` to the require block in your composer.json and then run `composer install`.
 
 ```json
 {
 	"require": {
-		"joomla/application": "~1.0"
+		"joomla/application": "~2.0"
 	}
 }
 ```
@@ -365,11 +365,11 @@ Add `"joomla/application": "~1.0"` to the require block in your composer.json an
 Alternatively, you can simply run the following from the command line:
 
 ```sh
-composer require joomla/application "~1.0"
+composer require joomla/application "~2.0"
 ```
 
 If you want to include the test sources, use
 
 ```sh
-composer require --prefer-source joomla/application "~1.0"
+composer require --prefer-source joomla/application "~2.0"
 ```

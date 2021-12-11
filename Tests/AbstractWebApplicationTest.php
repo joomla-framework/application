@@ -1,89 +1,123 @@
 <?php
 /**
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2005 - 2021 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
 namespace Joomla\Application\Tests;
 
+use Joomla\Application\AbstractWebApplication;
 use Joomla\Application\Web\WebClient;
+use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
+use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
+use Laminas\Diactoros\Response;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\AbstractWebApplication.
  */
-class AbstractWebApplicationTest extends CompatTestCase
+class AbstractWebApplicationTest extends TestCase
 {
 	/**
 	 * Value for test host.
 	 *
 	 * @var  string
 	 */
-	const TEST_HTTP_HOST = 'mydomain.com';
+	private const TEST_HTTP_HOST = 'mydomain.com';
 
 	/**
 	 * Value for test user agent.
 	 *
 	 * @var  string
 	 */
-	const TEST_USER_AGENT = 'Mozilla/5.0';
+	private const TEST_USER_AGENT = 'Mozilla/5.0';
 
 	/**
 	 * Value for test user agent.
 	 *
 	 * @var  string
 	 */
-	const TEST_REQUEST_URI = '/index.php';
+	private const TEST_REQUEST_URI = '/index.php';
 
 	/**
 	 * List of sent headers for inspection. array($string, $replace, $code).
 	 *
 	 * @var  array
 	 */
-	private static $headers = array();
+	private static $headers = [];
 
 	/**
 	 * {@inheritdoc}
 	 */
-	protected function doTearDown()
+	protected function tearDown(): void
 	{
 		// Reset the $headers array
-		self::$headers = array();
+		self::$headers = [];
 
-		parent::doTearDown();
+		parent::tearDown();
 	}
 
 	/**
 	 * Data for detectRequestUri method.
 	 *
-	 * @return  array
-	 *
-	 * @since   1.0
+	 * @return  \Generator
 	 */
-	public function getDetectRequestUriData()
+	public function getDetectRequestUriData(): \Generator
 	{
-		return array(
-			// HTTPS, PHP_SELF, REQUEST_URI, HTTP_HOST, SCRIPT_NAME, QUERY_STRING, (resulting uri)
-			array(null, '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php?foo=bar'),
-			array('on', '/j/index.php', '/j/index.php?foo=bar', 'joom.la:3', '/j/index.php', '', 'https://joom.la:3/j/index.php?foo=bar'),
-			array(null, '', '', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php'),
-			array(null, '', '', 'joom.la:3', '/j/index.php', 'foo=bar', 'http://joom.la:3/j/index.php?foo=bar'),
-		);
+		// HTTPS, PHP_SELF, REQUEST_URI, HTTP_HOST, SCRIPT_NAME, QUERY_STRING, (resulting uri)
+		yield 'HTTP connection with path in PHP_SELF and query string set in REQUEST_URI' => [
+			null,
+			'/j/index.php',
+			'/j/index.php?foo=bar',
+			'joom.la:3',
+			'/j/index.php',
+			'',
+			'http://joom.la:3/j/index.php?foo=bar'
+		];
+
+		yield 'HTTPS connection with path in PHP_SELF and query string set in REQUEST_URI' => [
+			'on',
+			'/j/index.php',
+			'/j/index.php?foo=bar',
+			'joom.la:3',
+			'/j/index.php',
+			'',
+			'https://joom.la:3/j/index.php?foo=bar'
+		];
+
+		yield 'HTTP connection with path in SCRIPT_NAME and no query string' => [
+			null,
+			'',
+			'',
+			'joom.la:3',
+			'/j/index.php',
+			'',
+			'http://joom.la:3/j/index.php'
+		];
+
+		yield 'HTTP connection with path in SCRIPT_NAME and query string set in QUERY_STRING' => [
+			null,
+			'',
+			'',
+			'joom.la:3',
+			'/j/index.php',
+			'foo=bar',
+			'http://joom.la:3/j/index.php?foo=bar'
+		];
 	}
 
 	/**
 	 * Data for testRedirectWithUrl method.
 	 *
-	 * @return  array
+	 * @return  \Generator
 	 */
-	public function getRedirectData()
+	public function getRedirectData(): \Generator
 	{
-		return array(
-			// Note: url, (expected result)
-			'with_leading_slash' => array('/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'),
-			'without_leading_slash' => array('foo', 'http://' . self::TEST_HTTP_HOST . '/foo'),
-		);
+		// Note: url, (expected result)
+		yield 'with_leading_slash'    => ['/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'];
+		yield 'without_leading_slash' => ['foo', 'http://' . self::TEST_HTTP_HOST . '/foo'];
 	}
 
 	/**
@@ -99,95 +133,149 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public static function mockHeader($string, $replace = true, $code = null)
 	{
-		self::$headers[] = array($string, $replace, $code);
+		self::$headers[] = [$string, $replace, $code];
 	}
 
 	/**
 	 * @testdox  Tests the constructor creates default object instances
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::__construct
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function test__constructDefaultBehaviour()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		// Validate default objects unique to the web application are created
-		$this->assertAttributeInstanceOf('Joomla\Application\Web\WebClient', 'client', $object);
+		$this->assertInstanceOf(WebClient::class, $object->client);
 	}
 
 	/**
 	 * @testdox  Tests the correct objects are stored when injected
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::__construct
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function test__constructDependencyInjection()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
+		$mockClient = $this->createMock(WebClient::class);
 
-		// Mock the Input object internals
-		$mockServerInput = new Input(array('HTTP_HOST' => self::TEST_HTTP_HOST));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig, $mockClient]);
 
-		$inputInternals = array(
-			'server' => $mockServerInput
+		$this->assertSame($mockInput, $object->getInput());
+
+		$this->assertSame(
+			$mockConfig,
+			TestHelper::getValue($object, 'config'),
+			'A configuration Registry can be injected'
 		);
 
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
-
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig, $mockClient));
-
-		$this->assertAttributeSame($mockInput, 'input', $object);
-		$this->assertAttributeSame($mockConfig, 'config', $object);
-		$this->assertAttributeSame($mockClient, 'client', $object);
+		$this->assertSame($mockClient, $object->client);
 
 		$this->assertEquals('http://' . self::TEST_HTTP_HOST, $object->get('uri.base.host'));
 	}
 
 	/**
+	 * @testdox  Tests access to the input property is allowed
+	 *
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 */
+	public function test__getDeprecatedInputReadAccess()
+	{
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+
+		// Validate default objects unique to the web application are created
+		$this->assertInstanceOf(Input::class, $object->input);
+	}
+
+	/**
 	 * @testdox  Tests that the application is executed successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::execute
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testExecute()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 		$object->expects($this->once())
 			->method('doExecute');
 
-		// execute() has no return, with our mock nothing should happen but ensuring that the mock's doExecute() stub is triggered
-		$this->assertNull($object->execute());
+		$object->execute();
 
 		$this->assertFalse($object->allowCache());
 
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Content-Type',
-				'value' => 'text/html; charset=utf-8'
-			),
+				'value' => 'text/html; charset=utf-8',
+			],
 			$headers[0]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
+	}
+
+	/**
+	 * @testdox  Tests that the application is executed successfully when an event dispatcher is registered.
+	 *
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Event\ApplicationEvent
+	 * @uses    Joomla\Application\Web\WebClient
+	 */
+	public function testExecuteWithEvents()
+	{
+		$dispatcher = $this->createMock(DispatcherInterface::class);
+		$dispatcher->expects($this->exactly(4))
+			->method('dispatch');
+
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+		$object->expects($this->once())
+			->method('doExecute');
+
+		$object->setDispatcher($dispatcher);
+
+		$object->execute();
+
+		$this->assertFalse($object->allowCache());
+
+		$headers = $object->getHeaders();
+
+		$this->assertSame(
+			[
+				'name'  => 'Content-Type',
+				'value' => 'text/html; charset=utf-8',
+			],
+			$headers[0]
+		);
+
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
 	 * @testdox  Tests that the application with compression enabled is executed successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::execute
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testExecuteWithCompression()
 	{
@@ -197,44 +285,43 @@ class AbstractWebApplicationTest extends CompatTestCase
 			$this->markTestSkipped('Output compression is unsupported in this environment.');
 		}
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-			->setConstructorArgs(array(array('gzip' => true)))
+		$mockConfig = $this->getMockBuilder(Registry::class)
+			->setConstructorArgs([['gzip' => true]])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, $mockConfig));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, $mockConfig]);
 		$object->expects($this->once())
 			->method('doExecute');
 
-		// execute() has no return, with our mock nothing should happen but ensuring that the mock's doExecute() stub is triggered
-		$this->assertNull($object->execute());
+		$object->execute();
 
 		$this->assertFalse($object->allowCache());
 
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Content-Type',
-				'value' => 'text/html; charset=utf-8'
-			),
+				'value' => 'text/html; charset=utf-8',
+			],
 			$headers[0]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
 	 * @testdox  Tests the compress() method correctly compresses data with gzip encoding
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithGzipEncoding()
 	{
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
-			->setConstructorArgs(array(null, 'gzip, deflate'))
+		$mockClient = $this->getMockBuilder(WebClient::class)
+			->setConstructorArgs([null, 'gzip, deflate'])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
@@ -242,52 +329,53 @@ class AbstractWebApplicationTest extends CompatTestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('gzip', 'deflate')
+			['gzip', 'deflate']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient), '', true, true, true, array('checkHeadersSent'));
+		$object = $this->getMockBuilder(AbstractWebApplication::class)
+			->setConstructorArgs([null, null, $mockClient])
+			->setMethods(['checkHeadersSent'])
+			->getMockForAbstractClass();
+
 		$object->expects($this->once())
 			->method('checkHeadersSent')
 			->willReturn(false);
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.'),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertLessThan(
-			\strlen($mockResponse->body[0]),
+			\strlen($response->getBody()),
 			$object->getBody()
 		);
 
 		// Ensure that the compression headers were set.
 		$this->assertSame(
-			array(
-				0 => array('name' => 'Content-Encoding', 'value' => 'gzip'),
-				1 => array('name' => 'Vary', 'value' => 'Accept-Encoding'),
-				2 => array('name' => 'X-Content-Encoded-By', 'value' => 'Joomla')
-			),
+			[
+				0 => ['name' => 'Content-Encoding', 'value' => 'gzip'],
+				1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
+				2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
+			],
 			$object->getHeaders()
 		);
 	}
@@ -295,14 +383,14 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the compress() method correctly compresses data with deflate encoding
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithDeflateEncoding()
 	{
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
-			->setConstructorArgs(array(null, 'deflate'))
+		$mockClient = $this->getMockBuilder(WebClient::class)
+			->setConstructorArgs([null, 'deflate'])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
@@ -310,52 +398,53 @@ class AbstractWebApplicationTest extends CompatTestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('deflate', 'gzip')
+			['deflate', 'gzip']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient), '', true, true, true, array('checkHeadersSent'));
+		$object = $this->getMockBuilder(AbstractWebApplication::class)
+			->setConstructorArgs([null, null, $mockClient])
+			->setMethods(['checkHeadersSent'])
+			->getMockForAbstractClass();
+
 		$object->expects($this->once())
 			->method('checkHeadersSent')
 			->willReturn(false);
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.'),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertLessThan(
-			\strlen($mockResponse->body[0]),
+			\strlen($response->getBody()),
 			$object->getBody()
 		);
 
 		// Ensure that the compression headers were set.
 		$this->assertSame(
-			array(
-				0 => array('name' => 'Content-Encoding', 'value' => 'deflate'),
-				1 => array('name' => 'Vary', 'value' => 'Accept-Encoding'),
-				2 => array('name' => 'X-Content-Encoded-By', 'value' => 'Joomla')
-			),
+			[
+				0 => ['name' => 'Content-Encoding', 'value' => 'deflate'],
+				1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
+				2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
+			],
 			$object->getHeaders()
 		);
 	}
@@ -363,13 +452,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the compress() method does not compress data when no encoding methods are supported
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithNoAcceptEncodings()
 	{
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
+		$mockClient = $this->getMockBuilder(WebClient::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
@@ -377,52 +466,52 @@ class AbstractWebApplicationTest extends CompatTestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient), '', true, true, true, array('checkHeadersSent'));
+		$object = $this->getMockBuilder(AbstractWebApplication::class)
+			->setConstructorArgs([null, null, $mockClient])
+			->setMethods(['checkHeadersSent'])
+			->getMockForAbstractClass();
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array(str_replace("\r\n", "\n", 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			\strlen($mockResponse->body[0]),
+			\strlen($response->getBody()),
 			\strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
-		$this->assertNull($object->getHeaders());
+		$this->assertEmpty($object->getHeaders());
 	}
 
 	/**
 	 * @testdox  Tests the compress() method does not compress data when the response headers have already been sent
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithHeadersSent()
 	{
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
-			->setConstructorArgs(array(null, 'deflate'))
+		$mockClient = $this->getMockBuilder(WebClient::class)
+			->setConstructorArgs([null, 'deflate'])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
@@ -430,56 +519,53 @@ class AbstractWebApplicationTest extends CompatTestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('deflate', 'gzip')
+			['deflate', 'gzip']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, null, $mockClient]);
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array(str_replace("\r\n", "\n", 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			\strlen($mockResponse->body[0]),
+			\strlen($response->getBody()),
 			\strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
-		$this->assertNull($object->getHeaders());
+		$this->assertEmpty($object->getHeaders());
 	}
 
 	/**
 	 * @testdox  Tests the compress() method does not compress data when the application does not support the client's encoding methods
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::compress
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testCompressWithUnsupportedEncodings()
 	{
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
+		$mockClient = $this->getMockBuilder(WebClient::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
@@ -487,57 +573,53 @@ class AbstractWebApplicationTest extends CompatTestCase
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('acceptEncoding' => true)
+			['acceptEncoding' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
 			'encodings',
-			array('foo', 'bar')
+			['foo', 'bar']
 		);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, null, $mockClient]);
 
 		// Mock a response.
-		$mockResponse = (object) array(
-			'cachable' => null,
-			'headers' => null,
-			'body' => array(str_replace("\r\n", "\n", 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+		$response = new Response\TextResponse('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.')),
-		);
+				sunt in culpa qui officia deserunt mollit anim id est laborum.');
+		$response = $response->withoutHeader('content-type');
 
 		TestHelper::setValue(
 			$object,
 			'response',
-			$mockResponse
+			$response
 		);
 
 		TestHelper::invoke($object, 'compress');
 
 		// Ensure that the compressed body is shorter than the raw body.
 		$this->assertSame(
-			\strlen($mockResponse->body[0]),
+			\strlen($response->getBody()),
 			\strlen($object->getBody())
 		);
 
 		// Ensure that no compression headers were set.
-		$this->assertNull($object->getHeaders());
+		$this->assertEmpty($object->getHeaders());
 	}
 
 	/**
 	 * @testdox  Tests that the application sends the response successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::respond
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testRespond()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		TestHelper::invoke($object, 'respond');
 
@@ -546,29 +628,28 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Content-Type',
-				'value' => 'text/html; charset=utf-8'
-			),
+				'value' => 'text/html; charset=utf-8',
+			],
 			$headers[0]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
 	 * @testdox  Tests that the application sends the response successfully with allowed caching.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::respond
-	 * @uses    Joomla\Application\AbstractWebApplication::allowCache
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testRespondWithAllowedCaching()
 	{
-		$modifiedDate = new \DateTime('now', new \DateTimeZone('UTC'));
+		$modifiedDate = new \DateTime('now', new \DateTimeZone('GMT'));
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 		$object->allowCache(true);
 		$object->modifiedDate = $modifiedDate;
 
@@ -579,51 +660,44 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			array(
+			[
 				'name'  => 'Last-Modified',
-				'value' => $modifiedDate->format('D, d M Y H:i:s') . ' GMT'
-			),
+				'value' => $modifiedDate->format('D, d M Y H:i:s') . ' GMT',
+			],
 			$headers[2]
 		);
 
-		$this->assertEmpty($object->getBody(true));
+		$this->assertEmpty($object->getBody());
 	}
 
 	/**
 	 * @testdox  Tests that the application redirects successfully with the legacy behavior.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testRedirectLegacyBehavior()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+		$mockClient = $this->createMock(WebClient::class);
 
 		// Mock the client internals to show engine has been detected.
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -632,13 +706,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -648,64 +722,57 @@ class AbstractWebApplicationTest extends CompatTestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('UTC'));
+		$date = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 
 		$object->redirect($url, false);
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
 	/**
 	 * @testdox  Tests that the application redirects successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testRedirect()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+		$mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
 		// Mock the client internals to show engine has been detected.
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -714,13 +781,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -730,63 +797,56 @@ class AbstractWebApplicationTest extends CompatTestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('UTC'));
+		$date = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 		$object->redirect($url);
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
 	/**
 	 * @testdox  Tests that the application redirects successfully when there is already a status code set.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
-	public function testRedirectWithExistingStatusCode1()
+	public function testRedirectWithExistingStatusCode()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+		$mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
 		// Mock the client internals to show engine has been detected.
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -795,13 +855,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -811,11 +871,11 @@ class AbstractWebApplicationTest extends CompatTestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('UTC'));
+		$date                 = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 		$object->setHeader('status', 201);
 
@@ -823,54 +883,46 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 201 Created', true, 201),
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
 	/**
 	 * @testdox  Tests that the application redirects and sends additional headers successfully.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testRedirectWithAdditionalHeaders()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+		$mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
 		// Mock the client internals to show engine has been detected.
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -879,13 +931,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -895,69 +947,65 @@ class AbstractWebApplicationTest extends CompatTestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('UTC'));
+		$date                 = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 
 		$object->redirect($url);
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 303 See other', true, 303),
-				array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 303 See other', true, 303],
+				['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
 	/**
 	 * @testdox  Tests that the application redirects successfully when the headers have already been sent.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 * @backupGlobals enabled
 	 */
 	public function testRedirectWithHeadersSent()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
-
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close')
+			['checkHeadersSent', 'close']
 		);
 
 		$object->expects($this->once())
-			->method('close');
+			->method('close')
+			->willReturn(true);
 		$object->expects($this->any())
 			->method('checkHeadersSent')
 			->willReturn(true);
@@ -978,40 +1026,34 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully with a JavaScript redirect.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testRedirectWithJavascriptRedirect()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
-			->setConstructorArgs(array('MSIE'))
+		$mockClient = $this->getMockBuilder(WebClient::class)
+			->setConstructorArgs(['MSIE'])
 			->enableProxyingToOriginalMethods()
 			->getMock();
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -1020,13 +1062,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -1052,37 +1094,31 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests that the application redirects successfully with the moved parameter set to true.
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testRedirectWithMoved()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+		$mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
 		// Mock the client internals to show engine has been detected.
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -1091,13 +1127,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -1107,26 +1143,26 @@ class AbstractWebApplicationTest extends CompatTestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$url = 'http://j.org/index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('UTC'));
+		$date                 = new \DateTime('now', new \DateTimeZone('GMT'));
 		$object->modifiedDate = $date;
 
 		$object->redirect($url, true);
 
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('HTTP/1.1 301 Moved Permanently', true, 301),
-				array('Location: ' . $url, true, null),
-				array('Content-Type: text/html; charset=utf-8', true, null),
-				array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
-				array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
-				array('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null),
-				array('Pragma: no-cache', true, null),
-			)
+			[
+				['HTTP/1.1 301 Moved Permanently', true, 301],
+				['Location: ' . $url, true, null],
+				['Content-Type: text/html; charset=utf-8', true, null],
+				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
+				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
+				['Pragma: no-cache', true, null],
+			]
 		);
 	}
 
@@ -1136,38 +1172,32 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 * @param   string  $url       The URL to redirect to
 	 * @param   string  $expected  The expected redirect URL
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::redirect
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
 	 * @dataProvider  getRedirectData
+	 * @backupGlobals enabled
 	 */
-	public function testRedirectWithUrl($url, $expected)
+	public function testRedirectWithUrl(string $url, string $expected)
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
-
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'HTTP_HOST'   => self::TEST_HTTP_HOST,
-				'REQUEST_URI' => self::TEST_REQUEST_URI,
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
+		$mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
 		// Mock the client internals to show engine has been detected.
 		TestHelper::setValue(
 			$mockClient,
 			'detection',
-			array('engine' => true)
+			['engine' => true]
 		);
 		TestHelper::setValue(
 			$mockClient,
@@ -1176,13 +1206,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array($mockInput, $mockConfig, $mockClient),
+			AbstractWebApplication::class,
+			[$mockInput, $mockConfig, $mockClient],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'close', 'header')
+			['checkHeadersSent', 'close', 'header']
 		);
 
 		$object->expects($this->once())
@@ -1192,7 +1222,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$object->redirect($url);
 
@@ -1205,11 +1235,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the allowCache() method returns the allowed cache state
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::allowCache
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testAllowCache()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$this->assertFalse($object->allowCache());
 		$this->assertTrue($object->allowCache(true));
@@ -1218,55 +1250,44 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the setHeader() method correctly sets and replaces a specified header
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::setHeader
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testSetHeader()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$object->setHeader('foo', 'bar');
 
 		$this->assertSame(
 			$object->getHeaders(),
-			array(
-				array('name' => 'foo', 'value' => 'bar')
-			)
+			[
+				['name' => 'foo', 'value' => 'bar'],
+			]
 		);
 
 		$object->setHeader('foo', 'car', true);
 
 		$this->assertSame(
 			$object->getHeaders(),
-			array(
-				array('name' => 'foo', 'value' => 'car')
-			),
+			[
+				['name' => 'foo', 'value' => 'car'],
+			],
 			'A header with the same name should be replaced.'
 		);
 	}
 
 	/**
-	 * @testdox  Tests the getHeaders() method return an array
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getHeaders
-	 */
-	public function testGetHeaders()
-	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
-
-		$this->assertEmpty($object->getHeaders());
-	}
-
-	/**
 	 * @testdox  Tests the clearHeaders() method resets the internal headers array
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::clearHeaders
-	 * @uses    Joomla\Application\AbstractWebApplication::getHeaders
-	 * @uses    Joomla\Application\AbstractWebApplication::setHeader
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testClearHeaders()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 		$object->setHeader('foo', 'bar');
 		$oldHeaders = $object->getHeaders();
 
@@ -1277,19 +1298,20 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the sendHeaders() method correctly sends the response headers
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::sendHeaders
-	 * @uses    Joomla\Application\AbstractWebApplication::setHeader
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testSendHeaders()
 	{
 		$object = $this->getMockForAbstractClass(
-			'Joomla\Application\AbstractWebApplication',
-			array(),
+			AbstractWebApplication::class,
+			[],
 			'',
 			true,
 			true,
 			true,
-			array('checkHeadersSent', 'header')
+			['checkHeadersSent', 'header']
 		);
 
 		$object->expects($this->any())
@@ -1297,7 +1319,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 			->willReturn(false);
 		$object->expects($this->any())
 			->method('header')
-			->willReturnCallback(array($this, 'mockHeader'));
+			->willReturnCallback([$this, 'mockHeader']);
 
 		$object->setHeader('foo', 'bar');
 		$object->setHeader('Status', 200);
@@ -1305,22 +1327,23 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$this->assertSame($object, $object->sendHeaders());
 		$this->assertSame(
 			self::$headers,
-			array(
-				array('foo: bar', true, null),
-				array('HTTP/1.1 200 OK', true, 200)
-			)
+			[
+				['foo: bar', true, null],
+				['HTTP/1.1 200 OK', true, 200],
+			]
 		);
 	}
 
 	/**
 	 * @testdox  Tests the setBody() method correctly sets the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::setBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testSetBody()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$this->assertSame($object, $object->setBody('Testing'));
 		$this->assertSame('Testing', $object->getBody());
@@ -1329,13 +1352,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the prependBody() method correctly prepends content to the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::prependBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::setBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testPrependBody()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$object->setBody('Testing');
 		$this->assertSame($object, $object->prependBody('Pre-'));
@@ -1345,13 +1368,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the appendBody() method correctly appends content to the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::appendBody
-	 * @uses    Joomla\Application\AbstractWebApplication::getBody
-	 * @uses    Joomla\Application\AbstractWebApplication::setBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testAppendBody()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$object->setBody('Testing');
 		$this->assertSame($object, $object->appendBody(' Later'));
@@ -1361,57 +1384,59 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the getBody() method correctly retrieves the response body
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getBody
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testGetBody()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$this->assertSame('', $object->getBody(), 'Returns an empty string by default');
-		$this->assertSame(array(), $object->getBody(true), 'Returns an empty array when requesting the body as an array');
 	}
 
 	/**
 	 * @testdox  Tests that the application correcty detects the request URI based on the injected data
 	 *
-	 * @param   string  $https        Value for $_SERVER['HTTPS'] or null to not set it
-	 * @param   string  $phpSelf      Value for $_SERVER['PHP_SELF']
-	 * @param   string  $requestUri   Value for $_SERVER['REQUEST_URI']
-	 * @param   string  $httpHost     Value for $_SERVER['HTTP_HOST']
-	 * @param   string  $scriptName   Value for $_SERVER['SCRIPT_NAME']
-	 * @param   string  $queryString  Value for $_SERVER['QUERY_STRING']
-	 * @param   string  $expects      Expected full URI string
+	 * @param   string|null  $https        Value for $_SERVER['HTTPS'] or null to not set it
+	 * @param   string       $phpSelf      Value for $_SERVER['PHP_SELF']
+	 * @param   string       $requestUri   Value for $_SERVER['REQUEST_URI']
+	 * @param   string       $httpHost     Value for $_SERVER['HTTP_HOST']
+	 * @param   string       $scriptName   Value for $_SERVER['SCRIPT_NAME']
+	 * @param   string       $queryString  Value for $_SERVER['QUERY_STRING']
+	 * @param   string       $expects      Expected full URI string
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::detectRequestUri
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
 	 * @dataProvider  getDetectRequestUriData
+	 * @backupGlobals enabled
 	 */
-	public function testDetectRequestUri($https, $phpSelf, $requestUri, $httpHost, $scriptName, $queryString, $expects)
+	public function testDetectRequestUri(
+		?string $https,
+		string $phpSelf,
+		string $requestUri,
+		string $httpHost,
+		string $scriptName,
+		string $queryString,
+		string $expects
+	)
 	{
-		$mockInput = new Input(array());
+		$mockInput = new Input([]);
 
-		$serverInputData = array(
-			'PHP_SELF'     => $phpSelf,
-			'REQUEST_URI'  => $requestUri,
-			'HTTP_HOST'    => $httpHost,
-			'SCRIPT_NAME'  => $scriptName,
-			'QUERY_STRING' => $queryString
-		);
+		$_SERVER['PHP_SELF'] = $phpSelf;
+		$_SERVER['REQUEST_URI'] = $requestUri;
+		$_SERVER['HTTP_HOST'] = $httpHost;
+		$_SERVER['SCRIPT_NAME'] = $scriptName;
+		$_SERVER['QUERY_STRING'] = $queryString;
 
 		if ($https !== null)
 		{
-			$serverInputData['HTTPS'] = $https;
+			$_SERVER['HTTPS'] = $https;
 		}
 
-		// Mock the Input object internals
-		$mockServerInput = new Input($serverInputData);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
-
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput]);
 
 		$this->assertSame(
 			$expects,
@@ -1422,17 +1447,18 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a URI is set in the application configuration
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testLoadSystemUrisWithSiteUriSet()
 	{
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-			->setConstructorArgs(array(array('site_uri' => 'http://test.joomla.org/path/')))
+		$mockConfig = $this->getMockBuilder(Registry::class)
+			->setConstructorArgs([['site_uri' => 'http://test.joomla.org/path/']])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, $mockConfig));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, $mockConfig]);
 
 		TestHelper::invoke($object, 'loadSystemUris');
 
@@ -1465,26 +1491,20 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a URI is passed into the method
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testLoadSystemUrisWithoutSiteUriSet()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
+		$mockInput = new Input([]);
 
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
-
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput]);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1517,32 +1537,25 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a media URI is set in the application configuration
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testLoadSystemUrisWithoutSiteUriWithMediaUriSet()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-			->setConstructorArgs(array(array('media_uri' => 'http://cdn.joomla.org/media/')))
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
+			->setConstructorArgs([['media_uri' => 'http://cdn.joomla.org/media/']])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
-
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig]);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1575,32 +1588,25 @@ class AbstractWebApplicationTest extends CompatTestCase
 	/**
 	 * @testdox  Tests the system URIs are correctly loaded when a relative media URI is set in the application configuration
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::loadSystemUris
-	 * @uses    Joomla\Application\AbstractApplication::get
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testLoadSystemUrisWithoutSiteUriWithRelativeMediaUriSet()
 	{
-		$mockInput = new Input(array());
+		$_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+		$_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-			->setConstructorArgs(array(array('media_uri' => '/media/')))
+		$mockInput = new Input([]);
+
+		$mockConfig = $this->getMockBuilder(Registry::class)
+			->setConstructorArgs([['media_uri' => '/media/']])
 			->enableProxyingToOriginalMethods()
 			->getMock();
 
-		// Mock the Input object internals
-		$mockServerInput = new Input(
-			array(
-				'SCRIPT_NAME' => '/index.php'
-			)
-		);
-
-		$inputInternals = array(
-			'server' => $mockServerInput
-		);
-
-		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
-
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig));
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig]);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1631,99 +1637,50 @@ class AbstractWebApplicationTest extends CompatTestCase
 	}
 
 	/**
-	 * @testdox  Tests a session object is correctly injected into the application and retrieved
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getSession
-	 * @covers  Joomla\Application\AbstractWebApplication::setSession
-	 */
-	public function testSetSession()
-	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
-		$mockSession = $this->getMockBuilder('Joomla\Session\Session')
-			->disableOriginalConstructor()
-			->getMock();
-
-		$this->assertSame($object, $object->setSession($mockSession));
-		$this->assertSame($mockSession, $object->getSession());
-	}
-
-	/**
-	 * @testdox  Tests a RuntimeException is thrown when a Session object is not set to the application
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getSession
-	 * @expectedException  \RuntimeException
-	 */
-	public function testGetSessionForAnException()
-	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
-		$object->getSession();
-	}
-
-	/**
 	 * @testdox  Tests the application correctly detects if a SSL connection is active
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::isSslConnection
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
+	 *
+	 * @backupGlobals enabled
 	 */
 	public function testisSslConnection()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
 		$this->assertFalse($object->isSslConnection());
 
-		$object->input->server->set('HTTPS', 'on');
+		$object->getInput()->server->set('HTTPS', 'on');
 
 		$this->assertTrue($object->isSslConnection());
 	}
 
 	/**
-	 * @testdox  Tests the application correctly retrieves a form token
-	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::getFormToken
-	 * @uses    Joomla\Application\AbstractApplication::set
-	 * @uses    Joomla\Application\AbstractWebApplication::setSession
-	 */
-	public function testGetFormToken()
-	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
-		$mockSession = $this->getMockBuilder('Joomla\\Session\\Session')
-			->disableOriginalConstructor()
-			->getMock();
-
-		$object->setSession($mockSession);
-		$object->set('secret', 'abc');
-		$expected = md5('abc' . 0 . $object->getSession()->getToken());
-
-		$this->assertSame(
-			$expected,
-			$object->getFormToken()
-		);
-	}
-
-	/**
 	 * @testdox  Tests the application correctly approves a valid HTTP Status Code
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::isValidHttpStatus
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testGetHttpStatusValue()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
-		$this->assertTrue(
-			$object->isValidHttpStatus(500)
-		);
+		$this->assertTrue($object->isValidHttpStatus(500));
 	}
 
 	/**
 	 * @testdox  Tests the application correctly rejects a valid HTTP Status Code
 	 *
-	 * @covers  Joomla\Application\AbstractWebApplication::isValidHttpStatus
+	 * @covers  Joomla\Application\AbstractWebApplication
+	 * @uses    Joomla\Application\AbstractApplication
+	 * @uses    Joomla\Application\Web\WebClient
 	 */
 	public function testInvalidHttpStatusValue()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
+		$object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
-		$this->assertFalse(
-			$object->isValidHttpStatus(460)
-		);
+		$this->assertFalse($object->isValidHttpStatus(460));
 	}
 }
