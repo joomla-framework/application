@@ -108,8 +108,6 @@ local pipeline(name, phpversion, params) = {
     },
     pipeline("5.3 lowest", "5.3", "--prefer-stable --prefer-lowest"),
     pipeline("5.3", "5.3", "--prefer-stable"),
-    pipeline("5.4", "5.4", "--prefer-stable"),
-    pipeline("5.5", "5.5", "--prefer-stable"),
     pipeline("5.6", "5.6", "--prefer-stable"),
     pipeline("7.0", "7.0", "--prefer-stable"),
     pipeline("7.1", "7.1", "--prefer-stable"),
