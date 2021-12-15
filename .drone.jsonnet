@@ -51,7 +51,7 @@ local pipeline(name, phpversion, params) = {
                 volumes: volumes,
                 commands: [
                     "php -v",
-                    "composer update",
+                    "composer update --prefer-stable",
                     "composer require phpmd/phpmd phpstan/phpstan"
                 ]
             },
@@ -61,7 +61,7 @@ local pipeline(name, phpversion, params) = {
                 depends: [ "composer" ],
                 commands: [
                     "vendor/bin/phpcs --config-set installed_paths vendor/joomla/coding-standards",
-                    "vendor/bin/phpcs -p --report=full --extensions=php --standard=Joomla src/"
+                    "vendor/bin/phpcs -p --report=full --extensions=php --standard=ruleset.xml src/"
                 ]
             },
             {
