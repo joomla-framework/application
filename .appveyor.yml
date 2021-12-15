@@ -1,0 +1,61 @@
+build: false
+platform:
+  - x64
+clone_folder: C:\projects\filesystem
+
+branches:
+  except:
+    - gh-pages
+
+## Build matrix for lowest and highest possible targets
+environment:
+  PHPBuild: "x64"
+  VC: "vc15"
+  WINCACHE: "2.0.0.8"
+  matrix:
+  - php_ver_target: 5.3.10
+  - php_ver_target: 5.3.29
+  - php_ver_target: 5.4.45
+  - php_ver_target: 7.0.33
+  - php_ver_target: 7.1.33
+  - php_ver_target: 7.2.34
+  - php_ver_target: 7.3.33
+  - php_ver_target: 7.4.26
+  - php_ver_target: 8.0.13
+
+init:
+  - SET PATH=C:\Program Files\OpenSSL;C:\tools\php;%PATH%
+  - SET COMPOSER_NO_INTERACTION=1
+  - SET PHP=1 # This var relates to caching the php install
+  - SET ANSICON=121x90 (121x90)
+
+## Install PHP and composer, and run the appropriate composer command
+install:
+    - IF EXIST C:\tools\php (SET PHP=0)
+    - ps: >-
+        If ($env:PHP -eq "1") {
+            appveyor-retry cinst php --version=$env:php_ver_target --package-parameters='""/InstallDir:C:\tools\php""' --ignore-checksums -y --no-progress --limit-output
+        }
+    - cd C:\tools\php
+    - IF %PHP%==1 copy php.ini-production php.ini /Y
+    - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
+    - IF %PHP%==1 echo extension_dir=ext >> php.ini
+    - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_mbstring.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_fileinfo.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_ftp.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_gd2.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_gmp.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pgsql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_curl.dll >> php.ini
+    - IF %PHP%==1 echo zend_extension=php_opcache.dll >> php.ini
+    - IF %PHP%==1 echo opcache.enable_cli=1 >> php.ini
+    - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
+    - IF %PHP%==1 php -r "readfile('http://getcomposer.org/installer');" | php
+    - cd C:\projects\filesystem
+    - IF NOT %php_ver_target%=="8.0.0" composer update --prefer-stable --no-progress
+    - IF %php_ver_target%=="8.0.0" composer update --prefer-stable --no-progress --ignore-platform-req=php
+
+test_script:
+  - cd C:\projects\filesystem
+  - vendor\bin\phpunit
