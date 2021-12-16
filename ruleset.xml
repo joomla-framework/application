@@ -19,7 +19,9 @@
 		<exclude name="Joomla.NamingConventions.ValidFunctionName.MethodUnderscore"/>
 		<!-- Required due to methods named with snake case -->
 		<exclude name="Joomla.NamingConventions.ValidFunctionName.ScopeNotCamelCaps"/>
-		<exclude name="Joomla.NamingConventions.ValidVariableName.ScopeNotCamelCaps"/>
+		<exclude name="Joomla.NamingConventions.ValidFunctionName.NotCamelCaps"/>
+		<exclude name="Joomla.NamingConventions.ValidVariableName.ClassVarHasUnderscore"/>
+		<exclude name="Joomla.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
 	</rule>
 
 	<rule ref="Joomla.Classes.InstantiateNewClasses">

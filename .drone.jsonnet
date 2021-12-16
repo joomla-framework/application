@@ -56,12 +56,22 @@ local pipeline(name, phpversion, params) = {
                 ]
             },
             {
-                name: "phpcs",
+                name: "phpcs (loose)",
                 image: "joomlaprojects/docker-images:php7.4",
                 depends: [ "composer" ],
                 commands: [
                     "vendor/bin/phpcs --config-set installed_paths vendor/joomla/coding-standards",
                     "vendor/bin/phpcs -p --report=full --extensions=php --standard=ruleset.xml src/"
+                ]
+            },
+            {
+                name: "phpcs (strict)",
+                image: "joomlaprojects/docker-images:php7.4",
+                depends: [ "composer" ],
+                failure: "ignore",
+                commands: [
+                    "vendor/bin/phpcs --config-set installed_paths vendor/joomla/coding-standards",
+                    "vendor/bin/phpcs -p --report=full --extensions=php --standard=Joomla src/"
                 ]
             },
             {
