@@ -106,7 +106,24 @@ local pipeline(name, phpversion, params) = {
             }
         ]
     },
-    pipeline("5.3 lowest", "5.3", "--prefer-stable --prefer-lowest"),
+    {
+        kind: "pipeline",
+        name: "PHP 5.3 lowest",
+        volumes: hostvolumes,
+        steps: [
+            {
+                name: "composer",
+                image: "joomlaprojects/docker-images:php5.3",
+                volumes: volumes,
+                commands: [
+                    "php -v",
+                    "composer update --prefer-stable --prefer-lowest",
+                    "composer update phpunit/phpunit-mock-objects"
+                ]
+            },
+            phpunit("5.3")
+        ]
+    },
     pipeline("5.3", "5.3", "--prefer-stable"),
     pipeline("5.6", "5.6", "--prefer-stable"),
     pipeline("7.0", "7.0", "--prefer-stable"),
