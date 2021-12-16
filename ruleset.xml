@@ -22,6 +22,7 @@
 		<exclude name="Joomla.NamingConventions.ValidFunctionName.NotCamelCaps"/>
 		<exclude name="Joomla.NamingConventions.ValidVariableName.ClassVarHasUnderscore"/>
 		<exclude name="Joomla.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
+		<exclude name="Joomla.NamingConventions.ValidVariableName.NotCamelCaps"/>
 	</rule>
 
 	<rule ref="Joomla.Classes.InstantiateNewClasses">
