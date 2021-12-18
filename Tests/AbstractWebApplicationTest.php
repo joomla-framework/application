@@ -652,7 +652,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		$url = 'index.php';
 
-		$date = new \DateTime('now', new \DateTimeZone('UTC'));
+		$date = new \DateTime('2008-08-07 18:11:31', new \DateTimeZone('UTC'));
 		$object->modifiedDate = $date;
 
 		$object->redirect($url, false);
