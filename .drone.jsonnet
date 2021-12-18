@@ -18,7 +18,9 @@ local composer(phpversion, params) = {
     volumes: volumes,
     commands: [
         "php -v",
-        "composer update " + params
+        "composer update " + params,
+        if phpversion == "8.0" then "composer require --dev --with-all-dependencies phpunit/phpunit:^8.0",
+        if phpversion == "8.1" then "composer require --dev --with-all-dependencies phpunit/phpunit:^8.0",
     ]
 };
 
