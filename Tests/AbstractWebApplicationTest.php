@@ -812,8 +812,7 @@ class AbstractWebApplicationTest extends TestCase
 				['Content-Type: text/html; charset=utf-8', true, null],
 				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
 				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
-				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
-				['Pragma: no-cache', true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, true, null],
 			]
 		);
 	}
@@ -888,8 +887,7 @@ class AbstractWebApplicationTest extends TestCase
 				['Content-Type: text/html; charset=utf-8', true, null],
 				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
 				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
-				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
-				['Pragma: no-cache', true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, true, null],
 			]
 		);
 	}
@@ -963,8 +961,7 @@ class AbstractWebApplicationTest extends TestCase
 				['Content-Type: text/html; charset=utf-8', true, null],
 				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
 				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
-				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
-				['Pragma: no-cache', true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, true, null],
 			]
 		);
 	}
@@ -1159,8 +1156,7 @@ class AbstractWebApplicationTest extends TestCase
 				['Content-Type: text/html; charset=utf-8', true, null],
 				['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
 				['Last-Modified: ' . $date->format('D, d M Y H:i:s e'), true, null],
-				['Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0', true, null],
-				['Pragma: no-cache', true, null],
+				['Cache-Control: no-store, no-cache, must-revalidate, true, null],
 			]
 		);
 	}
