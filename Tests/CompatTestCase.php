@@ -21,12 +21,23 @@ if (version_compare($versionClass::id(), '7.0', '>='))
 	{
 	}
 }
-else
+elseif (version_compare($versionClass::id(), '4.0', '>='))
 {
 	/**
 	 * Compatibility test case used for PHPUnit 6.x and earlier
 	 */
 	abstract class CompatTestCase extends PhpUnit6TestCase
+	{
+	}
+}
+else
+{
+	/**
+	 * Compatibility test case used for PHPUnit 3.x and earlier
+	 *
+	 * @since 1.4.0
+	 */
+	abstract class TestCase extends PhpUnit3TestCase
 	{
 	}
 }

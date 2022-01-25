@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php" colors="false">
+<phpunit bootstrap="Tests/bootstrap.php" colors="false">
 	<testsuites>
 		<testsuite name="Unit">
 			<directory>Tests</directory>
@@ -7,6 +7,18 @@
 	</testsuites>
     <php>
 		<env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
-        <const name="JPATH_ROOT" value="__DIR__" />
-    </php>
+	</php>
+
+	<!--
+	<logging>
+		<log type="coverage-clover" target="build/logs/clover.xml" />
+		<log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false" />
+	</logging>
+	-->
+
+	<filter>
+		<whitelist addUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">src</directory>
+		</whitelist>
+	</filter>
 </phpunit>
