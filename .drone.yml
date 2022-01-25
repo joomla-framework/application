@@ -106,8 +106,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -136,8 +134,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -166,8 +162,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -196,8 +190,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -226,8 +218,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -256,8 +246,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -286,8 +274,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -316,8 +302,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - composer require --dev --with-all-dependencies phpunit/phpunit:^8.0
-  - ""
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -326,7 +310,6 @@ steps:
   image: joomlaprojects/docker-images:php8.0
   commands:
   - vendor/bin/phpunit
-  failure: ignore
 
 volumes:
 - name: composer-cache
@@ -347,8 +330,6 @@ steps:
   commands:
   - php -v
   - composer update --prefer-stable
-  - ""
-  - composer require --dev --with-all-dependencies phpunit/phpunit:^8.0
   volumes:
   - name: composer-cache
     path: /tmp/composer-cache
@@ -357,7 +338,6 @@ steps:
   image: joomlaprojects/docker-images:php8.1
   commands:
   - vendor/bin/phpunit
-  failure: ignore
 
 volumes:
 - name: composer-cache
@@ -366,6 +346,6 @@ volumes:
 
 ---
 kind: signature
-hmac: d65b4ae2f08af797fb3d8964bf777a2ec1cb99d1d04f8f9549e8fd16b557153a
+hmac: 0c8fea5352315614dfe6f4b85637f9f8636903a27a80b6068e52a4d76db9bcd6
 
 ...
