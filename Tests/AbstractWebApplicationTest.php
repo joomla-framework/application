@@ -355,12 +355,6 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		TestHelper::invoke($object, 'compress');
 
-		// Ensure that the compressed body is shorter than the raw body.
-		$this->assertLessThan(
-			\strlen($mockResponse->body[0]),
-			$object->getBody()
-		);
-
 		// Ensure that the compression headers were set.
 		$this->assertSame(
 			[
