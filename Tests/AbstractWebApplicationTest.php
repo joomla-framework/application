@@ -212,7 +212,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 		}
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-						   ->setConstructorArgs([array('gzip' => true)])
+						   ->setConstructorArgs(array(array('gzip' => true)))
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
@@ -266,7 +266,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$object->expects($this->once())->method('checkHeadersSent')->willReturn(false);
 
 		// Mock a response.
-		$mockResponse = (object)[
+		$mockResponse = (object)array(
 			'cachable' => null,
 			'headers'  => null,
 			'body'     => array(
@@ -277,7 +277,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 				sunt in culpa qui officia deserunt mollit anim id est laborum.',
 			),
-		];
+		);
 
 		TestHelper::setValue(
 			$object,
@@ -334,7 +334,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$object->expects($this->once())->method('checkHeadersSent')->willReturn(false);
 
 		// Mock a response.
-		$mockResponse = (object)[
+		$mockResponse = (object)array(
 			'cachable' => null,
 			'headers'  => null,
 			'body'     => array(
@@ -345,7 +345,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 				sunt in culpa qui officia deserunt mollit anim id est laborum.',
 			),
-		];
+		);
 
 		TestHelper::setValue(
 			$object,
@@ -393,7 +393,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		// Mock a response.
-		$mockResponse = (object)[
+		$mockResponse = (object)array(
 			'cachable' => null,
 			'headers'  => null,
 			'body'     => array(
@@ -408,7 +408,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.'
 				),
 			),
-		];
+		);
 
 		TestHelper::setValue(
 			$object,
@@ -450,7 +450,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		// Mock a response.
-		$mockResponse = (object)[
+		$mockResponse = (object)array(
 			'cachable' => null,
 			'headers'  => null,
 			'body'     => array(
@@ -465,7 +465,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.'
 				),
 			),
-		];
+		);
 
 		TestHelper::setValue(
 			$object,
@@ -506,7 +506,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		// Mock a response.
-		$mockResponse = (object)[
+		$mockResponse = (object)array(
 			'cachable' => null,
 			'headers'  => null,
 			'body'     => array(
@@ -521,7 +521,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				sunt in culpa qui officia deserunt mollit anim id est laborum.'
 				),
 			),
-		];
+		);
 
 		TestHelper::setValue(
 			$object,
@@ -1469,7 +1469,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 	{
 		$mockInput = new Input(array());
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->setConstructorArgs([array('media_uri' => '/media/')]
+		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->setConstructorArgs(array(array('media_uri' => '/media/'))
 			)->enableProxyingToOriginalMethods()->getMock();
 
 		// Mock the Input object internals
