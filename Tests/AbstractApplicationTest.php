@@ -78,7 +78,7 @@ class AbstractApplicationTest extends CompatTestCase
 		$mockInput = $this->getMockBuilder('Joomla\Input\Input')->getMock();
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-						   ->setConstructorArgs([array('foo' => 'bar')])
+						   ->setConstructorArgs(array(array('foo' => 'bar')))
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
