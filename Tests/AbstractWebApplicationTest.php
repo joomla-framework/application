@@ -41,7 +41,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 *
 	 * @var  array
 	 */
-	private static $headers = [];
+	private static $headers = array();
 
 	/**
 	 * {@inheritdoc}
@@ -49,7 +49,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 	protected function doTearDown()
 	{
 		// Reset the $headers array
-		self::$headers = [];
+		self::$headers = array();
 
 		parent::doTearDown();
 	}
@@ -63,9 +63,9 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function getDetectRequestUriData()
 	{
-		return [
+		return array(
 			// HTTPS, PHP_SELF, REQUEST_URI, HTTP_HOST, SCRIPT_NAME, QUERY_STRING, (resulting uri)
-			[
+			array(
 				null,
 				'/j/index.php',
 				'/j/index.php?foo=bar',
@@ -73,8 +73,8 @@ class AbstractWebApplicationTest extends CompatTestCase
 				'/j/index.php',
 				'',
 				'http://joom.la:3/j/index.php?foo=bar',
-			],
-			[
+			),
+			array(
 				'on',
 				'/j/index.php',
 				'/j/index.php?foo=bar',
@@ -82,10 +82,10 @@ class AbstractWebApplicationTest extends CompatTestCase
 				'/j/index.php',
 				'',
 				'https://joom.la:3/j/index.php?foo=bar',
-			],
-			[null, '', '', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php'],
-			[null, '', '', 'joom.la:3', '/j/index.php', 'foo=bar', 'http://joom.la:3/j/index.php?foo=bar'],
-		];
+			),
+			array(null, '', '', 'joom.la:3', '/j/index.php', '', 'http://joom.la:3/j/index.php'),
+			array(null, '', '', 'joom.la:3', '/j/index.php', 'foo=bar', 'http://joom.la:3/j/index.php?foo=bar'),
+		);
 	}
 
 	/**
@@ -95,11 +95,11 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function getRedirectData()
 	{
-		return [
+		return array(
 			// Note: url, (expected result)
-			'with_leading_slash'    => ['/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'],
-			'without_leading_slash' => ['foo', 'http://' . self::TEST_HTTP_HOST . '/foo'],
-		];
+			'with_leading_slash'    => array('/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'),
+			'without_leading_slash' => array('foo', 'http://' . self::TEST_HTTP_HOST . '/foo'),
+		);
 	}
 
 	/**
@@ -115,7 +115,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public static function mockHeader($string, $replace = true, $code = null)
 	{
-		self::$headers[] = [$string, $replace, $code];
+		self::$headers[] = array($string, $replace, $code);
 	}
 
 	/**
@@ -139,24 +139,24 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function test__constructDependencyInjection()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input(['HTTP_HOST' => self::TEST_HTTP_HOST]);
+		$mockServerInput = new Input(array('HTTP_HOST' => self::TEST_HTTP_HOST));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			[$mockInput, $mockConfig, $mockClient]
+			array($mockInput, $mockConfig, $mockClient)
 		);
 
 		$this->assertSame($mockInput, $object->input);
@@ -186,10 +186,10 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			[
+			array(
 				'name'  => 'Content-Type',
 				'value' => 'text/html; charset=utf-8',
-			],
+			),
 			$headers[0]
 		);
 
@@ -212,11 +212,11 @@ class AbstractWebApplicationTest extends CompatTestCase
 		}
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-						   ->setConstructorArgs([['gzip' => true]])
+						   ->setConstructorArgs([array('gzip' => true)])
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, $mockConfig]);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, $mockConfig));
 		$object->expects($this->once())->method('doExecute');
 
 		// execute() has no return, with our mock nothing should happen but ensuring that the mock's doExecute() stub is triggered
@@ -227,10 +227,10 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			[
+			array(
 				'name'  => 'Content-Type',
 				'value' => 'text/html; charset=utf-8',
-			],
+			),
 			$headers[0]
 		);
 
@@ -247,21 +247,21 @@ class AbstractWebApplicationTest extends CompatTestCase
 	public function testCompressWithGzipEncoding()
 	{
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->setConstructorArgs(
-				[null, 'gzip, deflate']
+				array(null, 'gzip, deflate')
 			)->enableProxyingToOriginalMethods()->getMock();
 
 		// Mock the client internals to show encoding has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['acceptEncoding' => true]);
-		TestHelper::setValue($mockClient, 'encodings', ['gzip', 'deflate']);
+		TestHelper::setValue($mockClient, 'detection', array('acceptEncoding' => true));
+		TestHelper::setValue($mockClient, 'encodings', array('gzip', 'deflate'));
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			[null, null, $mockClient],
+			array(null, null, $mockClient),
 			'',
 			true,
 			true,
 			true,
-			['checkHeadersSent']
+			array('checkHeadersSent')
 		);
 		$object->expects($this->once())->method('checkHeadersSent')->willReturn(false);
 
@@ -269,14 +269,14 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$mockResponse = (object)[
 			'cachable' => null,
 			'headers'  => null,
-			'body'     => [
+			'body'     => array(
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 				sunt in culpa qui officia deserunt mollit anim id est laborum.',
-			],
+			),
 		];
 
 		TestHelper::setValue(
@@ -295,11 +295,11 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		// Ensure that the compression headers were set.
 		$this->assertSame(
-			[
-				0 => ['name' => 'Content-Encoding', 'value' => 'gzip'],
-				1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
-				2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
-			],
+			array(
+				0 => array('name' => 'Content-Encoding', 'value' => 'gzip'),
+				1 => array('name' => 'Vary', 'value' => 'Accept-Encoding'),
+				2 => array('name' => 'X-Content-Encoded-By', 'value' => 'Joomla'),
+			),
 			$object->getHeaders()
 		);
 	}
@@ -314,22 +314,22 @@ class AbstractWebApplicationTest extends CompatTestCase
 	public function testCompressWithDeflateEncoding()
 	{
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
-						   ->setConstructorArgs([null, 'deflate'])
+						   ->setConstructorArgs(array(null, 'deflate'))
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
 		// Mock the client internals to show encoding has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['acceptEncoding' => true]);
-		TestHelper::setValue($mockClient, 'encodings', ['deflate', 'gzip']);
+		TestHelper::setValue($mockClient, 'detection', array('acceptEncoding' => true));
+		TestHelper::setValue($mockClient, 'encodings', array('deflate', 'gzip'));
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			[null, null, $mockClient],
+			array(null, null, $mockClient),
 			'',
 			true,
 			true,
 			true,
-			['checkHeadersSent']
+			array('checkHeadersSent')
 		);
 		$object->expects($this->once())->method('checkHeadersSent')->willReturn(false);
 
@@ -337,14 +337,14 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$mockResponse = (object)[
 			'cachable' => null,
 			'headers'  => null,
-			'body'     => [
+			'body'     => array(
 				'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 				sunt in culpa qui officia deserunt mollit anim id est laborum.',
-			],
+			),
 		];
 
 		TestHelper::setValue(
@@ -357,11 +357,11 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		// Ensure that the compression headers were set.
 		$this->assertSame(
-			[
-				0 => ['name' => 'Content-Encoding', 'value' => 'deflate'],
-				1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
-				2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
-			],
+			array(
+				0 => array('name' => 'Content-Encoding', 'value' => 'deflate'),
+				1 => array('name' => 'Vary', 'value' => 'Accept-Encoding'),
+				2 => array('name' => 'X-Content-Encoded-By', 'value' => 'Joomla'),
+			),
 			$object->getHeaders()
 		);
 	}
@@ -380,23 +380,23 @@ class AbstractWebApplicationTest extends CompatTestCase
 						   ->getMock();
 
 		// Mock the client internals to show encoding has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['acceptEncoding' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('acceptEncoding' => true));
 
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractWebApplication',
-			[null, null, $mockClient],
+			array(null, null, $mockClient),
 			'',
 			true,
 			true,
 			true,
-			['checkHeadersSent']
+			array('checkHeadersSent')
 		);
 
 		// Mock a response.
 		$mockResponse = (object)[
 			'cachable' => null,
 			'headers'  => null,
-			'body'     => [
+			'body'     => array(
 				str_replace(
 					"\r\n",
 					"\n",
@@ -407,7 +407,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 				sunt in culpa qui officia deserunt mollit anim id est laborum.'
 				),
-			],
+			),
 		];
 
 		TestHelper::setValue(
@@ -438,22 +438,22 @@ class AbstractWebApplicationTest extends CompatTestCase
 	public function testCompressWithHeadersSent()
 	{
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
-						   ->setConstructorArgs([null, 'deflate'])
+						   ->setConstructorArgs(array(null, 'deflate'))
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
 		// Mock the client internals to show encoding has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['acceptEncoding' => true]);
-		TestHelper::setValue($mockClient, 'encodings', ['deflate', 'gzip']);
+		TestHelper::setValue($mockClient, 'detection', array('acceptEncoding' => true));
+		TestHelper::setValue($mockClient, 'encodings', array('deflate', 'gzip'));
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, null, $mockClient]
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient)
 		);
 
 		// Mock a response.
 		$mockResponse = (object)[
 			'cachable' => null,
 			'headers'  => null,
-			'body'     => [
+			'body'     => array(
 				str_replace(
 					"\r\n",
 					"\n",
@@ -464,7 +464,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 				sunt in culpa qui officia deserunt mollit anim id est laborum.'
 				),
-			],
+			),
 		];
 
 		TestHelper::setValue(
@@ -499,17 +499,17 @@ class AbstractWebApplicationTest extends CompatTestCase
 						   ->getMock();
 
 		// Mock the client internals to show encoding has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['acceptEncoding' => true]);
-		TestHelper::setValue($mockClient, 'encodings', ['foo', 'bar']);
+		TestHelper::setValue($mockClient, 'detection', array('acceptEncoding' => true));
+		TestHelper::setValue($mockClient, 'encodings', array('foo', 'bar'));
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, null, $mockClient]
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, null, $mockClient)
 		);
 
 		// Mock a response.
 		$mockResponse = (object)[
 			'cachable' => null,
 			'headers'  => null,
-			'body'     => [
+			'body'     => array(
 				str_replace(
 					"\r\n",
 					"\n",
@@ -520,7 +520,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 				dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 				sunt in culpa qui officia deserunt mollit anim id est laborum.'
 				),
-			],
+			),
 		];
 
 		TestHelper::setValue(
@@ -560,10 +560,10 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			[
+			array(
 				'name'  => 'Content-Type',
 				'value' => 'text/html; charset=utf-8',
-			],
+			),
 			$headers[0]
 		);
 
@@ -593,10 +593,10 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$headers = $object->getHeaders();
 
 		$this->assertSame(
-			[
+			array(
 				'name'  => 'Last-Modified',
 				'value' => $modifiedDate->format('D, d M Y H:i:s') . ' GMT',
-			],
+			),
 			$headers[2]
 		);
 
@@ -610,27 +610,27 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirectLegacyBehavior()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['engine' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('engine' => true));
 		TestHelper::setValue(
 			$mockClient,
 			'engine',
@@ -638,16 +638,16 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig, $mockClient],
+												 array($mockInput, $mockConfig, $mockClient),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close', 'header']);
+												 array('checkHeadersSent', 'close', 'header'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
-		$object->expects($this->any())->method('header')->willReturnCallback([$this, 'mockHeader']);
+		$object->expects($this->any())->method('header')->willReturnCallback(array($this, 'mockHeader'));
 
 		$url = 'index.php';
 
@@ -656,19 +656,19 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		$object->redirect($url, false);
 
-		$this->assertSame(self::$headers, [
-											['HTTP/1.1 303 See other', true, 303],
-											['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
-											['Content-Type: text/html; charset=utf-8', true, null],
-											['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
-											['Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null],
-											[
+		$this->assertSame(self::$headers, array(
+											array('HTTP/1.1 303 See other', true, 303),
+											array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
+											array('Content-Type: text/html; charset=utf-8', true, null),
+											array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
+											array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
+											array(
 												'Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
 												true,
 												null,
-											],
-											['Pragma: no-cache', true, null],
-										]);
+											),
+											array('Pragma: no-cache', true, null),
+										));
 	}
 
 	/**
@@ -678,27 +678,27 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirect()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['engine' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('engine' => true));
 		TestHelper::setValue(
 			$mockClient,
 			'engine',
@@ -706,16 +706,16 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig, $mockClient],
+												 array($mockInput, $mockConfig, $mockClient),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close', 'header']);
+												 array('checkHeadersSent', 'close', 'header'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
-		$object->expects($this->any())->method('header')->willReturnCallback([$this, 'mockHeader']);
+		$object->expects($this->any())->method('header')->willReturnCallback(array($this, 'mockHeader'));
 
 		$url = 'index.php';
 
@@ -723,19 +723,19 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$object->modifiedDate = $date;
 		$object->redirect($url);
 
-		$this->assertSame(self::$headers, [
-											['HTTP/1.1 303 See other', true, 303],
-											['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
-											['Content-Type: text/html; charset=utf-8', true, null],
-											['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
-											['Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null],
-											[
+		$this->assertSame(self::$headers, array(
+											array('HTTP/1.1 303 See other', true, 303),
+											array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
+											array('Content-Type: text/html; charset=utf-8', true, null),
+											array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
+											array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
+											array(
 												'Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
 												true,
 												null,
-											],
-											['Pragma: no-cache', true, null],
-										]);
+											),
+											array('Pragma: no-cache', true, null),
+										));
 	}
 
 	/**
@@ -745,27 +745,27 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirectWithExistingStatusCode1()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['engine' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('engine' => true));
 		TestHelper::setValue(
 			$mockClient,
 			'engine',
@@ -773,16 +773,16 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig, $mockClient],
+												 array($mockInput, $mockConfig, $mockClient),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close', 'header']);
+												 array('checkHeadersSent', 'close', 'header'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
-		$object->expects($this->any())->method('header')->willReturnCallback([$this, 'mockHeader']);
+		$object->expects($this->any())->method('header')->willReturnCallback(array($this, 'mockHeader'));
 
 		$url = 'index.php';
 
@@ -792,20 +792,20 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		$object->redirect($url);
 
-		$this->assertSame(self::$headers, [
-											['HTTP/1.1 201 Created', true, 201],
-											['HTTP/1.1 303 See other', true, 303],
-											['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
-											['Content-Type: text/html; charset=utf-8', true, null],
-											['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
-											['Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null],
-											[
+		$this->assertSame(self::$headers, array(
+											array('HTTP/1.1 201 Created', true, 201),
+											array('HTTP/1.1 303 See other', true, 303),
+											array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
+											array('Content-Type: text/html; charset=utf-8', true, null),
+											array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
+											array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
+											array(
 												'Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
 												true,
 												null,
-											],
-											['Pragma: no-cache', true, null],
-										]);
+											),
+											array('Pragma: no-cache', true, null),
+										));
 	}
 
 	/**
@@ -815,27 +815,27 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirectWithAdditionalHeaders()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['engine' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('engine' => true));
 		TestHelper::setValue(
 			$mockClient,
 			'engine',
@@ -843,16 +843,16 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig, $mockClient],
+												 array($mockInput, $mockConfig, $mockClient),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close', 'header']);
+												 array('checkHeadersSent', 'close', 'header'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
-		$object->expects($this->any())->method('header')->willReturnCallback([$this, 'mockHeader']);
+		$object->expects($this->any())->method('header')->willReturnCallback(array($this, 'mockHeader'));
 
 		$url = 'index.php';
 
@@ -861,19 +861,19 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		$object->redirect($url);
 
-		$this->assertSame(self::$headers, [
-											['HTTP/1.1 303 See other', true, 303],
-											['Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null],
-											['Content-Type: text/html; charset=utf-8', true, null],
-											['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
-											['Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null],
-											[
+		$this->assertSame(self::$headers, array(
+											array('HTTP/1.1 303 See other', true, 303),
+											array('Location: http://' . self::TEST_HTTP_HOST . "/$url", true, null),
+											array('Content-Type: text/html; charset=utf-8', true, null),
+											array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
+											array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
+											array(
 												'Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
 												true,
 												null,
-											],
-											['Pragma: no-cache', true, null],
-										]);
+											),
+											array('Pragma: no-cache', true, null),
+										));
 	}
 
 	/**
@@ -883,30 +883,30 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirectWithHeadersSent()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig],
+												 array($mockInput, $mockConfig),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close']);
+												 array('checkHeadersSent', 'close'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(true);
@@ -933,29 +933,29 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirectWithJavascriptRedirect()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')
-						   ->setConstructorArgs(['MSIE'])
+						   ->setConstructorArgs(array('MSIE'))
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['engine' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('engine' => true));
 		TestHelper::setValue(
 			$mockClient,
 			'engine',
@@ -963,12 +963,12 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig, $mockClient],
+												 array($mockInput, $mockConfig, $mockClient),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close', 'header']);
+												 array('checkHeadersSent', 'close', 'header'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
@@ -995,26 +995,26 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirectWithMoved()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['engine' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('engine' => true));
 		TestHelper::setValue(
 			$mockClient,
 			'engine',
@@ -1022,16 +1022,16 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig, $mockClient],
+												 array($mockInput, $mockConfig, $mockClient),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close', 'header']);
+												 array('checkHeadersSent', 'close', 'header'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
-		$object->expects($this->any())->method('header')->willReturnCallback([$this, 'mockHeader']);
+		$object->expects($this->any())->method('header')->willReturnCallback(array($this, 'mockHeader'));
 
 		$url = 'http://j.org/index.php';
 
@@ -1040,19 +1040,19 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		$object->redirect($url, true);
 
-		$this->assertSame(self::$headers, [
-											['HTTP/1.1 301 Moved Permanently', true, 301],
-											['Location: ' . $url, true, null],
-											['Content-Type: text/html; charset=utf-8', true, null],
-											['Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null],
-											['Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null],
-											[
+		$this->assertSame(self::$headers, array(
+											array('HTTP/1.1 301 Moved Permanently', true, 301),
+											array('Location: ' . $url, true, null),
+											array('Content-Type: text/html; charset=utf-8', true, null),
+											array('Expires: Wed, 17 Aug 2005 00:00:00 GMT', true, null),
+											array('Last-Modified: ' . $date->format('D, d M Y H:i:s') . ' GMT', true, null),
+											array(
 												'Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
 												true,
 												null,
-											],
-											['Pragma: no-cache', true, null],
-										]);
+											),
+											array('Pragma: no-cache', true, null),
+										));
 	}
 
 	/**
@@ -1066,26 +1066,26 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testRedirectWithUrl($url, $expected)
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->enableProxyingToOriginalMethods()->getMock();
 
 		$mockClient = $this->getMockBuilder('Joomla\Application\Web\WebClient')->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'HTTP_HOST'   => self::TEST_HTTP_HOST,
 										 'REQUEST_URI' => self::TEST_REQUEST_URI,
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
 		// Mock the client internals to show engine has been detected.
-		TestHelper::setValue($mockClient, 'detection', ['engine' => true]);
+		TestHelper::setValue($mockClient, 'detection', array('engine' => true));
 		TestHelper::setValue(
 			$mockClient,
 			'engine',
@@ -1093,16 +1093,16 @@ class AbstractWebApplicationTest extends CompatTestCase
 		);
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication',
-												 [$mockInput, $mockConfig, $mockClient],
+												 array($mockInput, $mockConfig, $mockClient),
 												 '',
 												 true,
 												 true,
 												 true,
-												 ['checkHeadersSent', 'close', 'header']);
+												 array('checkHeadersSent', 'close', 'header'));
 
 		$object->expects($this->once())->method('close');
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
-		$object->expects($this->any())->method('header')->willReturnCallback([$this, 'mockHeader']);
+		$object->expects($this->any())->method('header')->willReturnCallback(array($this, 'mockHeader'));
 
 		$object->redirect($url);
 
@@ -1137,17 +1137,17 @@ class AbstractWebApplicationTest extends CompatTestCase
 
 		$object->setHeader('foo', 'bar');
 
-		$this->assertSame($object->getHeaders(), [
-												   ['name' => 'foo', 'value' => 'bar'],
-											   ]);
+		$this->assertSame($object->getHeaders(), array(
+												   array('name' => 'foo', 'value' => 'bar'),
+											   ));
 
 		$object->setHeader('foo', 'car', true);
 
 		$this->assertSame(
 			$object->getHeaders(),
-			[
-				['name' => 'foo', 'value' => 'car'],
-			],
+			array(
+				array('name' => 'foo', 'value' => 'car'),
+			),
 			'A header with the same name should be replaced.'
 		);
 	}
@@ -1189,20 +1189,20 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testSendHeaders()
 	{
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [], '', true, true, true,
-												 ['checkHeadersSent', 'header']);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(), '', true, true, true,
+												 array('checkHeadersSent', 'header'));
 
 		$object->expects($this->any())->method('checkHeadersSent')->willReturn(false);
-		$object->expects($this->any())->method('header')->willReturnCallback([$this, 'mockHeader']);
+		$object->expects($this->any())->method('header')->willReturnCallback(array($this, 'mockHeader'));
 
 		$object->setHeader('foo', 'bar');
 		$object->setHeader('Status', 200);
 
 		$this->assertSame($object, $object->sendHeaders());
-		$this->assertSame(self::$headers, [
-											['foo: bar', true, null],
-											['HTTP/1.1 200 OK', true, 200],
-										]);
+		$this->assertSame(self::$headers, array(
+											array('foo: bar', true, null),
+											array('HTTP/1.1 200 OK', true, 200),
+										));
 	}
 
 	/**
@@ -1261,7 +1261,7 @@ class AbstractWebApplicationTest extends CompatTestCase
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication');
 
 		$this->assertSame('', $object->getBody(), 'Returns an empty string by default');
-		$this->assertSame([], $object->getBody(true), 'Returns an empty array when requesting the body as an array');
+		$this->assertSame(array(), $object->getBody(true), 'Returns an empty array when requesting the body as an array');
 	}
 
 	/**
@@ -1280,15 +1280,15 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testDetectRequestUri($https, $phpSelf, $requestUri, $httpHost, $scriptName, $queryString, $expects)
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
-		$serverInputData = [
+		$serverInputData = array(
 			'PHP_SELF'     => $phpSelf,
 			'REQUEST_URI'  => $requestUri,
 			'HTTP_HOST'    => $httpHost,
 			'SCRIPT_NAME'  => $scriptName,
 			'QUERY_STRING' => $queryString,
-		];
+		);
 
 		if ($https !== null) {
 			$serverInputData['HTTPS'] = $https;
@@ -1297,13 +1297,13 @@ class AbstractWebApplicationTest extends CompatTestCase
 		// Mock the Input object internals
 		$mockServerInput = new Input($serverInputData);
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput]);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput));
 
 		$this->assertSame(
 			$expects,
@@ -1320,10 +1320,10 @@ class AbstractWebApplicationTest extends CompatTestCase
 	public function testLoadSystemUrisWithSiteUriSet()
 	{
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->setConstructorArgs(
-				[['site_uri' => 'http://test.joomla.org/path/']]
+				array(array('site_uri' => 'http://test.joomla.org/path/'))
 			)->enableProxyingToOriginalMethods()->getMock();
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [null, $mockConfig]);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array(null, $mockConfig));
 
 		TestHelper::invoke($object, 'loadSystemUris');
 
@@ -1361,19 +1361,19 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testLoadSystemUrisWithoutSiteUriSet()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
-		$inputInternals  = [
+									 ));
+		$inputInternals  = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput]);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput));
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1411,24 +1411,24 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testLoadSystemUrisWithoutSiteUriWithMediaUriSet()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->setConstructorArgs(
-				[['media_uri' => 'http://cdn.joomla.org/media/']]
+				array(array('media_uri' => 'http://cdn.joomla.org/media/'))
 			)->enableProxyingToOriginalMethods()->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput, $mockConfig]
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig)
 		);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
@@ -1467,23 +1467,23 @@ class AbstractWebApplicationTest extends CompatTestCase
 	 */
 	public function testLoadSystemUrisWithoutSiteUriWithRelativeMediaUriSet()
 	{
-		$mockInput = new Input([]);
+		$mockInput = new Input(array());
 
-		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->setConstructorArgs([['media_uri' => '/media/']]
+		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')->setConstructorArgs([array('media_uri' => '/media/')]
 			)->enableProxyingToOriginalMethods()->getMock();
 
 		// Mock the Input object internals
-		$mockServerInput = new Input([
+		$mockServerInput = new Input(array(
 										 'SCRIPT_NAME' => '/index.php',
-									 ]);
+									 ));
 
-		$inputInternals = [
+		$inputInternals = array(
 			'server' => $mockServerInput,
-		];
+		);
 
 		TestHelper::setValue($mockInput, 'inputs', $inputInternals);
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', [$mockInput, $mockConfig]
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractWebApplication', array($mockInput, $mockConfig)
 		);
 
 		TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');

@@ -42,12 +42,12 @@ class AbstractApplicationTest extends CompatTestCase
 	{
 		$object = $this->getMockForAbstractClass(
 			'Joomla\Application\AbstractApplication',
-			[],
+			array(),
 			'',
 			false,
 			true,
 			true,
-			['close']
+			array('close')
 		);
 		$object->expects($this->any())->method('close')->willReturnArgument(0);
 
@@ -78,11 +78,11 @@ class AbstractApplicationTest extends CompatTestCase
 		$mockInput = $this->getMockBuilder('Joomla\Input\Input')->getMock();
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-						   ->setConstructorArgs([['foo' => 'bar']])
+						   ->setConstructorArgs([array('foo' => 'bar')])
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', [$mockInput, $mockConfig]);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array($mockInput, $mockConfig));
 
 		$this->assertSame('bar', $object->get('foo', 'car'), 'Checks a known configuration setting is returned.');
 		$this->assertSame(
@@ -115,11 +115,11 @@ class AbstractApplicationTest extends CompatTestCase
 		$mockInput = $this->getMockBuilder('Joomla\Input\Input')->getMock();
 
 		$mockConfig = $this->getMockBuilder('Joomla\Registry\Registry')
-						   ->setConstructorArgs([['foo' => 'bar']])
+						   ->setConstructorArgs([array('foo' => 'bar')])
 						   ->enableProxyingToOriginalMethods()
 						   ->getMock();
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', [$mockInput, $mockConfig]);
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractApplication', array($mockInput, $mockConfig));
 
 		$this->assertEquals('bar', $object->set('foo', 'car'), 'Checks set returns the previous value.');
 		$this->assertEquals('car', $object->get('foo'), 'Checks the new value has been set.');

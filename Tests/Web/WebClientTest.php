@@ -9,7 +9,7 @@ namespace Joomla\Application\Tests\Web;
 use Joomla\Application\Tests\CompatTestCase;
 use Joomla\Application\Web\WebClient;
 
-require_once __DIR__ . '/Stubs/JWebClientInspector.php';
+require_once dirname(__FILE__) . '/Stubs/JWebClientInspector.php';
 
 /**
  * Test class for Joomla\Application\Web\WebClient.

@@ -39,7 +39,7 @@ class AbstractCliApplicationTest extends CompatTestCase
 		$mockCliInput = $this->getMockBuilder('Joomla\Application\Cli\CliInput')->getMock();;
 
 		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractCliApplication',
-												 [$mockInput, $mockConfig, $mockOutput, $mockCliInput]);
+												 array($mockInput, $mockConfig, $mockOutput, $mockCliInput));
 
 		$this->assertSame($mockInput, $object->input);
 		$this->assertSame($mockOutput, $object->getOutput());
@@ -77,10 +77,10 @@ class AbstractCliApplicationTest extends CompatTestCase
 	 */
 	public function testOut()
 	{
-		$mockOutput = $this->getMockBuilder('Joomla\Application\Cli\Output\Stdout')->setMethods(['out'])->getMock();
+		$mockOutput = $this->getMockBuilder('Joomla\Application\Cli\Output\Stdout')->setMethods(array('out'))->getMock();
 		$mockOutput->expects($this->once())->method('out');
 
-		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractCliApplication', [null, null, $mockOutput]
+		$object = $this->getMockForAbstractClass('Joomla\Application\AbstractCliApplication', array(null, null, $mockOutput)
 		);
 
 		$this->assertSame($object, $object->out('Testing'));
