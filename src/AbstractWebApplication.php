@@ -575,7 +575,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 		{
 			return $this;
 		}
-		
+
 		// Add the header to the internal array.
 		$this->setResponse($response->withAddedHeader($name, $value));
 
