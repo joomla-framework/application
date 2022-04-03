@@ -571,6 +571,11 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 			$response = $response->withoutHeader($name);
 		}
 
+		if (!$replace && $response->hasHeader($name))
+		{
+			return $this;
+		}
+		
 		// Add the header to the internal array.
 		$this->setResponse($response->withAddedHeader($name, $value));
 
