@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of the Joomla Framework Application Package
  *
@@ -17,15 +18,15 @@ use Joomla\Router\ResolvedRoute;
  */
 interface ControllerResolverInterface
 {
-	/**
-	 * Resolve the controller for a route
-	 *
-	 * @param   ResolvedRoute  $route  The route to resolve the controller for
-	 *
-	 * @return  callable
-	 *
-	 * @since   2.0.0
-	 * @throws  \InvalidArgumentException
-	 */
-	public function resolve(ResolvedRoute $route): callable;
+    /**
+     * Resolve the controller for a route
+     *
+     * @param   ResolvedRoute  $route  The route to resolve the controller for
+     *
+     * @return  callable
+     *
+     * @since   2.0.0
+     * @throws  \InvalidArgumentException
+     */
+    public function resolve(ResolvedRoute $route): callable;
 }

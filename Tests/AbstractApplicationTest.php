@@ -28,8 +28,8 @@ class AbstractApplicationTest extends TestCase
 	 */
 	public function test__constructDefaultBehaviour()
 	{
-		$startTime      = time();
-		$startMicrotime = microtime(true);
+		$startTime      = \time();
+		$startMicrotime = \microtime(true);
 
 		$object = $this->getMockForAbstractClass(AbstractApplication::class);
 
@@ -42,7 +42,7 @@ class AbstractApplicationTest extends TestCase
 		// Validate default configuration data is written
 		$executionDateTime = new \DateTime($object->get('execution.datetime'));
 
-		$this->assertSame(date('Y'), $executionDateTime->format('Y'));
+		$this->assertSame(\date('Y'), $executionDateTime->format('Y'));
 		$this->assertGreaterThanOrEqual($startTime, $object->get('execution.timestamp'));
 		$this->assertGreaterThanOrEqual($startMicrotime, $object->get('execution.microtimestamp'));
 	}
@@ -65,7 +65,7 @@ class AbstractApplicationTest extends TestCase
 	}
 
 	/**
-	 * @testdox  Tests that close() exits the application with the given code
+	 * @testdox  Tests that \close() exits the application with the given code
 	 *
 	 * @covers  Joomla\Application\AbstractApplication
 	 */

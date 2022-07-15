@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of the Joomla Framework Application Package
  *
@@ -19,52 +20,52 @@ use Joomla\Event\Event;
  */
 class ApplicationErrorEvent extends ApplicationEvent
 {
-	/**
-	 * The Throwable object with the error data.
-	 *
-	 * @var    \Throwable
-	 * @since  2.0.0
-	 */
-	private $error;
+    /**
+     * The Throwable object with the error data.
+     *
+     * @var    \Throwable
+     * @since  2.0.0
+     */
+    private $error;
 
-	/**
-	 * Event constructor.
-	 *
-	 * @param   \Throwable           $error        The Throwable object with the error data.
-	 * @param   AbstractApplication  $application  The active application.
-	 *
-	 * @since   2.0.0
-	 */
-	public function __construct(\Throwable $error, AbstractApplication $application)
-	{
-		parent::__construct(ApplicationEvents::ERROR, $application);
+    /**
+     * Event constructor.
+     *
+     * @param   \Throwable           $error        The Throwable object with the error data.
+     * @param   AbstractApplication  $application  The active application.
+     *
+     * @since   2.0.0
+     */
+    public function __construct(\Throwable $error, AbstractApplication $application)
+    {
+        parent::__construct(ApplicationEvents::ERROR, $application);
 
-		$this->error = $error;
-	}
+        $this->error = $error;
+    }
 
-	/**
-	 * Get the error object.
-	 *
-	 * @return  \Throwable
-	 *
-	 * @since   2.0.0
-	 */
-	public function getError(): \Throwable
-	{
-		return $this->error;
-	}
+    /**
+     * Get the error object.
+     *
+     * @return  \Throwable
+     *
+     * @since   2.0.0
+     */
+    public function getError(): \Throwable
+    {
+        return $this->error;
+    }
 
-	/**
-	 * Set the error object.
-	 *
-	 * @param   \Throwable  $error  The error object to set to the event.
-	 *
-	 * @return  void
-	 *
-	 * @since   2.0.0
-	 */
-	public function setError(\Throwable $error): void
-	{
-		$this->error = $error;
-	}
+    /**
+     * Set the error object.
+     *
+     * @param   \Throwable  $error  The error object to set to the event.
+     *
+     * @return  void
+     *
+     * @since   2.0.0
+     */
+    public function setError(\Throwable $error): void
+    {
+        $this->error = $error;
+    }
 }
