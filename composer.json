@@ -1,10 +1,39 @@
 {
     "name": "joomla/application",
-    "type": "joomla-package",
     "description": "Joomla Application Package",
-    "keywords": ["joomla", "framework", "application"],
+    "type": "library",
+    "keywords": [
+        "joomla",
+        "framework",
+        "application",
+        "joomla-package"
+    ],
     "homepage": "https://github.com/joomla-framework/application",
+    "readme": "https://github.com/joomla-framework/application/README.md",
     "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "The Joomla! Project",
+            "homepage": "https://framework.joomla.org/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/joomla-framework/application/issues",
+        "forum": "https://groups.google.com/g/joomla-dev-framework",
+        "wiki": "https://github.com/joomla-framework/application/wiki",
+        "docs": "https://developer.joomla.org/framework/documentation.html",
+        "source": "https://github.com/joomla-framework/application"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/joomla"
+        },
+        {
+            "type": "custom",
+            "url": "https://community.joomla.org/sponsorship-campaigns.html"
+        }
+    ],
     "require": {
         "php": "^7.2.5|~8.0.0|~8.1.0",
         "ext-json": "*",
@@ -16,7 +45,6 @@
         "symfony/deprecation-contracts": "^2.1"
     },
     "require-dev": {
-        "joomla/coding-standards": "^3.0@dev",
         "joomla/controller": "^2.0",
         "joomla/di": "^2.0",
         "joomla/input": "^2.0",
@@ -25,7 +53,8 @@
         "joomla/test": "^2.0",
         "joomla/uri": "^2.0",
         "phpunit/phpunit": "^8.5|^9.0",
-        "symfony/phpunit-bridge": "^3.4.26|^4.1.12|^4.2.7|^5.0"
+        "symfony/phpunit-bridge": "^3.4.26|^4.1.12|^4.2.7|^5.0",
+        "squizlabs/php_codesniffer": "^3.4"
     },
     "conflict": {
         "joomla/di": "<1.5",
@@ -35,6 +64,7 @@
         "joomla/uri": "<1.1"
     },
     "suggest": {
+        "ext-json": "To use JSON format, ext-json is required",
         "joomla/controller": "^2.0 To support resolving ControllerInterface objects in ControllerResolverInterface, install joomla/controller",
         "joomla/input": "^2.0 To use WebApplicationInterface, install joomla/input",
         "joomla/router": "^2.0 To use WebApplication or ControllerResolverInterface implementations, install joomla/router",
@@ -53,6 +83,27 @@
         }
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "testdox": "vendor/bin/phpunit --testdox",
+        "coverage": "vendor/bin/phpunit --coverage-html build/coverage",
+        "sign": [
+            "drone jsonnet --stream",
+            "drone sign joomla-framework/application --save"
+        ],
+        "style": [
+            "vendor/bin/phpcbf --report=full --extensions=php --standard=PSR12 src/",
+            "vendor/bin/phpcs --report=full --extensions=php --standard=PSR12 src/"
+        ]
+    },
+    "scripts-descriptions": {
+        "test": "Run the PHPUnit tests",
+        "testdox": "Run the PHPUnit tests and output the result in testdox format",
+        "coverage": "Run the PHPUnit tests and write an HTML coverage report to build/coverage",
+        "sign": "Compile .drone.jsonnet and sign the resulting YML file. Make sure to have set DRONE_SERVER and DRONE_TOKEN properly.",
+        "style": "Fix any style issues that can be fixed automatically and run a check afterwards to list issues that could not be solved."
+    },
     "extra": {
         "branch-alias": {
             "dev-2.0-dev": "2.0-dev"

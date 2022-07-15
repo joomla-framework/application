@@ -56,7 +56,7 @@ class ContainerControllerResolverTest extends TestCase
 	{
 		$callable = $this->resolver->resolve(new ResolvedRoute(Controller::class, [], '/'));
 
-		$this->assertTrue(is_callable($callable));
+		$this->assertTrue(\is_callable($callable));
 		$this->assertInstanceOf(Controller::class, $callable[0]);
 	}
 

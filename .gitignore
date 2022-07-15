@@ -10,6 +10,6 @@ vendor/
 composer.phar
 composer.lock
 phpunit.xml
-.phpunit.result.cache
+.phpunit.cache/
 .idea/
 /.phpunit.cache/
