@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright  (C) 2018 Open Source Matters, Inc. <https://www.joomla.org>
  * @license    GNU General Public License version 2 or later; see LICENSE
@@ -20,52 +21,52 @@ use PHPUnit\Framework\TestCase;
  */
 class WebApplicationTest extends TestCase
 {
-	/**
-	 * @testdox  Tests that the application is executed successfully.
-	 *
-	 * @covers  Joomla\Application\WebApplication
-	 * @uses    Joomla\Application\AbstractApplication
-	 * @uses    Joomla\Application\AbstractWebApplication
-	 * @uses    Joomla\Application\Web\WebClient
-	 */
-	public function testExecute()
-	{
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+    /**
+     * @testdox  Tests that the application is executed successfully.
+     *
+     * @covers  Joomla\Application\WebApplication
+     * @uses    Joomla\Application\AbstractApplication
+     * @uses    Joomla\Application\AbstractWebApplication
+     * @uses    Joomla\Application\Web\WebClient
+     */
+    public function testExecute()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
 
-		$controller = new class
-		{
-			private $executed = false;
+        $controller = new class
+        {
+            private $executed = false;
 
-			public function __invoke()
-			{
-				$this->executed = true;
-			}
+            public function __invoke()
+            {
+                $this->executed = true;
+            }
 
-			public function isExecuted(): bool
-			{
-				return $this->executed === true;
-			}
-		};
+            public function isExecuted(): bool
+            {
+                return $this->executed === true;
+            }
+        };
 
-		$route = new ResolvedRoute($controller, [], '/');
+        $route = new ResolvedRoute($controller, [], '/');
 
-		$router = $this->createMock(RouterInterface::class);
+        $router = $this->createMock(RouterInterface::class);
 
-		$router->expects($this->once())
-			->method('parseRoute')
-			->willReturn($route);
+        $router->expects($this->once())
+            ->method('parseRoute')
+            ->willReturn($route);
 
-		$resolver = $this->createMock(ControllerResolverInterface::class);
+        $resolver = $this->createMock(ControllerResolverInterface::class);
 
-		$resolver->expects($this->once())
-			->method('resolve')
-			->with($route)
-			->willReturn($controller);
+        $resolver->expects($this->once())
+            ->method('resolve')
+            ->with($route)
+            ->willReturn($controller);
 
-		$mockInput = new Input([]);
+        $mockInput = new Input([]);
 
-		(new WebApplication($resolver, $router, $mockInput))->execute();
+        (new WebApplication($resolver, $router, $mockInput))->execute();
 
-		$this->assertTrue($controller->isExecuted());
-	}
+        $this->assertTrue($controller->isExecuted());
+    }
 }
