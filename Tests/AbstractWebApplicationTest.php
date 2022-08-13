@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright  (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
  * @license    GNU General Public License version 2 or later; see LICENSE
@@ -143,7 +144,7 @@ class AbstractWebApplicationTest extends TestCase
      * @uses     \Joomla\Application\AbstractApplication
      * @uses     \Joomla\Application\Web\WebClient
      */
-    public function test__constructDefaultBehaviour()
+    public function testConstructDefaultBehaviour()
     {
         $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
@@ -159,7 +160,7 @@ class AbstractWebApplicationTest extends TestCase
      *
      * @backupGlobals enabled
      */
-    public function test__constructDependencyInjection()
+    public function testConstructDependencyInjection()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
@@ -195,7 +196,7 @@ class AbstractWebApplicationTest extends TestCase
      * @uses     \Joomla\Application\AbstractApplication
      * @uses     \Joomla\Application\Web\WebClient
      */
-    public function test__getDeprecatedInputReadAccess()
+    public function testGetDeprecatedInputReadAccess()
     {
         $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
