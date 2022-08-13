@@ -4,12 +4,14 @@
  * Part of the Joomla Framework Application Package
  *
  * @copyright  (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @license        GNU General Public License version 2 or later; see LICENSE
  */
 
 namespace Joomla\Application;
 
+use Joomla\Application\Event\ApplicationErrorEvent;
 use Joomla\Application\Exception\UnableToWriteBody;
+use Joomla\Application\Web\WebClient;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Uri\Uri;
@@ -164,38 +166,38 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
     /**
      * Class constructor.
      *
-     * @param  \Joomla\Input\Input|null                  $input     An optional argument to provide dependency
-     *                                                              injection for the application's input object.  If
-     *                                                              the argument is an Input object that object will
-     *                                                              become the application's input object, otherwise a
-     *                                                              default input object is created.
-     * @param  \Joomla\Registry\Registry|null            $config    An optional argument to provide dependency
-     *                                                              injection for the application's config object.  If
-     *                                                              the argument is a Registry object that object will
-     *                                                              become the application's config object, otherwise a
-     *                                                              default config object is created.
-     * @param  \Joomla\Application\Web\WebClient|null    $client    An optional argument to provide dependency
-     *                                                              injection for the application's client object.  If
-     *                                                              the argument is a Web\WebClient object that object
-     *                                                              will become the application's client object,
-     *                                                              otherwise a default client object is created.
-     * @param  \Psr\Http\Message\ResponseInterface|null  $response  An optional argument to provide dependency
-     *                                                              injection for the application's response object.
-     *                                                              If the argument is a ResponseInterface object that
-     *                                                              object will become the application's response
-     *                                                              object, otherwise a default response object is
-     *                                                              created.
+     * @param  Input|null              $input     An optional argument to provide dependency
+     *                                            injection for the application's input object.  If
+     *                                            the argument is an Input object that object will
+     *                                            become the application's input object, otherwise a
+     *                                            default input object is created.
+     * @param  Registry|null           $config    An optional argument to provide dependency
+     *                                            injection for the application's config object.  If
+     *                                            the argument is a Registry object that object will
+     *                                            become the application's config object, otherwise a
+     *                                            default config object is created.
+     * @param  WebClient|null          $client    An optional argument to provide dependency
+     *                                            injection for the application's client object.  If
+     *                                            the argument is a Web\WebClient object that object
+     *                                            will become the application's client object,
+     *                                            otherwise a default client object is created.
+     * @param  ResponseInterface|null  $response  An optional argument to provide dependency
+     *                                            injection for the application's response object.
+     *                                            If the argument is a ResponseInterface object that
+     *                                            object will become the application's response
+     *                                            object, otherwise a default response object is
+     *                                            created.
      *
      * @since   1.0.0
      */
     public function __construct(
         Input $input = null,
         Registry $config = null,
-        Web\WebClient $client = null,
+        WebClient $client = null,
         ResponseInterface $response = null
     ) {
         $this->input  = $input ?: new Input();
-        $this->client = $client ?: new Web\WebClient();
+        $this->client = $client ?: new WebClient();
 
         // Setup the response object.
         if (!$response) {
@@ -216,7 +218,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @param  string  $name  The name of the property.
      *
-     * @return  \Joomla\Input\Input|null   A value if the property name is valid, null otherwise.
+     * @return Input|null A value if the property name is valid, null otherwise.
      *
      * @since       2.0.0
      * @deprecated  3.0  This is a B/C proxy for deprecated read accesses
@@ -277,7 +279,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
                 $this->compress();
             }
         } catch (\Throwable $throwable) {
-            $this->dispatchEvent(ApplicationEvents::ERROR, new Event\ApplicationErrorEvent($throwable, $this));
+            $this->dispatchEvent(ApplicationEvents::ERROR, new ApplicationErrorEvent($throwable, $this));
         }
 
         $this->dispatchEvent(ApplicationEvents::BEFORE_RESPOND);
@@ -468,7 +470,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         if ($this->checkHeadersSent()) {
             // If the headers have already been sent we need to send the redirect statement via JavaScript.
             echo '<script>document.location.href=' . \json_encode($url) . ";</script>\n";
-        } elseif (($this->client->engine == Web\WebClient::TRIDENT) && !static::isAscii($url)) {
+        } elseif (($this->client->engine == WebClient::TRIDENT) && !static::isAscii($url)) {
             // We have to use a JavaScript redirect here because MSIE doesn't play nice with UTF-8 URLs.
             $html = '<html><head>';
             $html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';

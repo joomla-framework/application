@@ -2,7 +2,7 @@
 
 /**
  * @copyright  (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @license        GNU General Public License version 2 or later; see LICENSE
  */
 
 namespace Joomla\Application\Tests;
@@ -13,7 +13,7 @@ use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
-use Laminas\Diactoros\Response;
+use Laminas\Diactoros\Response\TextResponse;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -347,7 +347,7 @@ class AbstractWebApplicationTest extends TestCase
             ->willReturn(false);
 
         // Mock a response.
-        $response = new Response\TextResponse(
+        $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -418,7 +418,7 @@ class AbstractWebApplicationTest extends TestCase
             ->willReturn(false);
 
         // Mock a response.
-        $response = new Response\TextResponse(
+        $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -479,7 +479,7 @@ class AbstractWebApplicationTest extends TestCase
             ->getMockForAbstractClass();
 
         // Mock a response.
-        $response = new Response\TextResponse(
+        $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -536,7 +536,7 @@ class AbstractWebApplicationTest extends TestCase
         $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, null, $mockClient]);
 
         // Mock a response.
-        $response = new Response\TextResponse(
+        $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -593,7 +593,7 @@ class AbstractWebApplicationTest extends TestCase
         $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, null, $mockClient]);
 
         // Mock a response.
-        $response = new Response\TextResponse(
+        $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 				veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

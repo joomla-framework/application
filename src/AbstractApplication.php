@@ -4,11 +4,13 @@
  * Part of the Joomla Framework Application Package
  *
  * @copyright  (C) 2013 Open Source Matters, Inc. <https://www.joomla.org>
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @license        GNU General Public License version 2 or later; see LICENSE
  */
 
 namespace Joomla\Application;
 
+use Joomla\Application\Event\ApplicationErrorEvent;
+use Joomla\Application\Event\ApplicationEvent;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Event\DispatcherAwareTrait;
 use Joomla\Event\EventInterface;
@@ -42,10 +44,10 @@ abstract class AbstractApplication implements
     /**
      * Class constructor.
      *
-     * @param  \Joomla\Registry\Registry|null  $config  An optional argument to provide dependency injection for the
-     *                                                  application's config object.  If the argument is a Registry
-     *                                                  object that object will become the application's config object,
-     *                                                  otherwise a default config object is created.
+     * @param  Registry|null  $config  An optional argument to provide dependency injection for the
+     *                                 application's config object.  If the argument is a Registry
+     *                                 object that object will become the application's config object,
+     *                                 otherwise a default config object is created.
      *
      * @since   1.0.0
      */
@@ -94,7 +96,7 @@ abstract class AbstractApplication implements
             return null;
         }
 
-        return $dispatcher->dispatch($eventName, $event ?: new Event\ApplicationEvent($eventName, $this));
+        return $dispatcher->dispatch($eventName, $event ?: new ApplicationEvent($eventName, $this));
     }
 
     /**
@@ -125,7 +127,7 @@ abstract class AbstractApplication implements
 
             $this->dispatchEvent(ApplicationEvents::AFTER_EXECUTE);
         } catch (\Throwable $throwable) {
-            $this->dispatchEvent(ApplicationEvents::ERROR, new Event\ApplicationErrorEvent($throwable, $this));
+            $this->dispatchEvent(ApplicationEvents::ERROR, new ApplicationErrorEvent($throwable, $this));
         }
     }
 

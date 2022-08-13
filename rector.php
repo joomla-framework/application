@@ -13,5 +13,8 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/Tests',
     ]);
 
+    $rectorConfig->importNames(true);
+    $rectorConfig->importShortClasses(false);
+
     $rectorConfig->rule(PublicConstantVisibilityRector::class);
 };
