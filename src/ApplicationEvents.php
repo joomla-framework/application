@@ -24,7 +24,7 @@ final class ApplicationEvents
      * @var    string
      * @since  2.0.0
      */
-    const ERROR = 'application.error';
+    public const ERROR = 'application.error';
 
     /**
      * The BEFORE_EXECUTE event is an event triggered before the application is executed.
@@ -32,7 +32,7 @@ final class ApplicationEvents
      * @var    string
      * @since  2.0.0
      */
-    const BEFORE_EXECUTE = 'application.before_execute';
+    public const BEFORE_EXECUTE = 'application.before_execute';
 
     /**
      * The AFTER_EXECUTE event is an event triggered after the application is executed.
@@ -40,7 +40,7 @@ final class ApplicationEvents
      * @var    string
      * @since  2.0.0
      */
-    const AFTER_EXECUTE = 'application.after_execute';
+    public const AFTER_EXECUTE = 'application.after_execute';
 
     /**
      * The BEFORE_RESPOND event is an event triggered before the application response is sent.
@@ -48,7 +48,7 @@ final class ApplicationEvents
      * @var    string
      * @since  2.0.0
      */
-    const BEFORE_RESPOND = 'application.before_respond';
+    public const BEFORE_RESPOND = 'application.before_respond';
 
     /**
      * The AFTER_RESPOND event is an event triggered after the application response is sent.
@@ -56,5 +56,5 @@ final class ApplicationEvents
      * @var    string
      * @since  2.0.0
      */
-    const AFTER_RESPOND = 'application.after_respond';
+    public const AFTER_RESPOND = 'application.after_respond';
 }

@@ -22,7 +22,7 @@ namespace Joomla\Application\Web;
  * @property-read  string   $userAgent       The web client's user agent string.
  * @property-read  string   $acceptEncoding  The web client's accepted encoding string.
  * @property-read  string   $acceptLanguage  The web client's accepted languages string.
- * @property-read  array    $detection       An array of flags determining whether or not a detection routine has been run.
+ * @property-read  array    $detection       An array of flags determining whether a detection routine has been run.
  * @property-read  boolean  $robot           True if the web client is a robot
  * @property-read  array    $headers         An array of all headers sent by client
  *
@@ -30,31 +30,31 @@ namespace Joomla\Application\Web;
  */
 class WebClient
 {
-    const WINDOWS       = 1;
-    const WINDOWS_PHONE = 2;
-    const WINDOWS_CE    = 3;
-    const IPHONE        = 4;
-    const IPAD          = 5;
-    const IPOD          = 6;
-    const MAC           = 7;
-    const BLACKBERRY    = 8;
-    const ANDROID       = 9;
-    const LINUX         = 10;
-    const TRIDENT       = 11;
-    const WEBKIT        = 12;
-    const GECKO         = 13;
-    const PRESTO        = 14;
-    const KHTML         = 15;
-    const AMAYA         = 16;
-    const IE            = 17;
-    const FIREFOX       = 18;
-    const CHROME        = 19;
-    const SAFARI        = 20;
-    const OPERA         = 21;
-    const ANDROIDTABLET = 22;
-    const EDGE          = 23;
-    const BLINK         = 24;
-    const EDG           = 25;
+    public const WINDOWS       = 1;
+    public const WINDOWS_PHONE = 2;
+    public const WINDOWS_CE    = 3;
+    public const IPHONE        = 4;
+    public const IPAD          = 5;
+    public const IPOD          = 6;
+    public const MAC           = 7;
+    public const BLACKBERRY    = 8;
+    public const ANDROID       = 9;
+    public const LINUX         = 10;
+    public const TRIDENT       = 11;
+    public const WEBKIT        = 12;
+    public const GECKO         = 13;
+    public const PRESTO        = 14;
+    public const KHTML         = 15;
+    public const AMAYA         = 16;
+    public const IE            = 17;
+    public const FIREFOX       = 18;
+    public const CHROME        = 19;
+    public const SAFARI        = 20;
+    public const OPERA         = 21;
+    public const ANDROIDTABLET = 22;
+    public const EDGE          = 23;
+    public const BLINK         = 24;
+    public const EDG           = 25;
 
     /**
      * The detected platform on which the web client runs.
