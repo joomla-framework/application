@@ -187,8 +187,3 @@ steps:
 volumes:
 - name: composer-cache
   path: /tmp/composer-cache
----
-kind: signature
-hmac: 163d274518430d98d4b640995947dbabb960500facabcf51c7454c1703aa7bb1
-
-...

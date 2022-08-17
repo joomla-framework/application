@@ -1,4 +1,4 @@
-local volumes = [
+local hostvolumes = [
     {
         name: "composer-cache",
         path: "/tmp/composer-cache",
@@ -8,7 +8,7 @@ local volumes = [
 local composer(phpversion, params) = {
     name: "composer",
     image: "joomlaprojects/docker-images:php" + phpversion,
-    volumes: volumes,
+    volumes: hostvolumes,
     commands: [
         "php -v",
         "composer update " + params
@@ -25,7 +25,7 @@ local phpunit(phpversion) = {
 local pipeline(name, phpversion, params) = {
     kind: "pipeline",
     name: "PHP " + name,
-    volumes: volumes,
+    volumes: hostvolumes,
     steps: [
         composer(phpversion, params),
         phpunit(phpversion)
@@ -36,12 +36,12 @@ local pipeline(name, phpversion, params) = {
     {
         kind: "pipeline",
         name: "Codequality",
-        volumes: volumes,
+        volumes: hostvolumes,
         steps: [
             {
                 name: "composer",
                 image: "joomlaprojects/docker-images:php7.4",
-                volumes: volumes,
+                volumes: hostvolumes,
                 commands: [
                     "php -v",
                     "composer update",
