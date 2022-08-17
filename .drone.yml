@@ -51,8 +51,9 @@ steps:
   image: joomlaprojects/docker-images:php7.4
   name: phpcpd
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: pipeline
 name: PHP 7.2 lowest
@@ -70,8 +71,9 @@ steps:
   image: joomlaprojects/docker-images:php7.2
   name: PHPUnit
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: pipeline
 name: PHP 7.2
@@ -89,8 +91,9 @@ steps:
   image: joomlaprojects/docker-images:php7.2
   name: PHPUnit
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: pipeline
 name: PHP 7.3
@@ -108,8 +111,9 @@ steps:
   image: joomlaprojects/docker-images:php7.3
   name: PHPUnit
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: pipeline
 name: PHP 7.4
@@ -127,8 +131,9 @@ steps:
   image: joomlaprojects/docker-images:php7.4
   name: PHPUnit
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: pipeline
 name: PHP 8.0
@@ -146,8 +151,9 @@ steps:
   image: joomlaprojects/docker-images:php8.0
   name: PHPUnit
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: pipeline
 name: PHP 8.1
@@ -165,8 +171,9 @@ steps:
   image: joomlaprojects/docker-images:php8.1
   name: PHPUnit
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: pipeline
 name: PHP 8.2
@@ -185,10 +192,11 @@ steps:
   image: joomlaprojects/docker-images:php8.2
   name: PHPUnit
 volumes:
-- name: composer-cache
-  path: /tmp/composer-cache
+- host:
+    path: /tmp/composer-cache
+  name: composer-cache
 ---
 kind: signature
-hmac: 163d274518430d98d4b640995947dbabb960500facabcf51c7454c1703aa7bb1
+hmac: d928727d833acd3e5f18502eab24d72558f1d84b3d86141058d48b67d5408d72
 
 ...

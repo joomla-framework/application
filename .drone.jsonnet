@@ -1,14 +1,21 @@
-local hostvolumes = [
+local volumes = [
     {
         name: "composer-cache",
         path: "/tmp/composer-cache",
     },
 ];
 
+local hostvolumes = [
+    {
+        name: "composer-cache",
+        host: {path: "/tmp/composer-cache"}
+    },
+];
+
 local composer(phpversion, params) = {
     name: "composer",
     image: "joomlaprojects/docker-images:php" + phpversion,
-    volumes: hostvolumes,
+    volumes: volumes,
     commands: [
         "php -v",
         "composer update " + params
@@ -41,7 +48,7 @@ local pipeline(name, phpversion, params) = {
             {
                 name: "composer",
                 image: "joomlaprojects/docker-images:php7.4",
-                volumes: hostvolumes,
+                volumes: volumes,
                 commands: [
                     "php -v",
                     "composer update",
