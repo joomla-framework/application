@@ -5,13 +5,6 @@ local volumes = [
     },
 ];
 
-local hostvolumes = [
-    {
-        name: "composer-cache",
-        host: {path: "/tmp/composer-cache"}
-    },
-];
-
 local composer(phpversion, params) = {
     name: "composer",
     image: "joomlaprojects/docker-images:php" + phpversion,
@@ -25,14 +18,14 @@ local composer(phpversion, params) = {
 local phpunit(phpversion) = {
     name: "PHPUnit",
     image: "joomlaprojects/docker-images:php" + phpversion,
-    [if phpversion == "8.0" then "failure"]: "ignore",
+    [if phpversion == "8.2" then "failure"]: "ignore",
     commands: ["vendor/bin/phpunit"]
 };
 
 local pipeline(name, phpversion, params) = {
     kind: "pipeline",
     name: "PHP " + name,
-    volumes: hostvolumes,
+    volumes: volumes,
     steps: [
         composer(phpversion, params),
         phpunit(phpversion)
@@ -43,7 +36,7 @@ local pipeline(name, phpversion, params) = {
     {
         kind: "pipeline",
         name: "Codequality",
-        volumes: hostvolumes,
+        volumes: volumes,
         steps: [
             {
                 name: "composer",
@@ -110,5 +103,7 @@ local pipeline(name, phpversion, params) = {
     pipeline("7.2", "7.2", "--prefer-stable"),
     pipeline("7.3", "7.3", "--prefer-stable"),
     pipeline("7.4", "7.4", "--prefer-stable"),
-    pipeline("8.0", "8.0", "--ignore-platform-reqs --prefer-stable")
+    pipeline("8.0", "8.0", "--prefer-stable"),
+    pipeline("8.1", "8.1", "--prefer-stable"),
+    pipeline("8.2", "8.2", "--prefer-stable")
 ]
