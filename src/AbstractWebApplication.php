@@ -805,7 +805,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
         if ($httpHost === null)
         {
-            throw new \InvalidArgumentException('Unable to parse the hostname from the request');
+            throw new \InvalidArgumentException('Found an empty hostname when parsing the request');
         }
 
         // First we need to detect the URI scheme.
