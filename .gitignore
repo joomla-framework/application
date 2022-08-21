@@ -12,4 +12,5 @@ composer.lock
 phpunit.xml
 .phpunit.cache/
 .idea/
+/.phpunit.result.cache
 /.phpunit.cache/
