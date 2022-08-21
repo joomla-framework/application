@@ -959,7 +959,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 		}
 
 		// Check to see if an explicit base URI has been set.
-		$siteUri = trim($this->get('site_uri'));
+		$siteUri = trim($this->get('site_uri') ?? '');
 
 		if ($siteUri != '')
 		{
@@ -1010,7 +1010,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 		}
 
 		// Get an explicitly set media URI is present.
-		$mediaURI = trim($this->get('media_uri'));
+		$mediaURI = trim($this->get('media_uri') ?? '');
 
 		if ($mediaURI)
 		{

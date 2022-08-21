@@ -7,6 +7,7 @@
     "license": "GPL-2.0-or-later",
     "require": {
         "php": "^7.2.5|~8.0.0|~8.1.0",
+        "ext-json": "*",
         "psr/log": "^1.0",
         "psr/http-message": "^1.0",
         "joomla/event": "^2.0",
