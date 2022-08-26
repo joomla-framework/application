@@ -827,6 +827,9 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
             }
         }
 
+        // Extra cleanup to remove invalid chars in the URL to prevent injections through the Host header
+        $uri = str_replace(array("'", '"', '<', '>'), array('%27', '%22', '%3C', '%3E'), $uri);
+
         return \trim($uri);
     }
 
