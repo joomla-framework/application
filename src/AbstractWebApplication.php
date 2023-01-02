@@ -371,7 +371,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
             $this->setHeader('Content-Type', $this->mimeType . '; charset=' . $this->charSet);
         }
 
-        // If the response is set to uncachable, et some appropriate headers so browsers don't cache the response.
+        // If the response is set to uncachable, set some appropriate headers so browsers don't cache the response.
         if (!$this->allowCache()) {
             // Expires in the past.
             $this->setHeader('Expires', 'Wed, 17 Aug 2005 00:00:00 GMT', true);
@@ -380,8 +380,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
             $this->setHeader('Last-Modified', \gmdate('D, d M Y H:i:s') . ' GMT', true);
             $this->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0', false);
 
-            // HTTP 1.0
-            $this->setHeader('Pragma', 'no-cache');
         } else {
             // Expires.
             if (!$this->getResponse()->hasHeader('Expires')) {
