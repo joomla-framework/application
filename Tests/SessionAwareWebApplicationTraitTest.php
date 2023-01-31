@@ -25,7 +25,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
      */
     public function testSetSession()
     {
-        $object = $this->getMockForTrait(SessionAwareWebApplicationTrait::class);
+        $object      = $this->getMockForTrait(SessionAwareWebApplicationTrait::class);
         $mockSession = $this->createMock(SessionInterface::class);
 
         $this->assertSame($object, $object->setSession($mockSession), 'The setSession method has a fluent interface.');

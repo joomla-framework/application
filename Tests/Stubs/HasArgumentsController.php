@@ -10,15 +10,15 @@ use Joomla\Controller\AbstractController;
 
 class HasArgumentsController extends AbstractController
 {
-	private $name;
+    private $name;
 
-	public function __construct(string $name)
-	{
-		$this->name = $name;
-	}
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
 
-	public function execute()
-	{
-		return 'Hello ' . $this->name . '!';
-	}
+    public function execute()
+    {
+        return 'Hello ' . $this->name . '!';
+    }
 }

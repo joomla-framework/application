@@ -818,7 +818,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         } else {
             // If not in "Apache Mode" we will assume that we are in an IIS environment and proceed.
             // IIS uses the SCRIPT_NAME variable instead of a REQUEST_URI variable... thanks, MS
-            $uri       .= $this->input->server->getString('SCRIPT_NAME');
+            $uri .= $this->input->server->getString('SCRIPT_NAME');
             $queryHost = $this->input->server->getString('QUERY_STRING', '');
 
             // If the QUERY_STRING variable exists append it to the URI string.
@@ -828,7 +828,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         }
 
         // Extra cleanup to remove invalid chars in the URL to prevent injections through the Host header
-        $uri = str_replace(array("'", '"', '<', '>'), array('%27', '%22', '%3C', '%3E'), $uri);
+        $uri = str_replace(["'", '"', '<', '>'], ['%27', '%22', '%3C', '%3E'], $uri);
 
         return \trim($uri);
     }

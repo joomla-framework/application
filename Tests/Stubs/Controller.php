@@ -10,8 +10,8 @@ use Joomla\Controller\AbstractController;
 
 class Controller extends AbstractController
 {
-	public function execute()
-	{
-		return 'Hello world!';
-	}
+    public function execute()
+    {
+        return 'Hello world!';
+    }
 }

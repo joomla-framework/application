@@ -33,7 +33,7 @@ class WebApplicationTest extends TestCase
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
 
-        $controller = new class {
+        $controller = new class () {
             private $executed = false;
 
             public function __invoke()
