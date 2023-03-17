@@ -11,7 +11,6 @@ namespace Joomla\Application\Event;
 
 use Joomla\Application\AbstractApplication;
 use Joomla\Application\ApplicationEvents;
-use Joomla\Event\Event;
 
 /**
  * Event class thrown when an application error occurs.
