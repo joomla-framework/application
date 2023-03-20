@@ -5,7 +5,6 @@ steps:
 - commands:
   - php -v
   - composer update
-  - composer require phpmd/phpmd phpstan/phpstan
   image: joomlaprojects/docker-images:php8.1
   name: composer
   volumes:
@@ -111,6 +110,6 @@ volumes:
   name: composer-cache
 ---
 kind: signature
-hmac: d9ebce9a5842b0f9d4064ce5b04ba5ebaa768add2a77ee76acd6372598370cda
+hmac: 60184ca6b1700d5de9b9e558725bdf11c72cc94a0de5900657293fe51fee4781
 
 ...

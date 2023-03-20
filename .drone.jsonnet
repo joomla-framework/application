@@ -51,8 +51,7 @@ local pipeline(name, phpversion, params) = {
                 volumes: volumes,
                 commands: [
                     "php -v",
-                    "composer update",
-                    "composer require phpmd/phpmd phpstan/phpstan"
+                    "composer update"
                 ]
             },
             {
