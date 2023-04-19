@@ -41,7 +41,7 @@
         "joomla/event": "3.0.x-dev",
         "joomla/registry": "3.0.x-dev",
         "laminas/laminas-diactoros": "^2.24.0",
-        "symfony/deprecation-contracts": "^3"
+        "symfony/deprecation-contracts": "^2|^3"
     },
     "require-dev": {
         "ext-json": "*",
