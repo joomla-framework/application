@@ -219,7 +219,7 @@ and uses following ones during object construction:
 
 - `gzip` to compress the output
 - `site_uri` to see if an explicit base URI has been set
-  (helpful when chaning request uri using mod_rewrite)
+  (helpful when chaining request uri using mod_rewrite)
 - `media_uri` to get an explicitly set media URI (relative values are appended to `uri.base` ).
   If it's not set explicitly, it defaults to a `media/` path of `uri.base`.
 
