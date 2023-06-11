@@ -65,7 +65,7 @@ class ControllerResolver implements ControllerResolverInterface
             return $controller;
         }
 
-        // Try to resolve an invokable object
+        // Try to resolve an invocable object
         if (\is_object($controller)) {
             if (!\is_callable($controller)) {
                 throw new \InvalidArgumentException(
