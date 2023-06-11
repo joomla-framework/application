@@ -202,7 +202,7 @@ You can provide customised implementations these methods by creating the followi
 
 The `AbstractWebApplication` sets following application configuration:
 
-- Exection datetime and timestamp
+- Execution datetime and timestamp
   - `execution.datetime` - Execution datetime
   - `execution.timestamp` - Execution timestamp
 
