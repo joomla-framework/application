@@ -7,7 +7,7 @@
 
 ## Initialising Applications
 
-`AbstractApplication` implements an `initialise` method that is called at the end of the constructor. This method is intended to be overriden in derived classes as needed by the developer.
+`AbstractApplication` implements an `initialise` method that is called at the end of the constructor. This method is intended to be overridden in derived classes as needed by the developer.
 
 If you are overriding the `__construct` method in your application class, remember to call the parent constructor last.
 
