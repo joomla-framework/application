@@ -7,7 +7,7 @@
 
 ## Initialising Applications
 
-`AbstractApplication` implements an `initialise` method that is called at the end of the constructor. This method is intended to be overriden in derived classes as needed by the developer.
+`AbstractApplication` implements an `initialise` method that is called at the end of the constructor. This method is intended to be overridden in derived classes as needed by the developer.
 
 If you are overriding the `__construct` method in your application class, remember to call the parent constructor last.
 
@@ -202,7 +202,7 @@ You can provide customised implementations these methods by creating the followi
 
 The `AbstractWebApplication` sets following application configuration:
 
-- Exection datetime and timestamp
+- Execution datetime and timestamp
   - `execution.datetime` - Execution datetime
   - `execution.timestamp` - Execution timestamp
 
@@ -219,7 +219,7 @@ and uses following ones during object construction:
 
 - `gzip` to compress the output
 - `site_uri` to see if an explicit base URI has been set
-  (helpful when chaning request uri using mod_rewrite)
+  (helpful when chaining request uri using mod_rewrite)
 - `media_uri` to get an explicitly set media URI (relative values are appended to `uri.base` ).
   If it's not set explicitly, it defaults to a `media/` path of `uri.base`.
 

@@ -479,7 +479,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
             echo $html;
         } else {
-            // Check if we have a boolean for the status variable for compatability with v1 of the framework
+            // Check if we have a boolean for the status variable for compatibility with v1 of the framework
             // @deprecated 3.0
             if (\is_bool($status)) {
                 \trigger_deprecation(
