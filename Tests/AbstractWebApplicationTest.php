@@ -1454,7 +1454,7 @@ class AbstractWebApplicationTest extends TestCase
     }
 
     /**
-     * @testdox  Tests that the application correctly detects the request URI based on the injected data
+     * @testdox  Tests that the application throws an exception when there isn't a valid HTTP host.
      *
      * @param   string|null  $https        Value for $_SERVER['HTTPS'] or null to not set it
      * @param   string       $phpSelf      Value for $_SERVER['PHP_SELF']
