@@ -803,8 +803,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
          */
         $httpHost = $this->input->server->getString('HTTP_HOST');
 
-        if ($httpHost === null)
-        {
+        if ($httpHost === null) {
             throw new \InvalidArgumentException('Found an empty hostname when parsing the request');
         }
 
