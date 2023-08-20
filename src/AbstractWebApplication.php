@@ -553,6 +553,11 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         $value    = (string) $value;
         $response = $this->getResponse();
 
+        // Don't override if the header exists
+        if (!$replace && $response->hasHeader($name)) {
+            return $this;
+        }
+
         // If the replace flag is set, unset all known headers with the given name.
         if ($replace && $response->hasHeader($name)) {
             $response = $response->withoutHeader($name);
