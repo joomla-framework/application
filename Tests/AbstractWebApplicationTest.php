@@ -376,7 +376,6 @@ class AbstractWebApplicationTest extends TestCase
             [
                 0 => ['name' => 'Content-Encoding', 'value' => 'gzip'],
                 1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
-                2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
             ],
             $object->getHeaders()
         );
@@ -447,7 +446,6 @@ class AbstractWebApplicationTest extends TestCase
             [
                 0 => ['name' => 'Content-Encoding', 'value' => 'deflate'],
                 1 => ['name' => 'Vary', 'value' => 'Accept-Encoding'],
-                2 => ['name' => 'X-Content-Encoded-By', 'value' => 'Joomla'],
             ],
             $object->getHeaders()
         );
