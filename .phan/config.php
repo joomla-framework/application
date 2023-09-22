@@ -317,8 +317,7 @@ return [
     // The `tools/make_stubs` script can be used to generate your own stubs (compatible with php 7.0+ right now)
     //
     // (e.g. `['xdebug' => '.phan/internal_stubs/xdebug.phan_php']`)
-    'autoload_internal_extension_signatures' => [
-    ],
+    'autoload_internal_extension_signatures' => [],
 
     // A list of plugin files to execute.
     //
@@ -339,7 +338,6 @@ return [
     'directory_list' => [
 		'vendor',
         'src',
-        'Tests',
     ],
 
     // A list of individual files to include in analysis
