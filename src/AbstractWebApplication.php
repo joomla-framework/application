@@ -793,9 +793,20 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @return  string  The requested URI
      *
      * @since   1.0.0
+     * @throws  \InvalidArgumentException
      */
     protected function detectRequestUri()
     {
+        /**
+         * If we've arrived here via a CLI application (which shouldn't happen in our web app) then we can use this as
+         * an opportunity to bail out
+         */
+        $httpHost = $this->input->server->getString('HTTP_HOST');
+
+        if ($httpHost === null) {
+            throw new \InvalidArgumentException('Found an empty hostname when parsing the request');
+        }
+
         // First we need to detect the URI scheme.
         $scheme = $this->isSslConnection() ? 'https://' : 'http://';
 
@@ -808,7 +819,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         $phpSelf    = $this->input->server->getString('PHP_SELF', '');
         $requestUri = $this->input->server->getString('REQUEST_URI', '');
 
-        $uri = $scheme . $this->input->server->getString('HTTP_HOST');
+        $uri = $scheme . $httpHost;
 
         if (!empty($phpSelf) && !empty($requestUri)) {
             // If PHP_SELF and REQUEST_URI are both populated then we will assume "Apache Mode".

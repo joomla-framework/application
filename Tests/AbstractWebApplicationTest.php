@@ -1407,7 +1407,7 @@ class AbstractWebApplicationTest extends TestCase
     }
 
     /**
-     * @testdox       Tests that the application correcty detects the request URI based on the injected data
+     * @testdox       Tests that the application correctly detects the request URI based on the injected data
      *
      * @param  string|null  $https        Value for $_SERVER['HTTPS'] or null to not set it
      * @param  string       $phpSelf      Value for $_SERVER['PHP_SELF']
@@ -1453,6 +1453,34 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
+    /**
+     * @testdox  Tests that the application throws an exception when there isn't a valid HTTP host.
+     *
+     * @param   string|null  $https        Value for $_SERVER['HTTPS'] or null to not set it
+     * @param   string       $phpSelf      Value for $_SERVER['PHP_SELF']
+     * @param   string       $requestUri   Value for $_SERVER['REQUEST_URI']
+     * @param   string       $httpHost     Value for $_SERVER['HTTP_HOST']
+     * @param   string       $scriptName   Value for $_SERVER['SCRIPT_NAME']
+     * @param   string       $queryString  Value for $_SERVER['QUERY_STRING']
+     * @param   string       $expects      Expected full URI string
+     *
+     * @covers  \Joomla\Application\AbstractWebApplication
+     *
+     * @backupGlobals enabled
+     */
+    public function testDetectRequestUriException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $mockInput = new Input([]);
+
+        $_SERVER['PHP_SELF'] = 'somthing/framework.php';
+        $_SERVER['HTTP_HOST'] = '';
+        $_SERVER['SCRIPT_NAME'] = 'somthing/framework.php';
+
+        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput]);
+
+        TestHelper::invoke($object, 'detectRequestUri');
+    }
     /**
      * @testdox  Tests the system URIs are correctly loaded when a URI is set in the application configuration
      *
