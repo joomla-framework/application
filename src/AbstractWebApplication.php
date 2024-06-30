@@ -191,10 +191,10 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @since   1.0.0
      */
     public function __construct(
-        Input $input = null,
-        Registry $config = null,
-        WebClient $client = null,
-        ResponseInterface $response = null
+        ?Input $input = null,
+        ?Registry $config = null,
+        ?WebClient $client = null,
+        ?ResponseInterface $response = null
     ) {
         $this->input  = $input ?: new Input();
         $this->client = $client ?: new WebClient();

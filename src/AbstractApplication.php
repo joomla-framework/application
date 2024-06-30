@@ -51,7 +51,7 @@ abstract class AbstractApplication implements
      *
      * @since   1.0.0
      */
-    public function __construct(Registry $config = null)
+    public function __construct(?Registry $config = null)
     {
         $this->config = $config ?: new Registry();
 
