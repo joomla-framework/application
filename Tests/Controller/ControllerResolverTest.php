@@ -8,7 +8,6 @@
 namespace Joomla\Application\Tests\Controller;
 
 use Joomla\Application\Controller\ControllerResolver;
-use Joomla\Application\Event\ApplicationEvent;
 use Joomla\Application\Tests\Stubs\Controller;
 use Joomla\Application\Tests\Stubs\HasArgumentsController;
 use Joomla\Registry\Registry;

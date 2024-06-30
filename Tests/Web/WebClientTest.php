@@ -7,7 +7,6 @@
 
 namespace Joomla\Application\Tests\Web;
 
-use Joomla\Application\Tests\CompatTestCase;
 use Joomla\Application\Web\WebClient;
 use PHPUnit\Framework\TestCase;
 
