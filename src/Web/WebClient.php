@@ -552,9 +552,13 @@ class WebClient
      */
     protected function detectRobot($userAgent)
     {
-        $this->robot = (bool) \preg_match('/http|bot|robot|spider|crawler|curl|^$/i', $userAgent);
-
         $this->detection['robot'] = true;
+
+        if (empty($userAgent)) {
+            return;
+        }
+
+        $this->robot = (bool) \preg_match('/http|bot|robot|spider|crawler|curl|^$/i', $userAgent);
     }
 
     /**
