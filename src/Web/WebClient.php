@@ -342,8 +342,8 @@ class WebClient
                     if ($key) {
                         $this->browserVersion = $matches['version'][$key];
                     }
-                } elseif ($matches['version'][0] !== 'Privacy') {
-                    // We only have a Version or a browser so use what we have.
+                } elseif ($this->browser !== self::CHROME || $matches['version'][0] !== 'Privacy') {
+                    // We only have a Version or a browser so use what we have if not Google privacy prefetch proxy.
                     $this->browserVersion = $matches['version'][0];
                 }
             }
