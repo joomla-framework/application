@@ -395,9 +395,9 @@ class WebClient
             $this->engine = self::BLINK;
         } elseif (\stripos($userAgent, 'Chrome') !== false) {
             $result  = \explode('/', \stristr($userAgent, 'Chrome'));
-            $version = \explode(' ', $result[1]);
+            $version = \count($result) > 1 ? \explode(' ', $result[1]) : false;
 
-            if ($version[0] >= 28) {
+            if ($version === false || $version[0] >= 28) {
                 $this->engine = self::BLINK;
             } else {
                 $this->engine = self::WEBKIT;
@@ -405,9 +405,9 @@ class WebClient
         } elseif (\stripos($userAgent, 'AppleWebKit') !== false || \stripos($userAgent, 'blackberry') !== false) {
             if (\stripos($userAgent, 'AppleWebKit') !== false) {
                 $result  = \explode('/', \stristr($userAgent, 'AppleWebKit'));
-                $version = \explode(' ', $result[1]);
+                $version = \count($result) > 1 ? \explode(' ', $result[1]) : false;
 
-                if ($version[0] === 537.36) {
+                if ($version !== false && $version[0] === 537.36) {
                     // AppleWebKit/537.36 is Blink engine specific, exception is Blink emulated IEMobile, Trident or Edge
                     $this->engine = self::BLINK;
                 }
