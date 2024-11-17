@@ -342,7 +342,7 @@ class WebClient
                     if ($key) {
                         $this->browserVersion = $matches['version'][$key];
                     }
-                } else {
+                } elseif ($matches['version'][0] !== 'Privacy') {
                     // We only have a Version or a browser so use what we have.
                     $this->browserVersion = $matches['version'][0];
                 }
