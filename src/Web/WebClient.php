@@ -290,7 +290,7 @@ class WebClient
         // Check for Google's Private Prefetch Proxy
         if ($userAgent === 'Chrome Privacy Preserving Prefetch Proxy') {
             // Private Prefetch Proxy does not provide any further details like e.g. version
-            $this->browser  = self::CHROME;
+            $this->browser = self::CHROME;
 
             return;
         }
