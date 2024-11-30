@@ -31,6 +31,14 @@ class WebClientTest extends TestCase
         // Platform, Mobile, Engine, Browser, Version, User Agent
         return [
             [
+                '',
+                false,
+                '',
+                '',
+                '',
+                null,
+            ],
+            [
                 WebClient::WINDOWS,
                 false,
                 WebClient::TRIDENT,
