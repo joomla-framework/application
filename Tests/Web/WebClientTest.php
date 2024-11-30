@@ -382,6 +382,14 @@ class WebClientTest extends TestCase
                 '',
                 'AppleWebKit',
             ],
+            [
+                '',
+                false,
+                WebClient::BLINK,
+                '',
+                '',
+                'AppleWebKit/537.36',
+            ],
         ];
     }
 
