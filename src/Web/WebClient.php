@@ -287,6 +287,14 @@ class WebClient
             return;
         }
 
+        // Check for Google's Private Prefetch Proxy
+        if ($userAgent === 'Chrome Privacy Preserving Prefetch Proxy') {
+            // Private Prefetch Proxy does not provide any further details like e.g. version
+            $this->browser  = self::CHROME;
+
+            return;
+        }
+
         $patternBrowser = '';
 
         // Attempt to detect the browser type.  Obviously we are only worried about major browsers.
@@ -342,8 +350,8 @@ class WebClient
                     if ($key) {
                         $this->browserVersion = $matches['version'][$key];
                     }
-                } elseif ($this->browser !== self::CHROME || $matches['version'][0] !== 'Privacy') {
-                    // We only have a Version or a browser so use what we have if not Google privacy prefetch proxy.
+                } else {
+                    // We only have a Version or a browser so use what we have.
                     $this->browserVersion = $matches['version'][0];
                 }
             }
