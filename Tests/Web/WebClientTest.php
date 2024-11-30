@@ -366,6 +366,22 @@ class WebClientTest extends TestCase
                 '',
                 'Chrome Privacy Preserving Prefetch Proxy',
             ],
+            [
+                '',
+                false,
+                WebClient::BLINK,
+                WebClient::CHROME,
+                '',
+                'Chrome',
+            ],
+            [
+                '',
+                false,
+                WebClient::WEBKIT,
+                '',
+                '',
+                'AppleWebKit',
+            ],
         ];
     }
 
