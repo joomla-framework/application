@@ -159,6 +159,14 @@ class WebClientTest extends TestCase
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
             ],
             [
+                WebClient::WINDOWS,
+                false,
+                WebClient::BLINK,
+                WebClient::CHROME,
+                '131.0.0.0',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            ],
+            [
                 WebClient::LINUX,
                 false,
                 WebClient::WEBKIT,

@@ -409,7 +409,7 @@ class WebClient
             if (isset($result[1])) {
                 $version = \explode(' ', $result[1]);
 
-                if ($version[0] < 28) {
+                if (version_compare($version[0], '28.0', 'lt')) {
                     $this->engine = self::WEBKIT;
                 }
             }
