@@ -13,3 +13,7 @@ $app->input->getInt();
 // New
 $app->getInput()->getInt();
 ```
+
+### Status on redirect
+
+When calling `$app->redirect()`, you can not hand over a boolean value for the status, but always have to use an integer representing the HTTP status code.
