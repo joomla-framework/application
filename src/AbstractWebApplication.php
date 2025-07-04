@@ -818,7 +818,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
             // If not in "Apache Mode" we will assume that we are in an IIS environment and proceed.
             // IIS uses the SCRIPT_NAME variable instead of a REQUEST_URI variable... thanks, MS
             $scriptname = $this->input->server->getString('SCRIPT_NAME');
-            if (substr($scriptname, 0, 1) !== '/' && substr($uri, -1) !== '/') {
+            if (!(str_starts_with($scriptname, '/') && str_ends_with($uri, '/'))) {
                 $uri .= '/';
             }
             $uri .= $scriptname;
