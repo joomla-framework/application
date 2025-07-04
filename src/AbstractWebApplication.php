@@ -281,7 +281,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
         // Iterate through the encodings and attempt to compress the data using any found supported encodings.
         foreach ($encodings as $encoding) {
-            if (($supported[$encoding] == 'gz') || ($supported[$encoding] == 'deflate')) {
+            if (in_array($supported[$encoding], ['gz', 'deflate'])) {
                 // Verify that the server supports gzip compression before we attempt to gzip encode the data.
                 // @codeCoverageIgnoreStart
                 if (!\extension_loaded('zlib') || \ini_get('zlib.output_compression')) {
