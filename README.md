@@ -355,12 +355,12 @@ class MyCli extends AbstractCliApplication
 
 ## Installation via Composer
 
-Add `"joomla/application": "~3.0"` to the require block in your composer.json and then run `composer install`.
+Add `"joomla/application": "~4.0"` to the require block in your composer.json and then run `composer install`.
 
 ```json
 {
 	"require": {
-		"joomla/application": "~3.0"
+		"joomla/application": "~4.0"
 	}
 }
 ```
@@ -368,11 +368,11 @@ Add `"joomla/application": "~3.0"` to the require block in your composer.json an
 Alternatively, you can simply run the following from the command line:
 
 ```sh
-composer require joomla/application "~3.0"
+composer require joomla/application "~4.0"
 ```
 
 If you want to include the test sources, use
 
 ```sh
-composer require --prefer-source joomla/application "~3.0"
+composer require --prefer-source joomla/application "~4.0"
 ```

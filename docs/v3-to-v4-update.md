@@ -2,6 +2,10 @@
 
 The following changes were made to the Application package between v3 and v4.
 
+### Minimum supported PHP version raised
+
+All Framework packages now require PHP 8.3 or newer.
+
 ### Access to input data
 
 Accessing the input data in the input attribute of the application can now only be done via the `getInput()`.
