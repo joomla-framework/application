@@ -280,72 +280,82 @@ class WebClient
      */
     protected function detectBrowser($userAgent)
     {
-        if (!empty($userAgent)) {
-            $patternBrowser = '';
+        // Mark this detection routine as run.
+        $this->detection['browser'] = true;
 
-            // Attempt to detect the browser type.  Obviously we are only worried about major browsers.
-            if ((\stripos($userAgent, 'MSIE') !== false) && (\stripos($userAgent, 'Opera') === false)) {
-                $this->browser  = self::IE;
-                $patternBrowser = 'MSIE';
-            } elseif (\stripos($userAgent, 'Trident') !== false) {
-                $this->browser  = self::IE;
-                $patternBrowser = ' rv';
-            } elseif (\stripos($userAgent, 'Edge') !== false) {
-                $this->browser  = self::EDGE;
-                $patternBrowser = 'Edge';
-            } elseif (\stripos($userAgent, 'Edg') !== false) {
-                $this->browser  = self::EDG;
-                $patternBrowser = 'Edg';
-            } elseif ((\stripos($userAgent, 'Firefox') !== false) && (\stripos($userAgent, 'like Firefox') === false)) {
-                $this->browser  = self::FIREFOX;
-                $patternBrowser = 'Firefox';
-            } elseif (\stripos($userAgent, 'OPR') !== false) {
-                $this->browser  = self::OPERA;
-                $patternBrowser = 'OPR';
-            } elseif (\stripos($userAgent, 'Chrome') !== false) {
-                $this->browser  = self::CHROME;
-                $patternBrowser = 'Chrome';
-            } elseif (\stripos($userAgent, 'Safari') !== false) {
-                $this->browser  = self::SAFARI;
-                $patternBrowser = 'Safari';
-            } elseif (\stripos($userAgent, 'Opera') !== false) {
-                $this->browser  = self::OPERA;
-                $patternBrowser = 'Opera';
-            }
+        if (empty($userAgent)) {
+            return;
+        }
 
-            // If we detected a known browser let's attempt to determine the version.
-            if ($this->browser) {
-                // Build the REGEX pattern to match the browser version string within the user agent string.
-                $pattern = '#(?<browser>Version|' . $patternBrowser . ')[/ :]+(?<version>[0-9.|a-zA-Z.]*)#';
+        // Check for Google's Private Prefetch Proxy
+        if ($userAgent === 'Chrome Privacy Preserving Prefetch Proxy') {
+            // Private Prefetch Proxy does not provide any further details like e.g. version
+            $this->browser = self::CHROME;
 
-                // Attempt to find version strings in the user agent string.
-                $matches = [];
+            return;
+        }
 
-                if (\preg_match_all($pattern, $userAgent, $matches)) {
-                    // Do we have both a Version and browser match?
-                    if (\count($matches['browser']) == 2) {
-                        // See whether Version or browser came first, and use the number accordingly.
-                        if (\strripos($userAgent, 'Version') < \strripos($userAgent, $patternBrowser)) {
-                            $this->browserVersion = $matches['version'][0];
-                        } else {
-                            $this->browserVersion = $matches['version'][1];
-                        }
-                    } elseif (\count($matches['browser']) > 2) {
-                        $key = \array_search('Version', $matches['browser']);
+        $patternBrowser = '';
 
-                        if ($key) {
-                            $this->browserVersion = $matches['version'][$key];
-                        }
-                    } else {
-                        // We only have a Version or a browser so use what we have.
+        // Attempt to detect the browser type.  Obviously we are only worried about major browsers.
+        if ((\stripos($userAgent, 'MSIE') !== false) && (\stripos($userAgent, 'Opera') === false)) {
+            $this->browser  = self::IE;
+            $patternBrowser = 'MSIE';
+        } elseif (\stripos($userAgent, 'Trident') !== false) {
+            $this->browser  = self::IE;
+            $patternBrowser = ' rv';
+        } elseif (\stripos($userAgent, 'Edge') !== false) {
+            $this->browser  = self::EDGE;
+            $patternBrowser = 'Edge';
+        } elseif (\stripos($userAgent, 'Edg') !== false) {
+            $this->browser  = self::EDG;
+            $patternBrowser = 'Edg';
+        } elseif ((\stripos($userAgent, 'Firefox') !== false) && (\stripos($userAgent, 'like Firefox') === false)) {
+            $this->browser  = self::FIREFOX;
+            $patternBrowser = 'Firefox';
+        } elseif (\stripos($userAgent, 'OPR') !== false) {
+            $this->browser  = self::OPERA;
+            $patternBrowser = 'OPR';
+        } elseif (\stripos($userAgent, 'Chrome') !== false) {
+            $this->browser  = self::CHROME;
+            $patternBrowser = 'Chrome';
+        } elseif (\stripos($userAgent, 'Safari') !== false) {
+            $this->browser  = self::SAFARI;
+            $patternBrowser = 'Safari';
+        } elseif (\stripos($userAgent, 'Opera') !== false) {
+            $this->browser  = self::OPERA;
+            $patternBrowser = 'Opera';
+        }
+
+        // If we detected a known browser let's attempt to determine the version.
+        if ($this->browser) {
+            // Build the REGEX pattern to match the browser version string within the user agent string.
+            $pattern = '#(?<browser>Version|' . $patternBrowser . ')[/ :]+(?<version>[0-9.|a-zA-Z.]*)#';
+
+            // Attempt to find version strings in the user agent string.
+            $matches = [];
+
+            if (\preg_match_all($pattern, $userAgent, $matches)) {
+                // Do we have both a Version and browser match?
+                if (\count($matches['browser']) == 2) {
+                    // See whether Version or browser came first, and use the number accordingly.
+                    if (\strripos($userAgent, 'Version') < \strripos($userAgent, $patternBrowser)) {
                         $this->browserVersion = $matches['version'][0];
+                    } else {
+                        $this->browserVersion = $matches['version'][1];
                     }
+                } elseif (\count($matches['browser']) > 2) {
+                    $key = \array_search('Version', $matches['browser']);
+
+                    if ($key) {
+                        $this->browserVersion = $matches['version'][$key];
+                    }
+                } else {
+                    // We only have a Version or a browser so use what we have.
+                    $this->browserVersion = $matches['version'][0];
                 }
             }
         }
-
-        // Mark this detection routine as run.
-        $this->detection['browser'] = true;
     }
 
     /**
@@ -377,6 +387,13 @@ class WebClient
      */
     protected function detectEngine($userAgent)
     {
+        // Mark this detection routine as run.
+        $this->detection['engine'] = true;
+
+        if (empty($userAgent)) {
+            return;
+        }
+
         if (\stripos($userAgent, 'MSIE') !== false || \stripos($userAgent, 'Trident') !== false) {
             // Attempt to detect the client engine -- starting with the most popular ... for now.
             $this->engine = self::TRIDENT;
@@ -385,27 +402,32 @@ class WebClient
         } elseif (\stripos($userAgent, 'Edg') !== false) {
             $this->engine = self::BLINK;
         } elseif (\stripos($userAgent, 'Chrome') !== false) {
-            $result  = \explode('/', \stristr($userAgent, 'Chrome'));
-            $version = \explode(' ', $result[1]);
+            $this->engine = self::BLINK;
 
-            if ($version[0] >= 28) {
-                $this->engine = self::BLINK;
-            } else {
-                $this->engine = self::WEBKIT;
-            }
-        } elseif (\stripos($userAgent, 'AppleWebKit') !== false || \stripos($userAgent, 'blackberry') !== false) {
-            if (\stripos($userAgent, 'AppleWebKit') !== false) {
-                $result  = \explode('/', \stristr($userAgent, 'AppleWebKit'));
+            $result = \explode('/', \stristr($userAgent, 'Chrome'));
+
+            if (isset($result[1])) {
                 $version = \explode(' ', $result[1]);
 
-                if ($version[0] === 537.36) {
-                    // AppleWebKit/537.36 is Blink engine specific, exception is Blink emulated IEMobile, Trident or Edge
-                    $this->engine = self::BLINK;
+                if (version_compare($version[0], '28.0', 'lt')) {
+                    $this->engine = self::WEBKIT;
                 }
             }
-
-            // Evidently blackberry uses WebKit and doesn't necessarily report it.  Bad RIM.
+        } elseif (\stripos($userAgent, 'AppleWebKit') !== false || \stripos($userAgent, 'blackberry') !== false) {
             $this->engine = self::WEBKIT;
+
+            if (\stripos($userAgent, 'AppleWebKit') !== false) {
+                $result = \explode('/', \stristr($userAgent, 'AppleWebKit'));
+
+                if (isset($result[1])) {
+                    $version = \explode(' ', $result[1]);
+
+                    if ($version[0] === '537.36') {
+                        // AppleWebKit/537.36 is Blink engine specific, exception is Blink emulated IEMobile, Trident or Edge
+                        $this->engine = self::BLINK;
+                    }
+                }
+            }
         } elseif (\stripos($userAgent, 'Gecko') !== false && \stripos($userAgent, 'like Gecko') === false) {
             // We have to check for like Gecko because some other browsers spoof Gecko.
             $this->engine = self::GECKO;
@@ -434,9 +456,6 @@ class WebClient
             // Lesser known engine but it finishes off the major list from Wikipedia :-)
             $this->engine = self::AMAYA;
         }
-
-        // Mark this detection routine as run.
-        $this->detection['engine'] = true;
     }
 
     /**
@@ -468,6 +487,13 @@ class WebClient
      */
     protected function detectPlatform($userAgent)
     {
+        // Mark this detection routine as run.
+        $this->detection['platform'] = true;
+
+        if (empty($userAgent)) {
+            return;
+        }
+
         // Attempt to detect the client platform.
         if (\stripos($userAgent, 'Windows') !== false) {
             $this->platform = self::WINDOWS;
@@ -526,9 +552,6 @@ class WebClient
         } elseif (\stripos($userAgent, 'Linux') !== false) {
             $this->platform = self::LINUX;
         }
-
-        // Mark this detection routine as run.
-        $this->detection['platform'] = true;
     }
 
     /**
@@ -542,9 +565,13 @@ class WebClient
      */
     protected function detectRobot($userAgent)
     {
-        $this->robot = (bool) \preg_match('/http|bot|robot|spider|crawler|curl|^$/i', $userAgent);
-
         $this->detection['robot'] = true;
+
+        if (empty($userAgent)) {
+            return;
+        }
+
+        $this->robot = (bool) \preg_match('/http|bot|robot|spider|crawler|curl|^$/i', $userAgent);
     }
 
     /**

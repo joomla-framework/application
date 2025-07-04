@@ -7,7 +7,6 @@
 
 namespace Joomla\Application\Tests\Web;
 
-use Joomla\Application\Tests\CompatTestCase;
 use Joomla\Application\Web\WebClient;
 use PHPUnit\Framework\TestCase;
 
@@ -31,6 +30,14 @@ class WebClientTest extends TestCase
     {
         // Platform, Mobile, Engine, Browser, Version, User Agent
         return [
+            [
+                '',
+                false,
+                '',
+                '',
+                '',
+                null,
+            ],
             [
                 WebClient::WINDOWS,
                 false,
@@ -150,6 +157,14 @@ class WebClientTest extends TestCase
                 WebClient::CHROME,
                 '54.0.2840.71',
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36',
+            ],
+            [
+                WebClient::WINDOWS,
+                false,
+                WebClient::BLINK,
+                WebClient::CHROME,
+                '131.0.0.0',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
             ],
             [
                 WebClient::LINUX,
@@ -350,6 +365,38 @@ class WebClientTest extends TestCase
                 WebClient::EDG,
                 '75.0.107.0',
                 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3738.0 Safari/537.36 Edg/75.0.107.0',
+            ],
+            [
+                '',
+                false,
+                WebClient::BLINK,
+                WebClient::CHROME,
+                '',
+                'Chrome Privacy Preserving Prefetch Proxy',
+            ],
+            [
+                '',
+                false,
+                WebClient::BLINK,
+                WebClient::CHROME,
+                '',
+                'Chrome',
+            ],
+            [
+                '',
+                false,
+                WebClient::WEBKIT,
+                '',
+                '',
+                'AppleWebKit',
+            ],
+            [
+                '',
+                false,
+                WebClient::BLINK,
+                '',
+                '',
+                'AppleWebKit/537.36',
             ],
         ];
     }

@@ -46,22 +46,22 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
      *
      * @param  ControllerResolverInterface  $controllerResolver   The application's controller resolver
      * @param  RouterInterface              $router               The application's router
-     * @param  Input                        ?$input               An optional argument to provide dependency injection
+     * @param  Input|null                   $input                An optional argument to provide dependency injection
      *                                                            for the application's input object.  If the argument
      *                                                            is an Input object that object will become the
      *                                                            application's input object, otherwise a default input
      *                                                            object is created.
-     * @param  Registry                     ?$config              An optional argument to provide dependency injection
+     * @param  Registry|null                $config               An optional argument to provide dependency injection
      *                                                            for the application's config object.  If the argument
      *                                                            is a Registry object that object will become the
      *                                                            application's config object, otherwise a default
      *                                                            config object is created.
-     * @param  Web\WebClient                ?$client              An optional argument to provide dependency injection
+     * @param  WebClient|null               $client               An optional argument to provide dependency injection
      *                                                            for the application's client object.  If the argument
      *                                                            is a Web\WebClient object that object will become the
      *                                                            application's client object, otherwise a default
      *                                                            client object is created.
-     * @param  ResponseInterface            ?$response            An optional argument to provide dependency injection
+     * @param  ResponseInterface|null       $response             An optional argument to provide dependency injection
      *                                                            for the application's response object.  If the
      *                                                            argument is a ResponseInterface object that object
      *                                                            will become the application's response object,
@@ -72,10 +72,10 @@ class WebApplication extends AbstractWebApplication implements SessionAwareWebAp
     public function __construct(
         ControllerResolverInterface $controllerResolver,
         RouterInterface $router,
-        Input $input = null,
-        Registry $config = null,
-        WebClient $client = null,
-        ResponseInterface $response = null
+        ?Input $input = null,
+        ?Registry $config = null,
+        ?WebClient $client = null,
+        ?ResponseInterface $response = null
     ) {
         $this->controllerResolver = $controllerResolver;
         $this->router             = $router;

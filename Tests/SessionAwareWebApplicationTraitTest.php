@@ -8,7 +8,6 @@
 namespace Joomla\Application\Tests;
 
 use Joomla\Application\SessionAwareWebApplicationTrait;
-use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
 use Joomla\Session\SessionInterface;
 use PHPUnit\Framework\TestCase;

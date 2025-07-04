@@ -65,7 +65,7 @@ class AbstractWebApplicationTest extends TestCase
      *
      * @return  \Generator
      */
-    public function getDetectRequestUriData(): \Generator
+    public static function getDetectRequestUriData(): \Generator
     {
         // HTTPS, PHP_SELF, REQUEST_URI, HTTP_HOST, SCRIPT_NAME, QUERY_STRING, (resulting uri)
         yield 'HTTP connection with path in PHP_SELF and query string set in REQUEST_URI' => [
@@ -114,7 +114,7 @@ class AbstractWebApplicationTest extends TestCase
      *
      * @return  \Generator
      */
-    public function getRedirectData(): \Generator
+    public static function getRedirectData(): \Generator
     {
         // Note: url, (expected result)
         yield 'with_leading_slash' => ['/foo', 'http://' . self::TEST_HTTP_HOST . '/foo'];
@@ -201,7 +201,7 @@ class AbstractWebApplicationTest extends TestCase
         $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
 
         // Validate default objects unique to the web application are created
-        $this->assertInstanceOf(Input::class, $object->input);
+        $this->assertInstanceOf(Input::class, $object->getInput());
     }
 
     /**
@@ -339,7 +339,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
-            ->setMethods(['checkHeadersSent'])
+            ->onlyMethods(['checkHeadersSent'])
             ->getMockForAbstractClass();
 
         $object->expects($this->once())
@@ -409,7 +409,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
-            ->setMethods(['checkHeadersSent'])
+            ->onlyMethods(['checkHeadersSent'])
             ->getMockForAbstractClass();
 
         $object->expects($this->once())
@@ -473,7 +473,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
-            ->setMethods(['checkHeadersSent'])
+            ->onlyMethods(['checkHeadersSent'])
             ->getMockForAbstractClass();
 
         // Mock a response.
@@ -531,7 +531,14 @@ class AbstractWebApplicationTest extends TestCase
             ['deflate', 'gzip']
         );
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, null, $mockClient]);
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([null, null, $mockClient])
+            ->onlyMethods(['checkHeadersSent'])
+            ->getMockForAbstractClass();
+
+        $object->expects($this->once())
+            ->method('checkHeadersSent')
+            ->willReturn(true);
 
         // Mock a response.
         $response = new TextResponse(
@@ -738,7 +745,7 @@ class AbstractWebApplicationTest extends TestCase
         $date                 = new \DateTime('now', new \DateTimeZone('GMT'));
         $object->modifiedDate = $date;
 
-        $object->redirect($url, false);
+        $object->redirect($url, 303);
 
         $this->assertSame(
             self::$headers,
@@ -1161,7 +1168,7 @@ class AbstractWebApplicationTest extends TestCase
         $date                 = new \DateTime('now', new \DateTimeZone('GMT'));
         $object->modifiedDate = $date;
 
-        $object->redirect($url, true);
+        $object->redirect($url, 301);
 
         $this->assertSame(
             self::$headers,
