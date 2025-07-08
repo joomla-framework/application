@@ -74,7 +74,7 @@ class MyApplication extends AbstractApplication
 
 ## Logging within Applications
 
-`AbstractApplication` implements the `Psr\Log\LoggerAwareInterface` so is ready for intergrating with an logging package that supports that standard.
+`AbstractApplication` implements the `Psr\Log\LoggerAwareInterface` so is ready for integrating with an logging package that supports that standard.
 
 The following example shows how you could set up logging in your application using `initialise` method from `AbstractApplication`.
 

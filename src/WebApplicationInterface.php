@@ -45,9 +45,9 @@ interface WebApplicationInterface extends ApplicationInterface
     public function redirect($url, $status = 303);
 
     /**
-     * Set/get cachable state for the response.
+     * Set/get cacheable state for the response.
      *
-     * If $allow is set, sets the cachable state of the response.  Always returns the current state.
+     * If $allow is set, sets the cacheable state of the response.  Always returns the current state.
      *
      * @param   boolean  $allow  True to allow browser caching.
      *

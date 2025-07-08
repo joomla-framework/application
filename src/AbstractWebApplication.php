@@ -459,9 +459,9 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
     }
 
     /**
-     * Set/get cachable state for the response.
+     * Set/get cacheable state for the response.
      *
-     * If $allow is set, sets the cachable state of the response.  Always returns the current state.
+     * If $allow is set, sets the cacheable state of the response.  Always returns the current state.
      *
      * @param  boolean  $allow  True to allow browser caching.
      *
