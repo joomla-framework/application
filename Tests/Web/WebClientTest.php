@@ -8,6 +8,7 @@
 namespace Joomla\Application\Tests\Web;
 
 use Joomla\Application\Web\WebClient;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,7 +27,7 @@ class WebClientTest extends TestCase
      *
      * @since   1.0.0
      */
-    public static function getUserAgentData()
+    public static function getUserAgentData(): array
     {
         // Platform, Mobile, Engine, Browser, Version, User Agent
         return [
@@ -408,7 +409,7 @@ class WebClientTest extends TestCase
      *
      * @since   1.0.0
      */
-    public static function getEncodingData()
+    public static function getEncodingData(): array
     {
         // HTTP_ACCEPT_ENCODING, Supported Encodings
         return [
@@ -429,7 +430,7 @@ class WebClientTest extends TestCase
      *
      * @since   1.0.0
      */
-    public static function getLanguageData()
+    public static function getLanguageData(): array
     {
         // HTTP_ACCEPT_LANGUAGE, Supported Language
         return [
@@ -450,7 +451,7 @@ class WebClientTest extends TestCase
      *
      * @since   1.0.0
      */
-    public static function detectRobotData()
+    public static function detectRobotData(): array
     {
         return [
             ['Googlebot/2.1 (+http://www.google.com/bot.html)', true],
@@ -512,10 +513,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getUserAgentData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getUserAgentData')]
     public function testDetectBrowser($p, $m, $e, $b, $v, $ua)
     {
         $client = new WebClient($ua);
@@ -553,10 +554,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getEncodingData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getEncodingData')]
     public function testDetectEncoding($ae, $e)
     {
         $client = new WebClient(null, $ae);
@@ -577,10 +578,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getUserAgentData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getUserAgentData')]
     public function testDetectEngine($p, $m, $e, $b, $v, $ua)
     {
         $client = new WebClient($ua);
@@ -597,10 +598,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getLanguageData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getLanguageData')]
     public function testDetectLanguage($al, $l)
     {
         $client = new WebClient(null, null, $al);
@@ -620,11 +621,10 @@ class WebClientTest extends TestCase
      * @param  string   $ua  The input user agent.
      *
      * @return  void
-     *
-     * @dataProvider getUserAgentData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getUserAgentData')]
     public function testDetectPlatform($p, $m, $e, $b, $v, $ua)
     {
         $client = new WebClient($ua);
@@ -642,10 +642,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider detectRobotData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('detectRobotData')]
     public function testDetectRobot($userAgent, $expected)
     {
         $client = new WebClient($userAgent);

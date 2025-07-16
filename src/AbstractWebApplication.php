@@ -611,7 +611,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         }
 
         $stream = new Stream('php://memory', 'rw');
-        $stream->write((string) $content . (string) $currentBody);
+        $stream->write((string) $content . $currentBody->getContents());
         $this->setResponse($this->getResponse()->withBody($stream));
 
         return $this;
@@ -653,7 +653,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      */
     public function getBody()
     {
-        return (string) $this->getResponse()->getBody();
+        return $this->getResponse()->getBody()->getContents();
     }
 
     /**

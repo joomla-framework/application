@@ -7,7 +7,7 @@
 
 namespace Joomla\Application\Tests;
 
-use Joomla\Application\SessionAwareWebApplicationTrait;
+use Joomla\Application\Tests\Stubs\TestSessionAwareWebApplicationTraitObject;
 use Joomla\Input\Input;
 use Joomla\Session\SessionInterface;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +24,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
      */
     public function testSetSession()
     {
-        $object      = $this->getMockForTrait(SessionAwareWebApplicationTrait::class);
+        $object      = new TestSessionAwareWebApplicationTraitObject();
         $mockSession = $this->createMock(SessionInterface::class);
 
         $this->assertSame($object, $object->setSession($mockSession), 'The setSession method has a fluent interface.');
@@ -40,7 +40,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
 
-        $object = $this->getMockForTrait(SessionAwareWebApplicationTrait::class);
+        $object = new TestSessionAwareWebApplicationTraitObject();
         $object->getSession();
     }
 
@@ -71,12 +71,8 @@ class SessionAwareWebApplicationTraitTest extends TestCase
             ->with('testing')
             ->willReturn(true);
 
-        $object = $this->getMockForTrait(SessionAwareWebApplicationTrait::class);
+        $object = new TestSessionAwareWebApplicationTraitObject();
         $object->setSession($mockSession);
-
-        $object->expects($this->any())
-            ->method('getInput')
-            ->willReturn($mockInput);
 
         $this->assertTrue($object->checkToken());
     }
@@ -108,12 +104,8 @@ class SessionAwareWebApplicationTraitTest extends TestCase
             ->with('testing')
             ->willReturn(true);
 
-        $object = $this->getMockForTrait(SessionAwareWebApplicationTrait::class);
+        $object = new TestSessionAwareWebApplicationTraitObject();
         $object->setSession($mockSession);
-
-        $object->expects($this->any())
-            ->method('getInput')
-            ->willReturn($mockInput);
 
         $this->assertTrue($object->checkToken());
     }
@@ -141,12 +133,8 @@ class SessionAwareWebApplicationTraitTest extends TestCase
         $mockSession->expects($this->never())
             ->method('hasToken');
 
-        $object = $this->getMockForTrait(SessionAwareWebApplicationTrait::class);
+        $object = new TestSessionAwareWebApplicationTraitObject();
         $object->setSession($mockSession);
-
-        $object->expects($this->any())
-            ->method('getInput')
-            ->willReturn($mockInput);
 
         $this->assertFalse($object->checkToken());
     }
