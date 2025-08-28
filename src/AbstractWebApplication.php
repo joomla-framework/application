@@ -214,46 +214,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
     }
 
     /**
-     * Magic method to access properties of the application.
-     *
-     * @param  string  $name  The name of the property.
-     *
-     * @return Input|null A value if the property name is valid, null otherwise.
-     *
-     * @since       2.0.0
-     * @deprecated  3.0  This is a B/C proxy for deprecated read accesses
-     */
-    public function __get($name)
-    {
-        switch ($name) {
-            case 'input':
-                \trigger_deprecation(
-                    'joomla/application',
-                    '2.0.0',
-                    'Accessing the input property of %s is deprecated, use the %s::getInput() method instead.',
-                    self::class,
-                    self::class
-                );
-
-                return $this->getInput();
-
-            default:
-                $trace = \debug_backtrace();
-                \trigger_error(
-                    \sprintf(
-                        'Undefined property via __get(): %1$s in %2$s on line %3$s',
-                        $name,
-                        $trace[0]['file'],
-                        $trace[0]['line']
-                    ),
-                    E_USER_NOTICE
-                );
-
-                return null;
-        }
-    }
-
-    /**
      * Execute the application.
      *
      * @return  void
