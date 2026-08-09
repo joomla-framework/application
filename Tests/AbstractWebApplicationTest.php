@@ -591,10 +591,10 @@ class AbstractWebApplicationTest extends TestCase
 
         $object->expects($this->once())
             ->method('close');
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
-        $object->expects($this->any())
+        $object->expects($this->exactly(7))
             ->method('header')
             ->willReturnCallback([$this, 'mockHeader']);
 
@@ -638,10 +638,10 @@ class AbstractWebApplicationTest extends TestCase
 
         $object->expects($this->once())
             ->method('close');
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
-        $object->expects($this->any())
+        $object->expects($this->exactly(7))
             ->method('header')
             ->willReturnCallback([$this, 'mockHeader']);
 
@@ -684,10 +684,10 @@ class AbstractWebApplicationTest extends TestCase
 
         $object->expects($this->once())
             ->method('close');
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
-        $object->expects($this->any())
+        $object->expects($this->exactly(7))
             ->method('header')
             ->willReturnCallback([$this, 'mockHeader']);
 
@@ -732,10 +732,10 @@ class AbstractWebApplicationTest extends TestCase
 
         $object->expects($this->once())
             ->method('close');
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
-        $object->expects($this->any())
+        $object->expects($this->exactly(7))
             ->method('header')
             ->willReturnCallback([$this, 'mockHeader']);
 
@@ -781,7 +781,7 @@ class AbstractWebApplicationTest extends TestCase
         $object->expects($this->once())
             ->method('close')
             ->willReturn(true);
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(true);
 
@@ -819,7 +819,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $object->expects($this->once())
             ->method('close');
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
 
@@ -856,10 +856,10 @@ class AbstractWebApplicationTest extends TestCase
 
         $object->expects($this->once())
             ->method('close');
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
-        $object->expects($this->any())
+        $object->expects($this->exactly(7))
             ->method('header')
             ->willReturnCallback([$this, 'mockHeader']);
 
@@ -908,10 +908,10 @@ class AbstractWebApplicationTest extends TestCase
 
         $object->expects($this->once())
             ->method('close');
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
-        $object->expects($this->any())
+        $object->expects($this->exactly(7))
             ->method('header')
             ->willReturnCallback([$this, 'mockHeader']);
 
@@ -975,10 +975,10 @@ class AbstractWebApplicationTest extends TestCase
             ->onlyMethods(['checkHeadersSent', 'header', 'doExecute'])
             ->getMock();
 
-        $object->expects($this->any())
+        $object->expects($this->once())
             ->method('checkHeadersSent')
             ->willReturn(false);
-        $object->expects($this->any())
+        $object->expects($this->exactly(2))
             ->method('header')
             ->willReturnCallback([$this, 'mockHeader']);
 
