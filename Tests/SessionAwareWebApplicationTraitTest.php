@@ -10,7 +10,6 @@ namespace Joomla\Application\Tests;
 use Joomla\Application\AbstractApplication;
 use Joomla\Application\AbstractWebApplication;
 use Joomla\Application\SessionAwareWebApplicationTrait;
-use Joomla\Application\Tests\Stubs\TestSessionAwareWebApplicationTraitObject;
 use Joomla\Application\Web\WebClient;
 use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
@@ -31,10 +30,31 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(WebClient::class)]
 class SessionAwareWebApplicationTraitTest extends TestCase
 {
+    /**
+     * Returns a lightweight object using SessionAwareWebApplicationTrait.
+     *
+     * The anonymous class provides a simple getInput() implementation,
+     * making it suitable for tests that require a minimal trait consumer.
+     *
+     * @return  object  An object using SessionAwareWebApplicationTrait
+     */
+    private function getSessionAwareWebApplicationTrait()
+    {
+        return new class ()
+        {
+            use SessionAwareWebApplicationTrait;
+
+            public function getInput(): Input
+            {
+                return new Input([]);
+            }
+        };
+    }
+
     #[TestDox('Tests a session object is correctly injected into the application and retrieved')]
     public function testSetSession()
     {
-        $object      = new TestSessionAwareWebApplicationTraitObject();
+        $object      = $this->getSessionAwareWebApplicationTrait();
         $mockSession = $this->createMock(SessionInterface::class);
 
         $this->assertSame($object, $object->setSession($mockSession), 'The setSession method has a fluent interface.');
@@ -46,7 +66,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
 
-        $object = new TestSessionAwareWebApplicationTraitObject();
+        $object = $this->getSessionAwareWebApplicationTrait();
         $object->getSession();
     }
 
@@ -68,7 +88,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
             ->with('testing')
             ->willReturn(true);
 
-        $object = new TestSessionAwareWebApplicationTraitObject();
+        $object = $this->getSessionAwareWebApplicationTrait();
         $object->setSession($mockSession);
 
         $this->assertTrue($object->checkToken());
@@ -92,7 +112,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
             ->with('testing')
             ->willReturn(true);
 
-        $object = new TestSessionAwareWebApplicationTraitObject();
+        $object = $this->getSessionAwareWebApplicationTrait();
         $object->setSession($mockSession);
 
         $this->assertTrue($object->checkToken());
@@ -112,7 +132,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
         $mockSession->expects($this->never())
             ->method('hasToken');
 
-        $object = new TestSessionAwareWebApplicationTraitObject();
+        $object = $this->getSessionAwareWebApplicationTrait();
         $object->setSession($mockSession);
 
         $this->assertFalse($object->checkToken());
