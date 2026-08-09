@@ -27,7 +27,7 @@ class ControllerResolverTest extends TestCase
     {
         $callable = (new ControllerResolver())->resolve(new ResolvedRoute([Registry::class, 'get'], [], '/'));
 
-        $this->assertTrue(\is_callable($callable));
+        $this->assertIsCallable($callable);
         $this->assertInstanceOf(Registry::class, $callable[0]);
     }
 
@@ -70,7 +70,7 @@ class ControllerResolverTest extends TestCase
     {
         $callable = (new ControllerResolver())->resolve(new ResolvedRoute(Controller::class, [], '/'));
 
-        $this->assertTrue(\is_callable($callable));
+        $this->assertIsCallable($callable);
         $this->assertInstanceOf(Controller::class, $callable[0]);
     }
 
