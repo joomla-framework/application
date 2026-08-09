@@ -7,7 +7,9 @@
 
 namespace Joomla\Application\Tests;
 
+use Joomla\Application\AbstractApplication;
 use Joomla\Application\AbstractWebApplication;
+use Joomla\Application\Event\ApplicationEvent;
 use Joomla\Application\Tests\Stubs\TestAbstractWebApplicationObject;
 use Joomla\Application\Web\WebClient;
 use Joomla\Event\DispatcherInterface;
@@ -15,12 +17,22 @@ use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
 use Laminas\Diactoros\Response\TextResponse;
+use PHPUnit\Framework\Attributes\BackupGlobals;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\AbstractWebApplication.
  */
+#[CoversClass(AbstractWebApplication::class)]
+#[UsesClass(AbstractApplication::class)]
+#[UsesClass(ApplicationEvent::class)]
+#[UsesClass(WebClient::class)]
 class AbstractWebApplicationTest extends TestCase
 {
     /**
@@ -141,13 +153,7 @@ class AbstractWebApplicationTest extends TestCase
         self::$headers[] = [$string, $replace, $code];
     }
 
-    /**
-     * @testdox  Tests the constructor creates default object instances
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the constructor creates default object instances')]
     public function testConstructDefaultBehaviour()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -156,14 +162,8 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertInstanceOf(WebClient::class, $object->client);
     }
 
-    /**
-     * @testdox       Tests the correct objects are stored when injected
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the correct objects are stored when injected')]
     public function testConstructDependencyInjection()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -191,13 +191,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEquals('http://' . self::TEST_HTTP_HOST, $object->get('uri.base.host'));
     }
 
-    /**
-     * @testdox  Tests access to the input property is allowed
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests access to the input property is allowed')]
     public function testGetDeprecatedInputReadAccess()
     {
         $object = $this->createMock(TestAbstractWebApplicationObject::class);
@@ -206,13 +200,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertInstanceOf(Input::class, $object->getInput());
     }
 
-    /**
-     * @testdox  Tests that the application is executed successfully.
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests that the application is executed successfully.')]
     public function testExecute()
     {
         $object = $this->createMock(TestAbstractWebApplicationObject::class);
@@ -236,14 +224,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getBody());
     }
 
-    /**
-     * @testdox  Tests that the application is executed successfully when an event dispatcher is registered.
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Event\ApplicationEvent
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests that the application is executed successfully when an event dispatcher is registered.')]
     public function testExecuteWithEvents()
     {
         $dispatcher = $this->createMock(DispatcherInterface::class);
@@ -273,13 +254,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getBody());
     }
 
-    /**
-     * @testdox  Tests that the application with compression enabled is executed successfully.
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests that the application with compression enabled is executed successfully.')]
     public function testExecuteWithCompression()
     {
         // Verify compression is supported in this environment
@@ -310,13 +285,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getBody());
     }
 
-    /**
-     * @testdox  Tests the \compress() method correctly compresses data with gzip encoding
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \compress() method correctly compresses data with gzip encoding')]
     public function testCompressWithGzipEncoding()
     {
         $mockClient = $this->getMockBuilder(WebClient::class)
@@ -380,13 +349,7 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests the compress() method correctly compresses data with deflate encoding
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the compress() method correctly compresses data with deflate encoding')]
     public function testCompressWithDeflateEncoding()
     {
         $mockClient = $this->getMockBuilder(WebClient::class)
@@ -450,13 +413,7 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests the \compress() method does not compress data when no encoding methods are supported
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \compress() method does not compress data when no encoding methods are supported')]
     public function testCompressWithNoAcceptEncodings()
     {
         $mockClient = $this->getMockBuilder(WebClient::class)
@@ -504,13 +461,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getHeaders());
     }
 
-    /**
-     * @testdox  Tests the \compress() method does not compress data when the response headers have already been sent
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \compress() method does not compress data when the response headers have already been sent')]
     public function testCompressWithHeadersSent()
     {
         $mockClient = $this->getMockBuilder(WebClient::class)
@@ -568,14 +519,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getHeaders());
     }
 
-    /**
-     * @testdox  Tests the \compress() method does not compress data when the application does not support the client's
-     *           encoding methods
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \compress() method does not compress data when the application does not support the client\'s encoding methods')]
     public function testCompressWithUnsupportedEncodings()
     {
         $mockClient = $this->getMockBuilder(WebClient::class)
@@ -625,13 +569,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getHeaders());
     }
 
-    /**
-     * @testdox  Tests that the application sends the response successfully.
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests that the application sends the response successfully.')]
     public function testRespond()
     {
         $object = $this->createMock(TestAbstractWebApplicationObject::class);
@@ -653,13 +591,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getBody());
     }
 
-    /**
-     * @testdox  Tests that the application sends the response successfully with allowed caching.
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests that the application sends the response successfully with allowed caching.')]
     public function testRespondWithAllowedCaching()
     {
         $modifiedDate = new \DateTime('now', new \DateTimeZone('GMT'));
@@ -685,15 +617,8 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getBody());
     }
 
-    /**
-     * @testdox       Tests that the application redirects successfully with the legacy behavior.
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests that the application redirects successfully with the legacy behavior.')]
     public function testRedirectLegacyBehavior()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -760,15 +685,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests that the application redirects successfully.
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests that the application redirects successfully.')]
     public function testRedirect()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -834,15 +752,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests that the application redirects successfully when there is already a status code set.
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests that the application redirects successfully when there is already a status code set.')]
     public function testRedirectWithExistingStatusCode()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -910,15 +821,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests that the application redirects and sends additional headers successfully.
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests that the application redirects and sends additional headers successfully.')]
     public function testRedirectWithAdditionalHeaders()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -985,17 +889,10 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox             Tests that the application redirects successfully when the headers have already been sent.
-     *
-     * @covers              \Joomla\Application\AbstractWebApplication
-     * @uses                \Joomla\Application\AbstractApplication
-     * @uses                \Joomla\Application\Web\WebClient
-     *
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     * @backupGlobals       enabled
-     */
+    #[BackupGlobals(true)]
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    #[TestDox('Tests that the application redirects successfully when the headers have already been sent.')]
     public function testRedirectWithHeadersSent()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1040,15 +937,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests that the application redirects successfully with a JavaScript redirect.
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests that the application redirects successfully with a JavaScript redirect.')]
     public function testRedirectWithJavascriptRedirect()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1108,15 +998,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests that the application redirects successfully with the moved parameter set to true.
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests that the application redirects successfully with the moved parameter set to true.')]
     public function testRedirectWithMoved()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1184,18 +1067,12 @@ class AbstractWebApplicationTest extends TestCase
     }
 
     /**
-     * @testdox       Tests that the application redirects successfully with the moved parameter set to true.
-     *
      * @param  string  $url       The URL to redirect to
      * @param  string  $expected  The expected redirect URL
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @dataProvider  getRedirectData
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
+    #[DataProvider('getRedirectData')]
+    #[TestDox('Tests that the application redirects successfully with the moved parameter set to true.')]
     public function testRedirectWithUrl(string $url, string $expected)
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1249,13 +1126,7 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests the \allowCache() method returns the allowed cache state
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \allowCache() method returns the allowed cache state')]
     public function testAllowCache()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1264,13 +1135,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertTrue($object->allowCache(true));
     }
 
-    /**
-     * @testdox  Tests the \setHeader() method correctly sets and replaces a specified header
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \setHeader() method correctly sets and replaces a specified header')]
     public function testSetHeader()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1295,13 +1160,7 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests the \clearHeaders() method resets the internal headers array
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \clearHeaders() method resets the internal headers array')]
     public function testClearHeaders()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1312,13 +1171,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertNotSame($oldHeaders, $object->getHeaders());
     }
 
-    /**
-     * @testdox  Tests the \sendHeaders() method correctly sends the response headers
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \sendHeaders() method correctly sends the response headers')]
     public function testSendHeaders()
     {
         $object = $this->createMock(
@@ -1351,13 +1204,7 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests the \setBody() method correctly sets the response body
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \setBody() method correctly sets the response body')]
     public function testSetBody()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1366,13 +1213,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertSame('Testing', $object->getBody());
     }
 
-    /**
-     * @testdox  Tests the \prependBody() method correctly prepends content to the response body
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \prependBody() method correctly prepends content to the response body')]
     public function testPrependBody()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1382,13 +1223,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertSame('Pre-Testing', $object->getBody());
     }
 
-    /**
-     * @testdox  Tests the \appendBody() method correctly appends content to the response body
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \appendBody() method correctly appends content to the response body')]
     public function testAppendBody()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1398,13 +1233,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertSame('Testing Later', $object->getBody());
     }
 
-    /**
-     * @testdox  Tests the \getBody() method correctly retrieves the response body
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the \getBody() method correctly retrieves the response body')]
     public function testGetBody()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1413,8 +1242,6 @@ class AbstractWebApplicationTest extends TestCase
     }
 
     /**
-     * @testdox       Tests that the application correctly detects the request URI based on the injected data
-     *
      * @param  string|null  $https        Value for $_SERVER['HTTPS'] or null to not set it
      * @param  string       $phpSelf      Value for $_SERVER['PHP_SELF']
      * @param  string       $requestUri   Value for $_SERVER['REQUEST_URI']
@@ -1422,14 +1249,10 @@ class AbstractWebApplicationTest extends TestCase
      * @param  string       $scriptName   Value for $_SERVER['SCRIPT_NAME']
      * @param  string       $queryString  Value for $_SERVER['QUERY_STRING']
      * @param  string       $expects      Expected full URI string
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     #[DataProvider('getDetectRequestUriData')]
+    #[TestDox('Tests that the application correctly detects the request URI based on the injected data')]
     public function testDetectRequestUri(
         ?string $https,
         string $phpSelf,
@@ -1459,13 +1282,7 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests the system URIs are correctly loaded when a URI is set in the application configuration
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the system URIs are correctly loaded when a URI is set in the application configuration')]
     public function testLoadSystemUrisWithSiteUriSet()
     {
         $mockConfig = $this->getMockBuilder(Registry::class)
@@ -1503,15 +1320,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests the system URIs are correctly loaded when a URI is passed into the method
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the system URIs are correctly loaded when a URI is passed into the method')]
     public function testLoadSystemUrisWithoutSiteUriSet()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1549,16 +1359,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests the system URIs are correctly loaded when a media URI is set in the application
-     *                configuration
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the system URIs are correctly loaded when a media URI is set in the application configuration')]
     public function testLoadSystemUrisWithoutSiteUriWithMediaUriSet()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1601,16 +1403,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests the system URIs are correctly loaded when a relative media URI is set in the application
-     *                configuration
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the system URIs are correctly loaded when a relative media URI is set in the application configuration')]
     public function testLoadSystemUrisWithoutSiteUriWithRelativeMediaUriSet()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1653,15 +1447,8 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox       Tests the application correctly detects if a SSL connection is active
-     *
-     * @covers        \Joomla\Application\AbstractWebApplication
-     * @uses          \Joomla\Application\AbstractApplication
-     * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
-     */
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the application correctly detects if a SSL connection is active')]
     public function testisSslConnection()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1673,13 +1460,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertTrue($object->isSslConnection());
     }
 
-    /**
-     * @testdox  Tests the application correctly approves a valid HTTP Status Code
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the application correctly approves a valid HTTP Status Code')]
     public function testGetHttpStatusValue()
     {
         $object = new TestAbstractWebApplicationObject();
@@ -1687,13 +1468,7 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertTrue($object->isValidHttpStatus(500));
     }
 
-    /**
-     * @testdox  Tests the application correctly rejects a valid HTTP Status Code
-     *
-     * @covers   \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the application correctly rejects a valid HTTP Status Code')]
     public function testInvalidHttpStatusValue()
     {
         $object = new TestAbstractWebApplicationObject();

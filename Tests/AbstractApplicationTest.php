@@ -8,9 +8,15 @@
 namespace Joomla\Application\Tests;
 
 use Joomla\Application\Tests\Stubs\TestAbstractApplicationObject;
+use Joomla\Application\AbstractApplication;
+use Joomla\Application\Event\ApplicationEvent;
+use Joomla\Application\Web\WebClient;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -18,15 +24,12 @@ use Psr\Log\NullLogger;
 /**
  * Test class for Joomla\Application\AbstractApplication.
  */
+#[CoversClass(AbstractApplication::class)]
+#[UsesClass(ApplicationEvent::class)]
+#[UsesClass(WebClient::class)]
 class AbstractApplicationTest extends TestCase
 {
-    /**
-     * @testdox  Tests the constructor creates default object instances
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     * @uses    Joomla\Application\AbstractApplication
-     * @uses    Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests the constructor creates default object instances')]
     public function testConstructDefaultBehaviour()
     {
         $startTime      = \time();
@@ -48,11 +51,7 @@ class AbstractApplicationTest extends TestCase
         $this->assertGreaterThanOrEqual($startMicrotime, $object->get('execution.microtimestamp'));
     }
 
-    /**
-     * @testdox  Tests the correct objects are stored when injected
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     */
+    #[TestDox('Tests the correct objects are stored when injected')]
     public function testConstructDependencyInjection()
     {
         $mockConfig = $this->createMock(Registry::class);
@@ -65,11 +64,7 @@ class AbstractApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests that the application is executed successfully.
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     */
+    #[TestDox('Tests that the application is executed successfully.')]
     public function testExecute()
     {
         $object = $this->createMock(TestAbstractApplicationObject::class);
@@ -79,12 +74,7 @@ class AbstractApplicationTest extends TestCase
         $object->execute();
     }
 
-    /**
-     * @testdox  Tests that the application is executed successfully when an event dispatcher is registered.
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     * @uses    Joomla\Application\Event\ApplicationEvent
-     */
+    #[TestDox('Tests that the application is executed successfully when an event dispatcher is registered.')]
     public function testExecuteWithEvents()
     {
         $dispatcher = $this->createMock(DispatcherInterface::class);
@@ -100,11 +90,7 @@ class AbstractApplicationTest extends TestCase
         $object->execute();
     }
 
-    /**
-     * @testdox  Tests that data is read from the application configuration successfully.
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     */
+    #[TestDox('Tests that data is read from the application configuration successfully.')]
     public function testGet()
     {
         $mockConfig = $this->getMockBuilder(Registry::class)
@@ -118,11 +104,7 @@ class AbstractApplicationTest extends TestCase
         $this->assertSame('car', $object->get('goo', 'car'), 'Checks an unknown configuration setting returns the default.');
     }
 
-    /**
-     * @testdox  Tests that a default LoggerInterface object is returned.
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     */
+    #[TestDox('Tests that a default LoggerInterface object is returned.')]
     public function testGetLogger()
     {
         $object = new TestAbstractApplicationObject();
@@ -130,11 +112,7 @@ class AbstractApplicationTest extends TestCase
         $this->assertInstanceOf(NullLogger::class, $object->getLogger());
     }
 
-    /**
-     * @testdox  Tests that data is set to the application configuration successfully.
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     */
+    #[TestDox('Tests that data is set to the application configuration successfully.')]
     public function testSet()
     {
         $mockConfig = $this->getMockBuilder(Registry::class)
@@ -147,11 +125,7 @@ class AbstractApplicationTest extends TestCase
         $this->assertEquals('car', $object->get('foo'), 'Checks the new value has been set.');
     }
 
-    /**
-     * @testdox  Tests that the application configuration is overwritten successfully.
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     */
+    #[TestDox('Tests that the application configuration is overwritten successfully.')]
     public function testSetConfiguration()
     {
         $object = new TestAbstractApplicationObject();
@@ -166,11 +140,7 @@ class AbstractApplicationTest extends TestCase
         );
     }
 
-    /**
-     * @testdox  Tests that a LoggerInterface object is correctly set to the application.
-     *
-     * @covers  Joomla\Application\AbstractApplication
-     */
+    #[TestDox('Tests that a LoggerInterface object is correctly set to the application.')]
     public function testSetLogger()
     {
         $object = new TestAbstractApplicationObject();

@@ -12,23 +12,23 @@ use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
 use Joomla\Router\ResolvedRoute;
 use Joomla\Router\RouterInterface;
+use PHPUnit\Framework\Attributes\BackupGlobals;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\WebApplication.
- *
- * @backupGlobals enabled
  */
+#[CoversClass(WebApplication::class)]
+#[BackupGlobals(true)]
+#[UsesClass('\Joomla\Application\AbstractApplication')]
+#[UsesClass('\Joomla\Application\AbstractWebApplication')]
+#[UsesClass('\Joomla\Application\Web\WebClient')]
 class WebApplicationTest extends TestCase
 {
-    /**
-     * @testdox  Tests that the application is executed successfully.
-     *
-     * @covers   \Joomla\Application\WebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests that the application is executed successfully.')]
     public function testExecute()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
