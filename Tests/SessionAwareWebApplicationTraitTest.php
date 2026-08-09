@@ -55,7 +55,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
     public function testSetSession()
     {
         $object      = $this->getSessionAwareWebApplicationTrait();
-        $mockSession = $this->createMock(SessionInterface::class);
+        $mockSession = $this->createStub(SessionInterface::class);
 
         $this->assertSame($object, $object->setSession($mockSession), 'The setSession method has a fluent interface.');
         $this->assertSame($mockSession, $object->getSession());
@@ -75,8 +75,6 @@ class SessionAwareWebApplicationTraitTest extends TestCase
     public function testCheckTokenForHttpHeader()
     {
         $_SERVER['HTTP_X_CSRF_TOKEN'] = 'token';
-
-        $mockInput = new Input([]);
 
         $mockSession = $this->createMock(SessionInterface::class);
         $mockSession->expects($this->once())
@@ -100,8 +98,6 @@ class SessionAwareWebApplicationTraitTest extends TestCase
     {
         $_POST['testing'] = 'token';
 
-        $mockInput = new Input([]);
-
         $mockSession = $this->createMock(SessionInterface::class);
         $mockSession->expects($this->once())
             ->method('getToken')
@@ -122,8 +118,6 @@ class SessionAwareWebApplicationTraitTest extends TestCase
     #[TestDox('Tests checking the CSRF token fails when it does not exist in the request')]
     public function testCheckTokenFailsWhenNotPresent()
     {
-        $mockInput = new Input([]);
-
         $mockSession = $this->createMock(SessionInterface::class);
         $mockSession->expects($this->once())
             ->method('getToken')

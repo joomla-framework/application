@@ -73,7 +73,7 @@ class AbstractApplicationTest extends TestCase
     #[TestDox('Tests the correct objects are stored when injected')]
     public function testConstructDependencyInjection()
     {
-        $mockConfig = $this->createMock(Registry::class);
+        $mockConfig = new Registry();
         $object     = $this->getAbstractApplication($mockConfig);
 
         $this->assertSame(
@@ -128,11 +128,7 @@ class AbstractApplicationTest extends TestCase
     #[TestDox('Tests that data is read from the application configuration successfully.')]
     public function testGet()
     {
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['foo' => 'bar']])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
-
+        $mockConfig = new Registry(['foo' => 'bar']);
         $object     = $this->getAbstractApplication($mockConfig);
 
         $this->assertSame('bar', $object->get('foo', 'car'), 'Checks a known configuration setting is returned.');
@@ -150,10 +146,7 @@ class AbstractApplicationTest extends TestCase
     #[TestDox('Tests that data is set to the application configuration successfully.')]
     public function testSet()
     {
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
-
+        $mockConfig = new Registry();
         $object     = $this->getAbstractApplication($mockConfig);
 
         $this->assertNull($object->set('foo', 'car'), 'Checks set returns the previous value.');
@@ -164,7 +157,7 @@ class AbstractApplicationTest extends TestCase
     public function testSetConfiguration()
     {
         $object     = $this->getAbstractApplication();
-        $mockConfig = $this->createMock(Registry::class);
+        $mockConfig = new Registry();
 
         $this->assertSame($object, $object->setConfiguration($mockConfig), 'The setConfiguration method has a fluent interface');
 
@@ -178,8 +171,8 @@ class AbstractApplicationTest extends TestCase
     #[TestDox('Tests that a LoggerInterface object is correctly set to the application.')]
     public function testSetLogger()
     {
-        $object = $this->getAbstractApplication();
-        $mockLogger = $this->createMock(LoggerInterface::class);
+        $object     = $this->getAbstractApplication();
+        $mockLogger = $this->createStub(LoggerInterface::class);
 
         $object->setLogger($mockLogger);
 

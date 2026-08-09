@@ -189,11 +189,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->createMock(Registry::class);
-
-        $mockClient = $this->createMock(WebClient::class);
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient();
 
         $object = $this->getAbstractWebApplication($mockInput, $mockConfig, $mockClient);
 
@@ -316,22 +314,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \compress() method correctly compresses data with gzip encoding')]
     public function testCompressWithGzipEncoding()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs([null, 'gzip, deflate'])
-
-            ->getMock();
-
-        // Mock the client internals to show encoding has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['acceptEncoding' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'encodings',
-            ['gzip', 'deflate']
-        );
+        $mockClient = new WebClient(null, 'gzip, deflate');
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
@@ -380,22 +363,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the compress() method correctly compresses data with deflate encoding')]
     public function testCompressWithDeflateEncoding()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs([null, 'deflate'])
-
-            ->getMock();
-
-        // Mock the client internals to show encoding has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['acceptEncoding' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'encodings',
-            ['deflate', 'gzip']
-        );
+        $mockClient = new WebClient(null, 'deflate');
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
@@ -427,7 +395,7 @@ class AbstractWebApplicationTest extends TestCase
 
         // Ensure that the compressed body is shorter than the raw body.
         $this->assertLessThan(
-            \strlen($response->getBody()->getContents()),
+            \strlen($response->getBody()),
             \strlen($object->getBody())
         );
 
@@ -444,21 +412,9 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \compress() method does not compress data when no encoding methods are supported')]
     public function testCompressWithNoAcceptEncodings()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
+        $mockClient = new WebClient();
 
-            ->getMock();
-
-        // Mock the client internals to show encoding has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['acceptEncoding' => true]
-        );
-
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
-            ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent', 'doExecute'])
-            ->getMock();
+        $object = $this->getAbstractWebApplication(null, null, $mockClient);
 
         // Mock a response.
         $response = new TextResponse(
@@ -492,22 +448,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \compress() method does not compress data when the response headers have already been sent')]
     public function testCompressWithHeadersSent()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs([null, 'deflate'])
-
-            ->getMock();
-
-        // Mock the client internals to show encoding has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['acceptEncoding' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'encodings',
-            ['deflate', 'gzip']
-        );
+        $mockClient = new WebClient(null, 'deflate');
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
@@ -550,21 +491,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \compress() method does not compress data when the application does not support the client\'s encoding methods')]
     public function testCompressWithUnsupportedEncodings()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-
-            ->getMock();
-
-        // Mock the client internals to show encoding has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['acceptEncoding' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'encodings',
-            ['foo', 'bar']
-        );
+        $mockClient = new WebClient();
 
         $object = $this->getAbstractWebApplication(null, null, $mockClient);
 
@@ -653,25 +580,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
-
-        $mockClient = $this->createMock(WebClient::class);
-
-        // Mock the client internals to show engine has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['engine' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'engine',
-            WebClient::GECKO
-        );
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient();
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
@@ -716,25 +627,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
-
-        $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
-
-        // Mock the client internals to show engine has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['engine' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'engine',
-            WebClient::GECKO
-        );
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient();
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
@@ -778,25 +673,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
-
-        $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
-
-        // Mock the client internals to show engine has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['engine' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'engine',
-            WebClient::GECKO
-        );
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient();
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
@@ -842,25 +721,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
-
-        $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
-
-        // Mock the client internals to show engine has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['engine' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'engine',
-            WebClient::GECKO
-        );
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient();
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
@@ -907,11 +770,8 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig])
@@ -948,28 +808,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
-
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs(['MSIE'])
-
-            ->getMock();
-
-        // Mock the client internals to show engine has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['engine' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'engine',
-            WebClient::TRIDENT
-        );
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient('MSIE');
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
@@ -1004,25 +845,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
-
-        $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
-
-        // Mock the client internals to show engine has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['engine' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'engine',
-            WebClient::GECKO
-        );
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient();
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
@@ -1072,25 +897,9 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-
-            ->getMock();
-
-        $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
-
-        // Mock the client internals to show engine has been detected.
-        TestHelper::setValue(
-            $mockClient,
-            'detection',
-            ['engine' => true]
-        );
-        TestHelper::setValue(
-            $mockClient,
-            'engine',
-            WebClient::GECKO
-        );
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry();
+        $mockClient = new WebClient();
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
@@ -1267,11 +1076,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the system URIs are correctly loaded when a URI is set in the application configuration')]
     public function testLoadSystemUrisWithSiteUriSet()
     {
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['site_uri' => 'http://test.joomla.org/path/']])
-
-            ->getMock();
-
+        $mockConfig = new Registry(['site_uri' => 'http://test.joomla.org/path/']);
         $object     = $this->getAbstractWebApplication(null, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris');
@@ -1347,13 +1152,8 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['media_uri' => 'http://cdn.joomla.org/media/']])
-
-            ->getMock();
-
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry(['media_uri' => 'http://cdn.joomla.org/media/']);
         $object     = $this->getAbstractWebApplication($mockInput, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
@@ -1391,13 +1191,8 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
-        $mockInput = new Input([]);
-
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['media_uri' => '/media/']])
-
-            ->getMock();
-
+        $mockInput  = new Input([]);
+        $mockConfig = new Registry(['media_uri' => '/media/']);
         $object     = $this->getAbstractWebApplication($mockInput, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
