@@ -316,15 +316,6 @@ class AbstractWebApplicationTest extends TestCase
     {
         $mockClient = new WebClient(null, 'gzip, deflate');
 
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
-            ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent', 'doExecute'])
-            ->getMock();
-
-        $object->expects($this->once())
-            ->method('checkHeadersSent')
-            ->willReturn(false);
-
         // Mock a response.
         $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -336,11 +327,14 @@ class AbstractWebApplicationTest extends TestCase
         );
         $response = $response->withoutHeader('content-type');
 
-        TestHelper::setValue(
-            $object,
-            'response',
-            $response
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([null, null, $mockClient, $response])
+            ->onlyMethods(['checkHeadersSent', 'doExecute'])
+            ->getMock();
+
+        $object->expects($this->once())
+            ->method('checkHeadersSent')
+            ->willReturn(false);
 
         TestHelper::invoke($object, 'compress');
 
@@ -365,15 +359,6 @@ class AbstractWebApplicationTest extends TestCase
     {
         $mockClient = new WebClient(null, 'deflate');
 
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
-            ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent', 'doExecute'])
-            ->getMock();
-
-        $object->expects($this->once())
-            ->method('checkHeadersSent')
-            ->willReturn(false);
-
         // Mock a response.
         $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -385,11 +370,14 @@ class AbstractWebApplicationTest extends TestCase
         );
         $response = $response->withoutHeader('content-type');
 
-        TestHelper::setValue(
-            $object,
-            'response',
-            $response
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([null, null, $mockClient, $response])
+            ->onlyMethods(['checkHeadersSent', 'doExecute'])
+            ->getMock();
+
+        $object->expects($this->once())
+            ->method('checkHeadersSent')
+            ->willReturn(false);
 
         TestHelper::invoke($object, 'compress');
 
@@ -414,8 +402,6 @@ class AbstractWebApplicationTest extends TestCase
     {
         $mockClient = new WebClient();
 
-        $object = $this->getAbstractWebApplication(null, null, $mockClient);
-
         // Mock a response.
         $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -427,11 +413,7 @@ class AbstractWebApplicationTest extends TestCase
         );
         $response = $response->withoutHeader('content-type');
 
-        TestHelper::setValue(
-            $object,
-            'response',
-            $response
-        );
+        $object = $this->getAbstractWebApplication(null, null, $mockClient, $response);
 
         TestHelper::invoke($object, 'compress');
 
@@ -450,15 +432,6 @@ class AbstractWebApplicationTest extends TestCase
     {
         $mockClient = new WebClient(null, 'deflate');
 
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
-            ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent', 'doExecute'])
-            ->getMock();
-
-        $object->expects($this->once())
-            ->method('checkHeadersSent')
-            ->willReturn(true);
-
         // Mock a response.
         $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -470,11 +443,14 @@ class AbstractWebApplicationTest extends TestCase
         );
         $response = $response->withoutHeader('content-type');
 
-        TestHelper::setValue(
-            $object,
-            'response',
-            $response
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([null, null, $mockClient, $response])
+            ->onlyMethods(['checkHeadersSent', 'doExecute'])
+            ->getMock();
+
+        $object->expects($this->once())
+            ->method('checkHeadersSent')
+            ->willReturn(true);
 
         TestHelper::invoke($object, 'compress');
 
@@ -493,8 +469,6 @@ class AbstractWebApplicationTest extends TestCase
     {
         $mockClient = new WebClient();
 
-        $object = $this->getAbstractWebApplication(null, null, $mockClient);
-
         // Mock a response.
         $response = new TextResponse(
             'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -506,11 +480,7 @@ class AbstractWebApplicationTest extends TestCase
         );
         $response = $response->withoutHeader('content-type');
 
-        TestHelper::setValue(
-            $object,
-            'response',
-            $response
-        );
+        $object = $this->getAbstractWebApplication(null, null, $mockClient, $response);
 
         TestHelper::invoke($object, 'compress');
 
