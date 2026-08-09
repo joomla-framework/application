@@ -7,7 +7,6 @@
 
 namespace Joomla\Application\Tests;
 
-use Joomla\Application\Tests\Stubs\TestAbstractApplicationObject;
 use Joomla\Application\AbstractApplication;
 use Joomla\Application\Event\ApplicationEvent;
 use Joomla\Application\Web\WebClient;
@@ -29,13 +28,33 @@ use Psr\Log\NullLogger;
 #[UsesClass(WebClient::class)]
 class AbstractApplicationTest extends TestCase
 {
+    /**
+     * Returns a lightweight AbstractApplication instance for testing.
+     *
+     * The anonymous class forwards all constructor arguments to the parent
+     * and provides an empty doExecute() implementation.
+     *
+     * @param   mixed  ...$args  Constructor arguments for AbstractApplication
+     *
+     * @return  AbstractApplication
+     */
+    private function getAbstractApplication(...$args): AbstractApplication
+    {
+        return new class (...$args) extends AbstractApplication
+        {
+            protected function doExecute()
+            {
+            }
+        };
+    }
+
     #[TestDox('Tests the constructor creates default object instances')]
     public function testConstructDefaultBehaviour()
     {
         $startTime      = \time();
         $startMicrotime = \microtime(true);
 
-        $object = new TestAbstractApplicationObject();
+        $object = $this->getAbstractApplication();
 
         $this->assertInstanceOf(
             Registry::class,
@@ -55,7 +74,7 @@ class AbstractApplicationTest extends TestCase
     public function testConstructDependencyInjection()
     {
         $mockConfig = $this->createMock(Registry::class);
-        $object = new TestAbstractApplicationObject($mockConfig);
+        $object     = $this->getAbstractApplication($mockConfig);
 
         $this->assertSame(
             $mockConfig,
@@ -64,10 +83,24 @@ class AbstractApplicationTest extends TestCase
         );
     }
 
+    #[TestDox('Tests that \close() exits the application with the given code')]
+    public function testClose()
+    {
+        $object = $this->createMock(AbstractApplication::class);
+
+        $object->expects($this->once())
+            ->method('close')
+            ->willReturnArgument(0);
+
+        $this->assertSame(3, $object->close(3));
+    }
+
     #[TestDox('Tests that the application is executed successfully.')]
     public function testExecute()
     {
-        $object = $this->createMock(TestAbstractApplicationObject::class);
+        $object = $this->getMockBuilder(AbstractApplication::class)
+            ->onlyMethods(['doExecute'])
+            ->getMock();
         $object->expects($this->once())
             ->method('doExecute');
 
@@ -81,7 +114,9 @@ class AbstractApplicationTest extends TestCase
         $dispatcher->expects($this->exactly(2))
             ->method('dispatch');
 
-        $object = $this->createMock(TestAbstractApplicationObject::class);
+        $object = $this->getMockBuilder(AbstractApplication::class)
+            ->onlyMethods(['doExecute'])
+            ->getMock();
         $object->expects($this->once())
             ->method('doExecute');
 
@@ -98,7 +133,7 @@ class AbstractApplicationTest extends TestCase
             ->enableProxyingToOriginalMethods()
             ->getMock();
 
-        $object = new TestAbstractApplicationObject($mockConfig);
+        $object     = $this->getAbstractApplication($mockConfig);
 
         $this->assertSame('bar', $object->get('foo', 'car'), 'Checks a known configuration setting is returned.');
         $this->assertSame('car', $object->get('goo', 'car'), 'Checks an unknown configuration setting returns the default.');
@@ -107,7 +142,7 @@ class AbstractApplicationTest extends TestCase
     #[TestDox('Tests that a default LoggerInterface object is returned.')]
     public function testGetLogger()
     {
-        $object = new TestAbstractApplicationObject();
+        $object = $this->getAbstractApplication();
 
         $this->assertInstanceOf(NullLogger::class, $object->getLogger());
     }
@@ -119,7 +154,7 @@ class AbstractApplicationTest extends TestCase
             ->enableProxyingToOriginalMethods()
             ->getMock();
 
-        $object = new TestAbstractApplicationObject($mockConfig);
+        $object     = $this->getAbstractApplication($mockConfig);
 
         $this->assertNull($object->set('foo', 'car'), 'Checks set returns the previous value.');
         $this->assertEquals('car', $object->get('foo'), 'Checks the new value has been set.');
@@ -128,7 +163,7 @@ class AbstractApplicationTest extends TestCase
     #[TestDox('Tests that the application configuration is overwritten successfully.')]
     public function testSetConfiguration()
     {
-        $object = new TestAbstractApplicationObject();
+        $object     = $this->getAbstractApplication();
         $mockConfig = $this->createMock(Registry::class);
 
         $this->assertSame($object, $object->setConfiguration($mockConfig), 'The setConfiguration method has a fluent interface');
@@ -143,7 +178,7 @@ class AbstractApplicationTest extends TestCase
     #[TestDox('Tests that a LoggerInterface object is correctly set to the application.')]
     public function testSetLogger()
     {
-        $object = new TestAbstractApplicationObject();
+        $object = $this->getAbstractApplication();
         $mockLogger = $this->createMock(LoggerInterface::class);
 
         $object->setLogger($mockLogger);
