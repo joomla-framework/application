@@ -10,7 +10,6 @@ namespace Joomla\Application\Tests;
 use Joomla\Application\AbstractApplication;
 use Joomla\Application\AbstractWebApplication;
 use Joomla\Application\Event\ApplicationEvent;
-use Joomla\Application\Tests\Stubs\TestAbstractWebApplicationObject;
 use Joomla\Application\Web\WebClient;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
@@ -72,6 +71,26 @@ class AbstractWebApplicationTest extends TestCase
         self::$headers = [];
 
         parent::tearDown();
+    }
+
+    /**
+     * Returns a lightweight AbstractWebApplication instance for testing.
+     *
+     * The anonymous class forwards all constructor arguments to the parent
+     * and provides an empty doExecute() implementation.
+     *
+     * @param   mixed  ...$args  Constructor arguments for AbstractWebApplication
+     *
+     * @return  AbstractWebApplication
+     */
+    private function getAbstractWebApplication(...$args): AbstractWebApplication
+    {
+        return new class (...$args) extends AbstractWebApplication
+        {
+            protected function doExecute()
+            {
+            }
+        };
     }
 
     /**
@@ -156,7 +175,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the constructor creates default object instances')]
     public function testConstructDefaultBehaviour()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         // Validate default objects unique to the web application are created
         $this->assertInstanceOf(WebClient::class, $object->client);
@@ -176,7 +195,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockClient = $this->createMock(WebClient::class);
 
-        $object = new TestAbstractWebApplicationObject($mockInput, $mockConfig, $mockClient);
+        $object = $this->getAbstractWebApplication($mockInput, $mockConfig, $mockClient);
 
         $this->assertSame($mockInput, $object->getInput());
 
@@ -194,7 +213,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests access to the input property is allowed')]
     public function testGetDeprecatedInputReadAccess()
     {
-        $object = $this->createMock(TestAbstractWebApplicationObject::class);
+        $object = $this->getAbstractWebApplication();
 
         // Validate default objects unique to the web application are created
         $this->assertInstanceOf(Input::class, $object->getInput());
@@ -203,7 +222,9 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests that the application is executed successfully.')]
     public function testExecute()
     {
-        $object = $this->createMock(TestAbstractWebApplicationObject::class);
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->onlyMethods(['doExecute'])
+            ->getMock();
         $object->expects($this->once())
             ->method('doExecute');
 
@@ -231,7 +252,9 @@ class AbstractWebApplicationTest extends TestCase
         $dispatcher->expects($this->exactly(4))
             ->method('dispatch');
 
-        $object = $this->createMock(TestAbstractWebApplicationObject::class);
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->onlyMethods(['doExecute'])
+            ->getMock();
         $object->expects($this->once())
             ->method('doExecute');
 
@@ -264,9 +287,14 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockConfig = new Registry(['gzip' => true]);
 
-        $object = $this->createMock(TestAbstractWebApplicationObject::class, [null, $mockConfig]);
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([null, $mockConfig])
+            ->onlyMethods(['doExecute', 'compress'])
+            ->getMock();
         $object->expects($this->once())
             ->method('doExecute');
+        $object->expects($this->once())
+            ->method('compress');
 
         $object->execute();
 
@@ -572,7 +600,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests that the application sends the response successfully.')]
     public function testRespond()
     {
-        $object = $this->createMock(TestAbstractWebApplicationObject::class);
+        $object = $this->getAbstractWebApplication();
 
         TestHelper::invoke($object, 'respond');
 
@@ -596,7 +624,7 @@ class AbstractWebApplicationTest extends TestCase
     {
         $modifiedDate = new \DateTime('now', new \DateTimeZone('GMT'));
 
-        $object = $this->createMock(TestAbstractWebApplicationObject::class);
+        $object = $this->getAbstractWebApplication();
         $object->allowCache(true);
         $object->modifiedDate = $modifiedDate;
 
@@ -1129,7 +1157,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \allowCache() method returns the allowed cache state')]
     public function testAllowCache()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $this->assertFalse($object->allowCache());
         $this->assertTrue($object->allowCache(true));
@@ -1138,7 +1166,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \setHeader() method correctly sets and replaces a specified header')]
     public function testSetHeader()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $object->setHeader('foo', 'bar');
 
@@ -1163,7 +1191,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \clearHeaders() method resets the internal headers array')]
     public function testClearHeaders()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
         $object->setHeader('foo', 'bar');
         $oldHeaders = $object->getHeaders();
 
@@ -1174,15 +1202,9 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \sendHeaders() method correctly sends the response headers')]
     public function testSendHeaders()
     {
-        $object = $this->createMock(
-            TestAbstractWebApplicationObject::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->onlyMethods(['checkHeadersSent', 'header', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->any())
             ->method('checkHeadersSent')
@@ -1207,7 +1229,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \setBody() method correctly sets the response body')]
     public function testSetBody()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $this->assertSame($object, $object->setBody('Testing'));
         $this->assertSame('Testing', $object->getBody());
@@ -1216,7 +1238,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \prependBody() method correctly prepends content to the response body')]
     public function testPrependBody()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $object->setBody('Testing');
         $this->assertSame($object, $object->prependBody('Pre-'));
@@ -1226,7 +1248,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \appendBody() method correctly appends content to the response body')]
     public function testAppendBody()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $object->setBody('Testing');
         $this->assertSame($object, $object->appendBody(' Later'));
@@ -1236,7 +1258,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the \getBody() method correctly retrieves the response body')]
     public function testGetBody()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $this->assertSame('', $object->getBody(), 'Returns an empty string by default');
     }
@@ -1274,7 +1296,7 @@ class AbstractWebApplicationTest extends TestCase
             $_SERVER['HTTPS'] = $https;
         }
 
-        $object = new TestAbstractWebApplicationObject($mockInput);
+        $object = $this->getAbstractWebApplication($mockInput);
 
         $this->assertSame(
             $expects,
@@ -1328,8 +1350,7 @@ class AbstractWebApplicationTest extends TestCase
         $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
 
         $mockInput = new Input([]);
-
-        $object = new TestAbstractWebApplicationObject($mockInput);
+        $object    = $this->getAbstractWebApplication($mockInput);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1451,7 +1472,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the application correctly detects if a SSL connection is active')]
     public function testisSslConnection()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $this->assertFalse($object->isSslConnection());
 
@@ -1463,7 +1484,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the application correctly approves a valid HTTP Status Code')]
     public function testGetHttpStatusValue()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $this->assertTrue($object->isValidHttpStatus(500));
     }
@@ -1471,7 +1492,7 @@ class AbstractWebApplicationTest extends TestCase
     #[TestDox('Tests the application correctly rejects a valid HTTP Status Code')]
     public function testInvalidHttpStatusValue()
     {
-        $object = new TestAbstractWebApplicationObject();
+        $object = $this->getAbstractWebApplication();
 
         $this->assertFalse($object->isValidHttpStatus(460));
     }
