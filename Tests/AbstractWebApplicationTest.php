@@ -335,8 +335,8 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['checkHeadersSent', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('checkHeadersSent')
@@ -399,8 +399,8 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['checkHeadersSent', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('checkHeadersSent')
@@ -457,8 +457,8 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['checkHeadersSent', 'doExecute'])
+            ->getMock();
 
         // Mock a response.
         $response = new TextResponse(
@@ -511,8 +511,8 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
-            ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->onlyMethods(['checkHeadersSent', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('checkHeadersSent')
@@ -566,7 +566,7 @@ class AbstractWebApplicationTest extends TestCase
             ['foo', 'bar']
         );
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, null, $mockClient]);
+        $object = $this->getAbstractWebApplication(null, null, $mockClient);
 
         // Mock a response.
         $response = new TextResponse(
@@ -673,15 +673,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -741,15 +736,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -808,15 +798,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -877,15 +862,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -933,15 +913,10 @@ class AbstractWebApplicationTest extends TestCase
 
             ->getMock();
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig])
+            ->onlyMethods(['checkHeadersSent', 'close', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close')
@@ -996,15 +971,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::TRIDENT
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -1054,15 +1024,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -1127,15 +1092,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -1312,7 +1272,7 @@ class AbstractWebApplicationTest extends TestCase
 
             ->getMock();
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, $mockConfig]);
+        $object     = $this->getAbstractWebApplication(null, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris');
 
@@ -1394,7 +1354,7 @@ class AbstractWebApplicationTest extends TestCase
 
             ->getMock();
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig]);
+        $object     = $this->getAbstractWebApplication($mockInput, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1438,7 +1398,7 @@ class AbstractWebApplicationTest extends TestCase
 
             ->getMock();
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig]);
+        $object     = $this->getAbstractWebApplication($mockInput, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
