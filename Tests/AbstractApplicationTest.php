@@ -40,8 +40,7 @@ class AbstractApplicationTest extends TestCase
      */
     private function getAbstractApplication(...$args): AbstractApplication
     {
-        return new class (...$args) extends AbstractApplication
-        {
+        return new class (...$args) extends AbstractApplication {
             protected function doExecute()
             {
             }

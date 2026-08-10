@@ -40,8 +40,7 @@ class SessionAwareWebApplicationTraitTest extends TestCase
      */
     private function getSessionAwareWebApplicationTrait()
     {
-        return new class ()
-        {
+        return new class () {
             use SessionAwareWebApplicationTrait;
 
             public function getInput(): Input

@@ -85,8 +85,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     private function getAbstractWebApplication(...$args): AbstractWebApplication
     {
-        return new class (...$args) extends AbstractWebApplication
-        {
+        return new class (...$args) extends AbstractWebApplication {
             protected function doExecute()
             {
             }
