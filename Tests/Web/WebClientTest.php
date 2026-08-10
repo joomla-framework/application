@@ -18,8 +18,8 @@ use PHPUnit\Framework\TestCase;
  *
  * @since         1.0.0
  */
-#[CoversClass(WebClient::class)]
 #[BackupGlobals(true)]
+#[CoversClass(WebClient::class)]
 class WebClientTest extends TestCase
 {
     /**

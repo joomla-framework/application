@@ -24,8 +24,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * Test class for Joomla\Application\WebApplication.
  */
-#[CoversClass(WebApplication::class)]
 #[BackupGlobals(true)]
+#[CoversClass(WebApplication::class)]
 #[UsesClass(AbstractApplication::class)]
 #[UsesClass(AbstractWebApplication::class)]
 #[UsesClass(WebClient::class)]
