@@ -7,7 +7,10 @@
 
 namespace Joomla\Application\Tests;
 
+use Joomla\Application\AbstractApplication;
+use Joomla\Application\AbstractWebApplication;
 use Joomla\Application\Controller\ControllerResolverInterface;
+use Joomla\Application\Web\WebClient;
 use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
 use Joomla\Router\ResolvedRoute;
@@ -23,9 +26,9 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(WebApplication::class)]
 #[BackupGlobals(true)]
-#[UsesClass('\Joomla\Application\AbstractApplication')]
-#[UsesClass('\Joomla\Application\AbstractWebApplication')]
-#[UsesClass('\Joomla\Application\Web\WebClient')]
+#[UsesClass(AbstractApplication::class)]
+#[UsesClass(AbstractWebApplication::class)]
+#[UsesClass(WebClient::class)]
 class WebApplicationTest extends TestCase
 {
     #[TestDox('Tests that the application is executed successfully.')]
