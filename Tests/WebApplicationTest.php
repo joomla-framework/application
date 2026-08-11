@@ -12,12 +12,11 @@ use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
 use Joomla\Router\ResolvedRoute;
 use Joomla\Router\RouterInterface;
+use PHPUnit\Framework\Attributes\BackupGlobals;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\WebApplication.
- *
- * @backupGlobals enabled
  */
 class WebApplicationTest extends TestCase
 {
@@ -29,6 +28,7 @@ class WebApplicationTest extends TestCase
      * @uses     \Joomla\Application\AbstractWebApplication
      * @uses     \Joomla\Application\Web\WebClient
      */
+    #[BackupGlobals(true)]
     public function testExecute()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';

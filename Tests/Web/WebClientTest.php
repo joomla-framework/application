@@ -8,14 +8,14 @@
 namespace Joomla\Application\Tests\Web;
 
 use Joomla\Application\Web\WebClient;
+use PHPUnit\Framework\Attributes\BackupGlobals;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\Web\WebClient.
  *
  * @since         1.0.0
- *
- * @backupGlobals enabled
  */
 class WebClientTest extends TestCase
 {
@@ -490,6 +490,7 @@ class WebClientTest extends TestCase
      *
      * @since   1.0.0
      */
+    #[BackupGlobals(true)]
     public function setUp(): void
     {
         parent::setUp();
@@ -512,10 +513,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getUserAgentData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getUserAgentData')]
     public function testDetectBrowser($p, $m, $e, $b, $v, $ua)
     {
         $client = new WebClient($ua);
@@ -553,10 +554,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getEncodingData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getEncodingData')]
     public function testDetectEncoding($ae, $e)
     {
         $client = new WebClient(null, $ae);
@@ -577,10 +578,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getUserAgentData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getUserAgentData')]
     public function testDetectEngine($p, $m, $e, $b, $v, $ua)
     {
         $client = new WebClient($ua);
@@ -597,10 +598,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getLanguageData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getLanguageData')]
     public function testDetectLanguage($al, $l)
     {
         $client = new WebClient(null, null, $al);
@@ -621,10 +622,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider getUserAgentData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('getUserAgentData')]
     public function testDetectPlatform($p, $m, $e, $b, $v, $ua)
     {
         $client = new WebClient($ua);
@@ -642,10 +643,10 @@ class WebClientTest extends TestCase
      *
      * @return  void
      *
-     * @dataProvider detectRobotData
      * @since        1.0.0
      * @covers       \Joomla\Application\Web\WebClient
      */
+    #[DataProvider('detectRobotData')]
     public function testDetectRobot($userAgent, $expected)
     {
         $client = new WebClient($userAgent);

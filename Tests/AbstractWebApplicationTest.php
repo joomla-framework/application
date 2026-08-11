@@ -8,12 +8,15 @@
 namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractWebApplication;
+use Joomla\Application\Tests\Stubs\ConcreteWebApplication;
 use Joomla\Application\Web\WebClient;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
 use Laminas\Diactoros\Response\TextResponse;
+use PHPUnit\Framework\Attributes\BackupGlobals;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -146,7 +149,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testConstructDefaultBehaviour()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         // Validate default objects unique to the web application are created
         $this->assertInstanceOf(WebClient::class, $object->client);
@@ -157,9 +160,8 @@ class AbstractWebApplicationTest extends TestCase
      *
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testConstructDependencyInjection()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -168,13 +170,11 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
         $mockClient = $this->createMock(WebClient::class);
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig, $mockClient]);
+        $object = new ConcreteWebApplication($mockInput, $mockConfig, $mockClient);
 
         $this->assertSame($mockInput, $object->getInput());
 
@@ -198,7 +198,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testGetDeprecatedInputReadAccess()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         // Validate default objects unique to the web application are created
         $this->assertInstanceOf(Input::class, $object->getInput());
@@ -213,7 +213,11 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testExecute()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['doExecute'])
+            ->getMock();
+
         $object->expects($this->once())
             ->method('doExecute');
 
@@ -248,7 +252,11 @@ class AbstractWebApplicationTest extends TestCase
         $dispatcher->expects($this->exactly(4))
             ->method('dispatch');
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['doExecute'])
+            ->getMock();
+
         $object->expects($this->once())
             ->method('doExecute');
 
@@ -285,12 +293,13 @@ class AbstractWebApplicationTest extends TestCase
             $this->markTestSkipped('Output compression is unsupported in this environment.');
         }
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['gzip' => true]])
-            ->enableProxyingToOriginalMethods()
+        $mockConfig = new Registry(['gzip' => true]);
+
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([null, $mockConfig])
+            ->onlyMethods(['doExecute'])
             ->getMock();
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, $mockConfig]);
         $object->expects($this->once())
             ->method('doExecute');
 
@@ -320,10 +329,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testCompressWithGzipEncoding()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs([null, 'gzip, deflate'])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockClient = new WebClient(null, 'gzip, deflate');
 
         // Mock the client internals to show encoding has been detected.
         TestHelper::setValue(
@@ -337,10 +343,10 @@ class AbstractWebApplicationTest extends TestCase
             ['gzip', 'deflate']
         );
 
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
             ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $object->expects($this->once())
             ->method('checkHeadersSent')
@@ -390,10 +396,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testCompressWithDeflateEncoding()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs([null, 'deflate'])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockClient = new WebClient(null, 'deflate');
 
         // Mock the client internals to show encoding has been detected.
         TestHelper::setValue(
@@ -407,10 +410,10 @@ class AbstractWebApplicationTest extends TestCase
             ['deflate', 'gzip']
         );
 
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
             ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $object->expects($this->once())
             ->method('checkHeadersSent')
@@ -460,9 +463,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testCompressWithNoAcceptEncodings()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockClient = new WebClient();
 
         // Mock the client internals to show encoding has been detected.
         TestHelper::setValue(
@@ -471,10 +472,10 @@ class AbstractWebApplicationTest extends TestCase
             ['acceptEncoding' => true]
         );
 
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
             ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         // Mock a response.
         $response = new TextResponse(
@@ -514,10 +515,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testCompressWithHeadersSent()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs([null, 'deflate'])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockClient = new WebClient(null, 'deflate');
 
         // Mock the client internals to show encoding has been detected.
         TestHelper::setValue(
@@ -531,10 +529,10 @@ class AbstractWebApplicationTest extends TestCase
             ['deflate', 'gzip']
         );
 
-        $object = $this->getMockBuilder(AbstractWebApplication::class)
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
             ->setConstructorArgs([null, null, $mockClient])
             ->onlyMethods(['checkHeadersSent'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $object->expects($this->once())
             ->method('checkHeadersSent')
@@ -579,9 +577,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testCompressWithUnsupportedEncodings()
     {
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockClient = new WebClient();
 
         // Mock the client internals to show encoding has been detected.
         TestHelper::setValue(
@@ -595,7 +591,7 @@ class AbstractWebApplicationTest extends TestCase
             ['foo', 'bar']
         );
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, null, $mockClient]);
+        $object = new ConcreteWebApplication(null, null, $mockClient);
 
         // Mock a response.
         $response = new TextResponse(
@@ -635,7 +631,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testRespond()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         TestHelper::invoke($object, 'respond');
 
@@ -665,7 +661,7 @@ class AbstractWebApplicationTest extends TestCase
     {
         $modifiedDate = new \DateTime('now', new \DateTimeZone('GMT'));
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
         $object->allowCache(true);
         $object->modifiedDate = $modifiedDate;
 
@@ -692,9 +688,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testRedirectLegacyBehavior()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -703,9 +698,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
         $mockClient = $this->createMock(WebClient::class);
 
@@ -721,15 +714,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -767,9 +755,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testRedirect()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -778,9 +765,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
         $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
@@ -796,15 +781,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -841,9 +821,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testRedirectWithExistingStatusCode()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -852,9 +831,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
         $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
@@ -870,15 +847,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -917,9 +889,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testRedirectWithAdditionalHeaders()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -928,9 +899,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
         $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
@@ -946,15 +915,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -995,8 +959,8 @@ class AbstractWebApplicationTest extends TestCase
      *
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * @backupGlobals       enabled
      */
+    #[BackupGlobals(true)]
     public function testRedirectWithHeadersSent()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1005,19 +969,12 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig])
+            ->onlyMethods(['checkHeadersSent', 'close'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close')
@@ -1047,9 +1004,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testRedirectWithJavascriptRedirect()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1058,14 +1014,9 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
-        $mockClient = $this->getMockBuilder(WebClient::class)
-            ->setConstructorArgs(['MSIE'])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockClient = new WebClient('MSIE');
 
         // Mock the client internals to show engine has been detected.
         TestHelper::setValue(
@@ -1079,15 +1030,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::TRIDENT
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -1115,9 +1061,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testRedirectWithMoved()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1126,9 +1071,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
         $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
@@ -1144,15 +1087,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -1193,10 +1131,9 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @dataProvider  getRedirectData
-     * @backupGlobals enabled
      */
+    #[DataProvider('getRedirectData')]
+    #[BackupGlobals(true)]
     public function testRedirectWithUrl(string $url, string $expected)
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1205,9 +1142,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry();
 
         $mockClient = $this->getMockBuilder(WebClient::class)->getMock();
 
@@ -1223,15 +1158,10 @@ class AbstractWebApplicationTest extends TestCase
             WebClient::GECKO
         );
 
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [$mockInput, $mockConfig, $mockClient],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'close', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header'])
+            ->getMock();
 
         $object->expects($this->once())
             ->method('close');
@@ -1259,7 +1189,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testAllowCache()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $this->assertFalse($object->allowCache());
         $this->assertTrue($object->allowCache(true));
@@ -1274,7 +1204,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testSetHeader()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $object->setHeader('foo', 'bar');
 
@@ -1305,7 +1235,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testClearHeaders()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
         $object->setHeader('foo', 'bar');
         $oldHeaders = $object->getHeaders();
 
@@ -1322,15 +1252,10 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testSendHeaders()
     {
-        $object = $this->getMockForAbstractClass(
-            AbstractWebApplication::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['checkHeadersSent', 'header']
-        );
+        $object = $this->getMockBuilder(ConcreteWebApplication::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['checkHeadersSent', 'header'])
+            ->getMock();
 
         $object->expects($this->any())
             ->method('checkHeadersSent')
@@ -1361,7 +1286,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testSetBody()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $this->assertSame($object, $object->setBody('Testing'));
         $this->assertSame('Testing', $object->getBody());
@@ -1376,7 +1301,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testPrependBody()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $object->setBody('Testing');
         $this->assertSame($object, $object->prependBody('Pre-'));
@@ -1392,7 +1317,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testAppendBody()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $object->setBody('Testing');
         $this->assertSame($object, $object->appendBody(' Later'));
@@ -1408,7 +1333,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testGetBody()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $this->assertSame('', $object->getBody(), 'Returns an empty string by default');
     }
@@ -1427,10 +1352,9 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @dataProvider  getDetectRequestUriData
-     * @backupGlobals enabled
      */
+    #[DataProvider('getDetectRequestUriData')]
+    #[BackupGlobals(true)]
     public function testDetectRequestUri(
         ?string $https,
         string $phpSelf,
@@ -1452,7 +1376,7 @@ class AbstractWebApplicationTest extends TestCase
             $_SERVER['HTTPS'] = $https;
         }
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput]);
+        $object = new ConcreteWebApplication($mockInput);
 
         $this->assertSame(
             $expects,
@@ -1469,12 +1393,9 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testLoadSystemUrisWithSiteUriSet()
     {
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['site_uri' => 'http://test.joomla.org/path/']])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry(['site_uri' => 'http://test.joomla.org/path/']);
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [null, $mockConfig]);
+        $object = new ConcreteWebApplication(null, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris');
 
@@ -1510,9 +1431,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testLoadSystemUrisWithoutSiteUriSet()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1520,7 +1440,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput]);
+        $object = new ConcreteWebApplication($mockInput);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1557,9 +1477,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testLoadSystemUrisWithoutSiteUriWithMediaUriSet()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1567,12 +1486,9 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['media_uri' => 'http://cdn.joomla.org/media/']])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry(['media_uri' => 'http://cdn.joomla.org/media/']);
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig]);
+        $object = new ConcreteWebApplication($mockInput, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1609,9 +1525,8 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testLoadSystemUrisWithoutSiteUriWithRelativeMediaUriSet()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
@@ -1619,12 +1534,9 @@ class AbstractWebApplicationTest extends TestCase
 
         $mockInput = new Input([]);
 
-        $mockConfig = $this->getMockBuilder(Registry::class)
-            ->setConstructorArgs([['media_uri' => '/media/']])
-            ->enableProxyingToOriginalMethods()
-            ->getMock();
+        $mockConfig = new Registry(['media_uri' => '/media/']);
 
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class, [$mockInput, $mockConfig]);
+        $object = new ConcreteWebApplication($mockInput, $mockConfig);
 
         TestHelper::invoke($object, 'loadSystemUris', 'http://joom.la/application');
 
@@ -1660,12 +1572,11 @@ class AbstractWebApplicationTest extends TestCase
      * @covers        \Joomla\Application\AbstractWebApplication
      * @uses          \Joomla\Application\AbstractApplication
      * @uses          \Joomla\Application\Web\WebClient
-     *
-     * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function testisSslConnection()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $this->assertFalse($object->isSslConnection());
 
@@ -1683,7 +1594,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testGetHttpStatusValue()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $this->assertTrue($object->isValidHttpStatus(500));
     }
@@ -1697,7 +1608,7 @@ class AbstractWebApplicationTest extends TestCase
      */
     public function testInvalidHttpStatusValue()
     {
-        $object = $this->getMockForAbstractClass(AbstractWebApplication::class);
+        $object = new ConcreteWebApplication();
 
         $this->assertFalse($object->isValidHttpStatus(460));
     }
