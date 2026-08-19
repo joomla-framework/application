@@ -7,28 +7,31 @@
 
 namespace Joomla\Application\Tests;
 
+use Joomla\Application\AbstractApplication;
+use Joomla\Application\AbstractWebApplication;
 use Joomla\Application\Controller\ControllerResolverInterface;
+use Joomla\Application\Web\WebClient;
 use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
 use Joomla\Router\ResolvedRoute;
 use Joomla\Router\RouterInterface;
+use PHPUnit\Framework\Attributes\BackupGlobals;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\WebApplication.
- *
- * @backupGlobals enabled
  */
+#[BackupGlobals(true)]
+#[CoversClass(WebApplication::class)]
+#[UsesClass(AbstractApplication::class)]
+#[UsesClass(AbstractWebApplication::class)]
+#[UsesClass(WebClient::class)]
 class WebApplicationTest extends TestCase
 {
-    /**
-     * @testdox  Tests that the application is executed successfully.
-     *
-     * @covers   \Joomla\Application\WebApplication
-     * @uses     \Joomla\Application\AbstractApplication
-     * @uses     \Joomla\Application\AbstractWebApplication
-     * @uses     \Joomla\Application\Web\WebClient
-     */
+    #[TestDox('Tests that the application is executed successfully.')]
     public function testExecute()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';

@@ -8,15 +8,21 @@
 namespace Joomla\Application\Tests\Controller;
 
 use Joomla\Application\Controller\ContainerControllerResolver;
+use Joomla\Application\Controller\ControllerResolver;
 use Joomla\Application\Tests\Stubs\Controller;
 use Joomla\Application\Tests\Stubs\HasArgumentsController;
 use Joomla\DI\Container;
 use Joomla\Router\ResolvedRoute;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\Controller\ContainerControllerResolver.
  */
+#[CoversClass(ContainerControllerResolver::class)]
+#[UsesClass(ControllerResolver::class)]
 class ContainerControllerResolverTest extends TestCase
 {
     /**
@@ -43,26 +49,16 @@ class ContainerControllerResolverTest extends TestCase
         $this->resolver = new ContainerControllerResolver($container);
     }
 
-    /**
-     * @testdox  Tests the resolver resolves a ControllerInterface
-     *
-     * @covers  Joomla\Application\Controller\ContainerControllerResolver
-     * @uses    Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a ControllerInterface')]
     public function testResolvingAControllerInterface()
     {
         $callable = $this->resolver->resolve(new ResolvedRoute(Controller::class, [], '/'));
 
-        $this->assertTrue(\is_callable($callable));
+        $this->assertIsCallable($callable);
         $this->assertInstanceOf(Controller::class, $callable[0]);
     }
 
-    /**
-     * @testdox  Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments
-     *
-     * @covers  Joomla\Application\Controller\ContainerControllerResolver
-     * @uses    Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments')]
     public function testResolvingControllerInterfaceFailsOnAClassWithRequiredArguments()
     {
         $this->expectException(\InvalidArgumentException::class);

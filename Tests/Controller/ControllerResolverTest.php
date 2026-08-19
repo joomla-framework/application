@@ -12,31 +12,26 @@ use Joomla\Application\Tests\Stubs\Controller;
 use Joomla\Application\Tests\Stubs\HasArgumentsController;
 use Joomla\Registry\Registry;
 use Joomla\Router\ResolvedRoute;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Test class for Joomla\Application\Controller\ControllerResolver.
  */
+#[CoversClass(ControllerResolver::class)]
 class ControllerResolverTest extends TestCase
 {
-    /**
-     * @testdox  Tests the resolver resolves a callable array
-     *
-     * @covers  Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a callable array')]
     public function testResolvingACallableArray()
     {
         $callable = (new ControllerResolver())->resolve(new ResolvedRoute([Registry::class, 'get'], [], '/'));
 
-        $this->assertTrue(\is_callable($callable));
+        $this->assertIsCallable($callable);
         $this->assertInstanceOf(Registry::class, $callable[0]);
     }
 
-    /**
-     * @testdox  Tests the resolver fails to resolve an array that is not callable
-     *
-     * @covers   Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver fails to resolve an array that is not callable')]
     public function testResolvingAnArrayFailsWhenNonCollable()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -45,11 +40,7 @@ class ControllerResolverTest extends TestCase
         (new ControllerResolver())->resolve(new ResolvedRoute([Registry::class, 'noWayThisWillEverExist'], [], '/'));
     }
 
-    /**
-     * @testdox  Tests the resolver resolves a callable array but fails instantiating a class with required arguments
-     *
-     * @covers   Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a callable array but fails instantiating a class with required arguments')]
     public function testResolvingACallableArrayFailsOnAClassWithRequiredArguments()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -58,11 +49,7 @@ class ControllerResolverTest extends TestCase
         (new ControllerResolver())->resolve(new ResolvedRoute([HasArgumentsController::class, 'execute'], [], '/'));
     }
 
-    /**
-     * @testdox  Tests the resolver resolves a callable object
-     *
-     * @covers  Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a callable object')]
     public function testResolvingACallableObject()
     {
         $controller = function () {
@@ -72,34 +59,22 @@ class ControllerResolverTest extends TestCase
         $this->assertSame($controller, (new ControllerResolver())->resolve(new ResolvedRoute($controller, [], '/')));
     }
 
-    /**
-     * @testdox  Tests the resolver resolves a callable function
-     *
-     * @covers  Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a callable function')]
     public function testResolvingACallableFunction()
     {
         $this->assertSame('str_replace', (new ControllerResolver())->resolve(new ResolvedRoute('str_replace', [], '/')));
     }
 
-    /**
-     * @testdox  Tests the resolver resolves a ControllerInterface
-     *
-     * @covers  Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a ControllerInterface')]
     public function testResolvingAControllerInterface()
     {
         $callable = (new ControllerResolver())->resolve(new ResolvedRoute(Controller::class, [], '/'));
 
-        $this->assertTrue(\is_callable($callable));
+        $this->assertIsCallable($callable);
         $this->assertInstanceOf(Controller::class, $callable[0]);
     }
 
-    /**
-     * @testdox  Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments
-     *
-     * @covers   Joomla\Application\Controller\ControllerResolver
-     */
+    #[TestDox('Tests the resolver resolves a ControllerInterface but fails instantiating a class with required arguments')]
     public function testResolvingControllerInterfaceFailsOnAClassWithRequiredArguments()
     {
         $this->expectException(\InvalidArgumentException::class);
