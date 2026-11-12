@@ -325,8 +325,15 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      */
     protected function respond()
     {
+        // The status may be set as a Status header, which takes precedence when the status line is sent
+        $statusHeader = $this->getResponse()->getHeader('Status');
+        $statusCode   = $statusHeader ? (int) \end($statusHeader) : $this->getResponse()->getStatusCode();
+
+        // Informational and 204 No Content responses have no content, so they do not get a Content-Type either
+        $hasNoContent = $statusCode < 200 || $statusCode === 204;
+
         // Send the content-type header.
-        if (!$this->getResponse()->hasHeader('Content-Type')) {
+        if (!$hasNoContent && !$this->getResponse()->hasHeader('Content-Type')) {
             $this->setHeader('Content-Type', $this->mimeType . '; charset=' . $this->charSet);
         }
 
@@ -357,6 +364,11 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         }
 
         $this->sendHeaders();
+
+        // RFC 9110 does not allow a body for 1xx, 204 and 304 responses, a 304 keeps its other headers though
+        if ($hasNoContent || $statusCode === 304) {
+            return;
+        }
 
         echo $this->getBody();
     }

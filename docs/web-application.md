@@ -70,6 +70,11 @@ $app->setHeader('Status', '404', true);
 
 `respond()` adds one automatically from the PSR-7 response if none is present.
 
+For `1xx`, `204 No Content` and `304 Not Modified` responses — whether the status comes from the
+`Status` header or the PSR-7 response — `respond()` sends no body, as RFC 9110 requires, even if one
+was set. `1xx` and `204` responses also get no default `Content-Type`; a `304` keeps it, because it
+describes the representation being validated.
+
 ### Security headers
 
 `respond()` sets `Content-Type`, the cache headers and `Status`. It does **not** set any of the

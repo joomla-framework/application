@@ -15,6 +15,7 @@ use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
+use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\TextResponse;
 use PHPUnit\Framework\Attributes\BackupGlobals;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -513,6 +514,52 @@ class AbstractWebApplicationTest extends TestCase
         );
 
         $this->assertEmpty($object->getBody());
+    }
+
+    /**
+     * Data for the responses without body test.
+     *
+     * @return  array
+     */
+    public static function getResponsesWithoutBodyData(): array
+    {
+        return [
+            // Status code of the response, Status header, Content-Type expected
+            '204 response status'  => [204, null, false],
+            '304 response status'  => [304, null, true],
+            '204 Status header'    => [200, '204', false],
+            '304 Status header'    => [200, '304', true],
+        ];
+    }
+
+    #[DataProvider('getResponsesWithoutBodyData')]
+    #[TestDox('Tests that no body is sent for 204 and 304 responses, and no Content-Type for 204 responses')]
+    public function testRespondWithoutBody(int $responseStatus, ?string $statusHeader, bool $hasContentType)
+    {
+        $object = $this->getAbstractWebApplication(null, null, null, new Response('php://memory', $responseStatus));
+        $object->setBody('This must not be sent');
+
+        if ($statusHeader !== null) {
+            $object->setHeader('Status', $statusHeader, true);
+        }
+
+        $this->expectOutputString('');
+
+        TestHelper::invoke($object, 'respond');
+
+        $this->assertSame($hasContentType, $object->getResponse()->hasHeader('Content-Type'));
+    }
+
+    #[TestDox('Tests that the body is sent for other responses')]
+    public function testRespondWithBody()
+    {
+        $object = $this->getAbstractWebApplication();
+        $object->setBody('Hello');
+        $object->setHeader('Status', '404', true);
+
+        $this->expectOutputString('Hello');
+
+        TestHelper::invoke($object, 'respond');
     }
 
     #[TestDox('Tests that the application sends the response successfully with allowed caching.')]
