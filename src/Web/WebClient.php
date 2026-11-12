@@ -370,7 +370,7 @@ class WebClient
     protected function detectEncoding($acceptEncoding)
     {
         // Parse the accepted encodings.
-        $this->encodings = \array_map('trim', (array) \explode(',', (string) $acceptEncoding));
+        $this->encodings = $this->parseAcceptHeader($acceptEncoding);
 
         // Mark this detection routine as run.
         $this->detection['acceptEncoding'] = true;
@@ -469,11 +469,47 @@ class WebClient
      */
     protected function detectLanguage($acceptLanguage)
     {
-        // Parse the accepted encodings.
-        $this->languages = \array_map('trim', (array) \explode(',', $acceptLanguage));
+        // Parse the accepted languages.
+        $this->languages = $this->parseAcceptHeader($acceptLanguage);
 
         // Mark this detection routine as run.
         $this->detection['acceptLanguage'] = true;
+    }
+
+    /**
+     * Parses the values of an Accept-* header, in the order they are listed.
+     *
+     * Parameters such as the quality value ("gzip;q=1.0") are removed, and values with a quality of 0 are skipped
+     * because the client explicitly does not accept them.
+     *
+     * @param   string|null  $header  The header value to parse.
+     *
+     * @return  string[]
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private function parseAcceptHeader(?string $header): array
+    {
+        $values = [];
+
+        foreach (\explode(',', (string) $header) as $entry) {
+            $parameters = \array_map('trim', \explode(';', $entry));
+            $value      = \array_shift($parameters);
+
+            if ($value === '') {
+                continue;
+            }
+
+            foreach ($parameters as $parameter) {
+                if (\preg_match('/^q\s*=\s*0(\.0{0,3})?$/i', $parameter)) {
+                    continue 2;
+                }
+            }
+
+            $values[] = $value;
+        }
+
+        return $values;
     }
 
     /**

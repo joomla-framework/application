@@ -11,6 +11,7 @@ use Joomla\Application\Web\WebClient;
 use PHPUnit\Framework\Attributes\BackupGlobals;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -422,6 +423,9 @@ class WebClientTest extends TestCase
             ['deflate, x-gzip', ['deflate', 'x-gzip']],
             ['goober , flasm', ['goober', 'flasm']],
             ['b2z, base64', ['b2z', 'base64']],
+            ['gzip;q=1.0, deflate;q=0.5', ['gzip', 'deflate']],
+            ['gzip; q=0.8, identity;q=0, br', ['gzip', 'br']],
+            ['', []],
         ];
     }
 
@@ -443,6 +447,8 @@ class WebClientTest extends TestCase
             ['en, nl-NL', ['en', 'nl-NL']],
             ['nerd , geek', ['nerd', 'geek']],
             ['xx-XX, xx', ['xx-XX', 'xx']],
+            ['de-DE,de;q=0.9,en;q=0.8', ['de-DE', 'de', 'en']],
+            ['en-US, fr;q=0.000', ['en-US']],
         ];
     }
 
@@ -605,6 +611,28 @@ class WebClientTest extends TestCase
 
         // Test the assertions.
         $this->assertEquals($client->languages, $l, 'Language detection failed');
+    }
+
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the WebClient::detectLanguage method without an Accept-Language header')]
+    public function testDetectLanguageWithoutHeader()
+    {
+        unset($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+
+        $client = new WebClient();
+
+        set_error_handler(
+            static function (int $errno, string $errstr): never {
+                throw new \ErrorException($errstr, 0, $errno);
+            },
+            E_DEPRECATED
+        );
+
+        try {
+            $this->assertSame([], $client->languages);
+        } finally {
+            restore_error_handler();
+        }
     }
 
     /**
