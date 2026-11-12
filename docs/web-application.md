@@ -207,10 +207,14 @@ $app->client->mobile;          // bool
 $app->client->engine;          // WebClient::WEBKIT, ::BLINK, …
 $app->client->browser;         // WebClient::CHROME, ::FIREFOX, …
 $app->client->browserVersion;  // string
-$app->client->language;        // from Accept-Language
-$app->client->encoding;        // from Accept-Encoding
+$app->client->languages;       // from Accept-Language, e.g. ['de-DE', 'de', 'en']
+$app->client->encodings;       // from Accept-Encoding, e.g. ['gzip', 'br']
 $app->client->robot;           // bool
 ```
+
+`languages` and `encodings` list the values in the order the client sent them, without parameters
+such as quality values (`de;q=0.9` becomes `de`). Values with `q=0`, which the client explicitly
+refuses, are left out, and a missing header results in an empty list.
 
 Detection is user-agent pattern matching. Treat the result as a hint, never as a security control.
 
