@@ -25,7 +25,7 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
      *
      * @since   2.0.0
      */
-    public function getSession();
+    public function getSession(): SessionInterface;
 
     /**
      * Sets the session for the application to use, if required.
@@ -36,7 +36,7 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
      *
      * @since   2.0.0
      */
-    public function setSession(SessionInterface $session);
+    public function setSession(SessionInterface $session): static;
 
     /**
      * Checks for a form token in the request.
@@ -47,7 +47,7 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
      *
      * @since   2.0.0
      */
-    public function checkToken($method = 'post');
+    public function checkToken(string $method = 'post'): bool;
 
     /**
      * Method to determine a hash for anti-spoofing variable names
@@ -58,5 +58,5 @@ interface SessionAwareWebApplicationInterface extends WebApplicationInterface
      *
      * @since   2.0.0
      */
-    public function getFormToken($forceNew = false);
+    public function getFormToken(bool $forceNew = false): string;
 }

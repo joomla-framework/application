@@ -58,23 +58,23 @@ Implements `WebApplicationInterface`.
 | `__construct(?Input, ?Registry, ?WebClient, ?ResponseInterface)` | public | All arguments optional; calls `loadSystemUris()` |
 | `execute()` | public | Full lifecycle including `compress()` and `respond()` |
 | `getInput()` | public | The `Input` object |
-| `redirect($url, $status = 303)` | public | Sends a redirect and calls `close()` |
-| `allowCache($allow = null)` | public | Getter with `null`, setter otherwise; returns the resulting state |
-| `setHeader($name, $value, $replace = false)` | public | Fluent |
+| `redirect(string $url, int $status = 303): void` | public | Sends a redirect and calls `close()` |
+| `allowCache(?bool $allow = null): bool` | public | Getter with `null`, setter otherwise; returns the resulting state |
+| `setHeader(string $name, string $value, bool $replace = false): static` | public | Fluent |
 | `getHeaders()` | public | List of `['name' => …, 'value' => …]` |
 | `clearHeaders()` | public | Removes every header, fluent |
 | `sendHeaders()` | public | Sends status line and headers, fluent |
-| `setBody($content)` | public | Replaces the body, fluent |
-| `prependBody($content)` | public | Fluent |
-| `appendBody($content)` | public | Fluent |
+| `setBody(string $content): static` | public | Replaces the body, fluent |
+| `prependBody(string $content): static` | public | Fluent |
+| `appendBody(string $content): static` | public | Fluent |
 | `getBody()` | public | The body as a string |
 | `getResponse()` | public | The PSR-7 `ResponseInterface` |
 | `setResponse(ResponseInterface $response)` | public | `void` |
-| `isValidHttpStatus($code)` | public | Whether the code is in the known status map |
+| `isValidHttpStatus(int $code): bool` | public | Whether the code is in the known status map |
 | `isSslConnection()` | public | Based on `$_SERVER['HTTPS']` and the port only |
 | `compress()` | protected | gzip/deflate the body based on `Accept-Encoding` |
 | `respond()` | protected | Content-Type, cache headers, status, then `sendHeaders()` and echo the body |
-| `getHttpStatusValue($value)` | protected | Maps an integer to a status line |
+| `getHttpStatusValue(int\|string $value): string` | protected | Maps an integer to a status line |
 | `checkConnectionAlive()` | protected | `connection_status() === CONNECTION_NORMAL` |
 | `checkHeadersSent()` | protected | `headers_sent()` |
 | `detectRequestUri()` | protected | Builds the request URI from the server environment |
@@ -103,8 +103,8 @@ Implements `SessionAwareWebApplicationInterface`, uses `SessionAwareWebApplicati
 |---|---|---|
 | `getSession()` | `SessionInterface` | Throws `RuntimeException` when unset |
 | `setSession(SessionInterface $session)` | `$this` | |
-| `checkToken($method = 'post')` | `bool` | Validates the CSRF token; throws `InvalidArgumentException` for a method other than `post`/`get` |
-| `getFormToken($forceNew = false)` | `string` | The session token |
+| `checkToken(string $method = 'post')` | `bool` | Validates the CSRF token; throws `InvalidArgumentException` for a method other than `post`/`get` |
+| `getFormToken(bool $forceNew = false)` | `string` | The session token |
 
 ## `ApplicationEvents`
 

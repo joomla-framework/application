@@ -766,8 +766,8 @@ class AbstractWebApplicationTest extends TestCase
     }
 
     #[BackupGlobals(true)]
-    #[TestDox('Tests that the application redirects successfully with a JavaScript redirect.')]
-    public function testRedirectWithJavascriptRedirect()
+    #[TestDox('Tests that a redirect to a non-ASCII URL for Internet Explorer uses the Location header like for other browsers.')]
+    public function testRedirectWithNonAsciiUrlForInternetExplorer()
     {
         $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
         $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
@@ -779,7 +779,7 @@ class AbstractWebApplicationTest extends TestCase
 
         $object = $this->getMockBuilder(AbstractWebApplication::class)
             ->setConstructorArgs([$mockInput, $mockConfig, $mockClient])
-            ->onlyMethods(['checkHeadersSent', 'close', 'doExecute'])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
             ->getMock();
 
         $object->expects($this->once())
@@ -787,19 +787,16 @@ class AbstractWebApplicationTest extends TestCase
         $object->expects($this->exactly(2))
             ->method('checkHeadersSent')
             ->willReturn(false);
+        $object->method('header')
+            ->willReturnCallback([$this, 'mockHeader']);
 
         $url = 'http://j.org/index.php?phi=Φ';
 
-        // Capture the output for this test.
-        \ob_start();
-        $object->redirect($url);
-        $buffer = \ob_get_clean();
+        $this->expectOutputString('');
 
-        $this->assertSame(
-            '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8" />'
-            . "<script>document.location.href=" . \json_encode($url) . ";</script></head><body></body></html>",
-            \trim($buffer)
-        );
+        $object->redirect($url);
+
+        $this->assertContains(['Location: ' . $url, true, null], self::$headers);
     }
 
     #[BackupGlobals(true)]

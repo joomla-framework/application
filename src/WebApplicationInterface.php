@@ -42,7 +42,7 @@ interface WebApplicationInterface extends ApplicationInterface
      * @since   2.0.0
      * @throws  \InvalidArgumentException
      */
-    public function redirect($url, $status = 303);
+    public function redirect(string $url, int $status = 303): void;
 
     /**
      * Set/get cacheable state for the response.
@@ -55,7 +55,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function allowCache($allow = null);
+    public function allowCache(?bool $allow = null): bool;
 
     /**
      * Method to set a response header.
@@ -71,7 +71,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function setHeader($name, $value, $replace = false);
+    public function setHeader(string $name, string $value, bool $replace = false): static;
 
     /**
      * Method to get the array of response headers to be sent when the response is sent to the client.
@@ -80,7 +80,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function getHeaders();
+    public function getHeaders(): array;
 
     /**
      * Method to clear any set response headers.
@@ -89,7 +89,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function clearHeaders();
+    public function clearHeaders(): static;
 
     /**
      * Send the response headers.
@@ -98,7 +98,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function sendHeaders();
+    public function sendHeaders(): static;
 
     /**
      * Set body content.  If body content already defined, this will replace it.
@@ -109,7 +109,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function setBody($content);
+    public function setBody(string $content): static;
 
     /**
      * Prepend content to the body content
@@ -120,7 +120,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function prependBody($content);
+    public function prependBody(string $content): static;
 
     /**
      * Append content to the body content
@@ -131,16 +131,16 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function appendBody($content);
+    public function appendBody(string $content): static;
 
     /**
      * Return the body content
      *
-     * @return  mixed  The response body as a string.
+     * @return  string  The response body as a string.
      *
      * @since   2.0.0
      */
-    public function getBody();
+    public function getBody(): string;
 
     /**
      * Get the PSR-7 Response Object.
@@ -160,7 +160,7 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function isValidHttpStatus($code);
+    public function isValidHttpStatus(int $code): bool;
 
     /**
      * Set the PSR-7 Response Object.
@@ -180,5 +180,5 @@ interface WebApplicationInterface extends ApplicationInterface
      *
      * @since   2.0.0
      */
-    public function isSslConnection();
+    public function isSslConnection(): bool;
 }
