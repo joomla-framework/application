@@ -91,9 +91,10 @@ Resolves, in order:
 | `[$object, 'method']` | Returned as-is |
 | An object with `__invoke()` | Returned as-is |
 | A function name | Returned as-is |
-| `SomeClass::class` (string) | Instantiates it and returns `[$instance, 'execute']` |
+| `SomeClass::class` (string) | Must implement `Joomla\Controller\ControllerInterface`; instantiates it and returns `[$instance, 'execute']` |
 
-Anything else, or a class that cannot be instantiated, raises `InvalidArgumentException`.
+Anything else, a class that does not implement `ControllerInterface`, or a class that cannot be
+instantiated, raises `InvalidArgumentException`. Use `[SomeClass::class, 'method']` for other classes.
 
 `ControllerResolver::instantiateController()` calls `new $class()` — so a controller resolved this
 way **must have a constructor without required arguments**. If it has any, you get an
