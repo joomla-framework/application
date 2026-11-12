@@ -10,6 +10,7 @@ namespace Joomla\Application\Tests\Controller;
 use Joomla\Application\Controller\ControllerResolver;
 use Joomla\Application\Tests\Stubs\Controller;
 use Joomla\Application\Tests\Stubs\HasArgumentsController;
+use Joomla\Application\Tests\Stubs\PlainController;
 use Joomla\Registry\Registry;
 use Joomla\Router\ResolvedRoute;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -81,5 +82,14 @@ class ControllerResolverTest extends TestCase
         $this->expectExceptionMessage('Controller `Joomla\Application\Tests\Stubs\HasArgumentsController` has required constructor arguments, cannot instantiate the class');
 
         (new ControllerResolver())->resolve(new ResolvedRoute(HasArgumentsController::class, [], '/'));
+    }
+
+    #[TestDox('Tests the resolver fails for a class which does not implement ControllerInterface')]
+    public function testResolvingAClassWithoutControllerInterfaceFails()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('does not implement');
+
+        (new ControllerResolver())->resolve(new ResolvedRoute(PlainController::class, [], '/'));
     }
 }

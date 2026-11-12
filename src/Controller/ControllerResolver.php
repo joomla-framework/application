@@ -89,6 +89,17 @@ class ControllerResolver implements ControllerResolverInterface
                 );
             }
 
+            if (!\is_subclass_of($controller, ControllerInterface::class)) {
+                throw new \InvalidArgumentException(
+                    \sprintf(
+                        'Controller `%s` does not implement `%s`, cannot resolve controller for URI `%s`',
+                        $controller,
+                        ControllerInterface::class,
+                        $route->getUri()
+                    )
+                );
+            }
+
             try {
                 return [$this->instantiateController($controller), 'execute'];
             } catch (\ArgumentCountError $error) {
