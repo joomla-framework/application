@@ -9,7 +9,6 @@
 
 namespace Joomla\Application;
 
-use Joomla\Application\Event\ApplicationErrorEvent;
 use Joomla\Application\Exception\UnableToWriteBody;
 use Joomla\Application\Web\WebClient;
 use Joomla\Input\Input;
@@ -239,7 +238,10 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
                 $this->compress();
             }
         } catch (\Throwable $throwable) {
-            $this->dispatchEvent(ApplicationEvents::ERROR, new ApplicationErrorEvent($throwable, $this));
+            // Without an error listener nobody prepares an error response, so at least do not report success
+            if (!$this->dispatchErrorEvent($throwable)) {
+                $this->setHeader('Status', '500', true);
+            }
         }
 
         $this->dispatchEvent(ApplicationEvents::BEFORE_RESPOND);

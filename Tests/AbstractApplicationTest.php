@@ -8,8 +8,11 @@
 namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractApplication;
+use Joomla\Application\ApplicationEvents;
+use Joomla\Application\Event\ApplicationErrorEvent;
 use Joomla\Application\Event\ApplicationEvent;
 use Joomla\Application\Web\WebClient;
+use Joomla\Event\Dispatcher;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Registry\Registry;
 use Joomla\Test\TestHelper;
@@ -24,6 +27,7 @@ use Psr\Log\NullLogger;
  * Test class for Joomla\Application\AbstractApplication.
  */
 #[CoversClass(AbstractApplication::class)]
+#[UsesClass(ApplicationErrorEvent::class)]
 #[UsesClass(ApplicationEvent::class)]
 #[UsesClass(WebClient::class)]
 class AbstractApplicationTest extends TestCase
@@ -122,6 +126,62 @@ class AbstractApplicationTest extends TestCase
         $object->setDispatcher($dispatcher);
 
         $object->execute();
+    }
+
+    #[TestDox('Tests that an error is logged when no listener for the error event is registered.')]
+    public function testExecuteLogsErrorWithoutListener()
+    {
+        $exception = new \RuntimeException('boom');
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with($this->stringContains('boom'), ['exception' => $exception]);
+
+        $object = $this->getMockBuilder(AbstractApplication::class)
+            ->onlyMethods(['doExecute'])
+            ->getMock();
+        $object->expects($this->once())
+            ->method('doExecute')
+            ->willThrowException($exception);
+
+        $object->setLogger($logger);
+        $object->setDispatcher(new Dispatcher());
+
+        $object->execute();
+    }
+
+    #[TestDox('Tests that an error is not logged by the application when a listener for the error event is registered.')]
+    public function testExecuteDispatchesErrorToListener()
+    {
+        $exception = new \RuntimeException('boom');
+        $received  = null;
+
+        $dispatcher = new Dispatcher();
+        $dispatcher->addListener(
+            ApplicationEvents::ERROR,
+            static function (ApplicationErrorEvent $event) use (&$received): void {
+                $received = $event->getError();
+            }
+        );
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->never())
+            ->method('error');
+
+        $object = $this->getMockBuilder(AbstractApplication::class)
+            ->onlyMethods(['doExecute'])
+            ->getMock();
+        $object->expects($this->once())
+            ->method('doExecute')
+            ->willThrowException($exception);
+
+        $object->setLogger($logger);
+        $object->setDispatcher($dispatcher);
+
+        $object->execute();
+
+        $this->assertSame($exception, $received);
     }
 
     #[TestDox('Tests that data is read from the application configuration successfully.')]

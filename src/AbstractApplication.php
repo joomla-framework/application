@@ -127,8 +127,35 @@ abstract class AbstractApplication implements
 
             $this->dispatchEvent(ApplicationEvents::AFTER_EXECUTE);
         } catch (\Throwable $throwable) {
-            $this->dispatchEvent(ApplicationEvents::ERROR, new ApplicationErrorEvent($throwable, $this));
+            $this->dispatchErrorEvent($throwable);
         }
+    }
+
+    /**
+     * Dispatches the error event for a throwable caught while executing the application.
+     *
+     * If no listener is registered for the error event, the throwable is logged instead, so that it is not lost.
+     *
+     * @param  \Throwable  $throwable  The throwable caught while executing the application.
+     *
+     * @return  boolean  True if a listener for the error event was notified, false otherwise.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function dispatchErrorEvent(\Throwable $throwable): bool
+    {
+        $event = $this->dispatchEvent(ApplicationEvents::ERROR, new ApplicationErrorEvent($throwable, $this));
+
+        if ($event !== null && $this->getDispatcher()->countListeners(ApplicationEvents::ERROR) > 0) {
+            return true;
+        }
+
+        $this->getLogger()->error(
+            \sprintf('Uncaught %s while executing the application: %s', \get_class($throwable), $throwable->getMessage()),
+            ['exception' => $throwable]
+        );
+
+        return false;
     }
 
     /**

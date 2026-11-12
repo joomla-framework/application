@@ -40,8 +40,9 @@ You still get the configuration registry, the PSR-3 logger, the event dispatcher
 `before_execute`/`after_execute`/`error` events.
 
 Note that `AbstractApplication::execute()` **swallows the throwable** — it turns it into an
-`application.error` event and returns normally, with exit code 0. For a CLI process that is usually
-wrong. Add a listener that sets the exit status:
+`application.error` event and returns normally, with exit code 0. Without a listener it only logs the
+throwable through the application's logger. For a CLI process that is usually wrong. Add a listener
+that sets the exit status:
 
 ```php
 $dispatcher->addListener(

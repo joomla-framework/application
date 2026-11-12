@@ -120,9 +120,17 @@ prevents the remaining listeners for that event from running.
 
 ## Error handling
 
-The package dispatches `application.error` and does nothing else. There is no default error page,
-no logging of the throwable, and no status code is set. Without a listener the client receives
-whatever was in the response body at the time — usually nothing, with status 200.
+The package dispatches `application.error` and leaves the response to your listener. There is no
+default error page. If **no listener** is registered for `application.error` (or no dispatcher is
+set), the throwable is not lost:
+
+* it is logged through `getLogger()->error()` with the throwable in the `exception` context key, so
+  set a logger (the default `NullLogger` discards it),
+* a web application also sets the status to 500. The body is whatever was in the response at the
+  time — usually nothing.
+
+Once a listener is registered, neither happens; the listener decides about logging, status and
+body.
 
 A minimal but complete error listener:
 
