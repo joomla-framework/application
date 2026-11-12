@@ -103,11 +103,26 @@ class ControllerResolverTest extends TestCase
     #[TestDox('Tests resolving a controller class which does not implement ControllerInterface is deprecated')]
     public function testResolvingAClassWithoutControllerInterfaceIsDeprecated()
     {
-        $this->expectUserDeprecationMessageMatches('/does not implement/');
+        $deprecations = [];
 
-        $callable = (new ControllerResolver())->resolve(new ResolvedRoute(PlainController::class, [], '/'));
+        set_error_handler(
+            static function (int $errno, string $errstr) use (&$deprecations): bool {
+                $deprecations[] = $errstr;
+
+                return true;
+            },
+            E_USER_DEPRECATED
+        );
+
+        try {
+            $callable = (new ControllerResolver())->resolve(new ResolvedRoute(PlainController::class, [], '/'));
+        } finally {
+            restore_error_handler();
+        }
 
         $this->assertInstanceOf(PlainController::class, $callable[0]);
+        $this->assertCount(1, $deprecations);
+        $this->assertStringContainsString('does not implement', $deprecations[0]);
     }
 
     #[IgnoreDeprecations]
