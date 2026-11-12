@@ -62,13 +62,16 @@ $app->sendHeaders();    // send status line + headers now
 `getHeaders()` returns a flat list of `['name' => …, 'value' => …]` pairs, one entry per value, not
 a name-indexed map.
 
-The status code is carried as a header named `Status`:
+The status code can be set as a header named `Status`:
 
 ```php
 $app->setHeader('Status', '404', true);
 ```
 
-`respond()` adds one automatically from the PSR-7 response if none is present.
+`setHeader()` also sets it as the status code of the PSR-7 response (for a valid code between 100
+and 599), so `getResponse()->getStatusCode()` reports it. `respond()` sends the status line from the
+response's status code; a status set with `$app->setResponse($response->withStatus(…))` after a
+`Status` header therefore takes precedence over the header.
 
 ### Security headers
 
@@ -122,9 +125,9 @@ Pragma: no-cache
 With caching **enabled**, it sends an `Expires` 15 minutes in the future and, if you set
 `$app->modifiedDate` to a `DateTime`, a `Last-Modified` derived from it.
 
-> `Cache-Control` is set with `$replace = false`, so a `Cache-Control` header you set yourself is
-> **appended to**, not replaced. Call `clearHeaders()` or set the header after `respond()` has run
-> if you need full control.
+> With caching disabled, `Cache-Control` is set with `$replace = true`, like `Expires` and
+> `Last-Modified`: a `Cache-Control` header you set yourself is **replaced**. Enable caching if you
+> want to send your own `Cache-Control` header.
 
 ## Compression
 

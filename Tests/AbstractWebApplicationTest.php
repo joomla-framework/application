@@ -541,6 +541,57 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertEmpty($object->getBody());
     }
 
+    #[TestDox('Tests that a status code set on the PSR-7 response wins over an earlier Status header')]
+    public function testRespondUsesResponseStatusCode()
+    {
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->onlyMethods(['checkHeadersSent', 'header', 'doExecute'])
+            ->getMock();
+
+        $object->expects($this->once())
+            ->method('checkHeadersSent')
+            ->willReturn(false);
+        $object->method('header')
+            ->willReturnCallback([$this, 'mockHeader']);
+
+        $object->setHeader('Status', '200', true);
+        $object->setResponse($object->getResponse()->withStatus(404));
+
+        TestHelper::invoke($object, 'respond');
+
+        $this->assertSame(
+            [['HTTP/1.1 404 Not Found', true, 404]],
+            \array_values(\array_filter(self::$headers, static fn (array $header): bool => $header[2] !== null))
+        );
+        $this->assertSame(['404'], $object->getResponse()->getHeader('Status'));
+    }
+
+    #[TestDox('Tests that respond() replaces an existing Cache-Control header for an uncacheable response')]
+    public function testRespondReplacesCacheControlHeader()
+    {
+        $object = $this->getAbstractWebApplication();
+        $object->setHeader('Cache-Control', 'public, max-age=3600');
+
+        TestHelper::invoke($object, 'respond');
+        TestHelper::invoke($object, 'respond');
+
+        $this->assertSame(['no-cache, must-revalidate'], $object->getResponse()->getHeader('Cache-Control'));
+    }
+
+    #[TestDox('Tests that a Status header also sets the status code of the PSR-7 response')]
+    public function testSetHeaderStatusSetsResponseStatusCode()
+    {
+        $object = $this->getAbstractWebApplication();
+
+        $object->setHeader('status', 404, true);
+
+        $this->assertSame(404, $object->getResponse()->getStatusCode());
+
+        $object->setHeader('Status', 'not a status', true);
+
+        $this->assertSame(404, $object->getResponse()->getStatusCode(), 'An invalid status does not change the status code.');
+    }
+
     #[BackupGlobals(true)]
     #[TestDox('Tests that the application redirects successfully with the legacy behavior.')]
     public function testRedirectLegacyBehavior()
@@ -846,6 +897,8 @@ class AbstractWebApplicationTest extends TestCase
                 ['Cache-Control: no-cache, must-revalidate', true, null],
             ]
         );
+
+        $this->assertSame(301, $object->getResponse()->getStatusCode(), 'The redirect status is the status code of the response.');
     }
 
     /**
