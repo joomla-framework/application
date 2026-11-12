@@ -836,6 +836,9 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
     /**
      * Determine if we are using a secure (SSL) connection.
      *
+     * The X-Forwarded-Proto header is only taken into account if the request comes from a proxy listed in the
+     * "trusted_proxies" configuration option.
+     *
      * @return  boolean  True if using SSL, false if not.
      *
      * @since   1.0.0
@@ -850,7 +853,78 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
         $serverForwarderProtoVar = $this->input->server->getString('HTTP_X_FORWARDED_PROTO', '');
 
-        return !empty($serverForwarderProtoVar) && \strtolower($serverForwarderProtoVar) === 'https';
+        return !empty($serverForwarderProtoVar)
+            && \strtolower($serverForwarderProtoVar) === 'https'
+            && $this->isRequestFromTrustedProxy();
+    }
+
+    /**
+     * Check whether the request was sent by one of the proxies listed in the "trusted_proxies" configuration option.
+     *
+     * The option takes a list (or a comma separated string) of IP addresses and CIDR ranges, e.g. "10.0.0.0/8".
+     *
+     * @return  boolean
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private function isRequestFromTrustedProxy(): bool
+    {
+        $proxies = $this->get('trusted_proxies', []);
+
+        if (\is_string($proxies)) {
+            $proxies = \explode(',', $proxies);
+        }
+
+        $remoteAddress = $this->input->server->getString('REMOTE_ADDR', '');
+
+        if (\filter_var($remoteAddress, FILTER_VALIDATE_IP) === false) {
+            return false;
+        }
+
+        $remote = \inet_pton($remoteAddress);
+
+        foreach ((array) $proxies as $proxy) {
+            [$subnet, $bits] = \array_pad(\explode('/', \trim((string) $proxy), 2), 2, null);
+
+            if (\filter_var($subnet, FILTER_VALIDATE_IP) === false) {
+                continue;
+            }
+
+            $subnet = \inet_pton($subnet);
+
+            // Do not match an IPv4 address against an IPv6 range and vice versa
+            if (\strlen($subnet) !== \strlen($remote)) {
+                continue;
+            }
+
+            $maxBits = \strlen($subnet) * 8;
+
+            if ($bits === null) {
+                $bits = $maxBits;
+            } elseif (\ctype_digit($bits) && (int) $bits <= $maxBits) {
+                $bits = (int) $bits;
+            } else {
+                continue;
+            }
+
+            $bytes = \intdiv($bits, 8);
+
+            if (\substr($subnet, 0, $bytes) !== \substr($remote, 0, $bytes)) {
+                continue;
+            }
+
+            if ($bits % 8 === 0) {
+                return true;
+            }
+
+            $mask = (0xFF << (8 - $bits % 8)) & 0xFF;
+
+            if ((\ord($subnet[$bytes]) & $mask) === (\ord($remote[$bytes]) & $mask)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

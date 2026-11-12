@@ -70,6 +70,7 @@ proxy that changes the path, it can be missing — `WebApplication::doExecute()`
 | `gzip` | `AbstractWebApplication::execute()` | When truthy, and neither `zlib.output_compression` nor `ob_gzhandler` is active, the body is compressed with gzip or deflate depending on `Accept-Encoding` |
 | `site_uri` | `loadSystemUris()` | Overrides base URI detection. Set this whenever the application runs behind a proxy or in a sub-directory — detection uses `SCRIPT_NAME`/`PHP_SELF` and gets it wrong often enough to be worth pinning |
 | `media_uri` | `loadSystemUris()` | Overrides the media folder location. A value containing `://` is used verbatim, otherwise it is treated as a path below `uri.base.host` |
+| `trusted_proxies` | `isSslConnection()` | IP addresses and CIDR ranges (a list or a comma separated string, e.g. `['10.0.0.0/8']`) of the reverse proxies whose `X-Forwarded-Proto` header is trusted. Empty by default, so the header is ignored |
 
 ## Public properties that act as configuration
 

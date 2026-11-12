@@ -182,20 +182,22 @@ Two things to know:
 if ($app->isSslConnection()) { … }
 ```
 
-This reads `$_SERVER['HTTPS']` and the server port only. Behind a TLS terminating proxy it returns
-`false` even though the client connection is encrypted. If you run behind a proxy, decide on the
-basis of your own trusted-proxy handling instead, for example in `initialise()`:
+This reads `$_SERVER['HTTPS']`. Behind a TLS terminating proxy that is not set, although the client
+connection is encrypted; the proxy reports the original scheme in the `X-Forwarded-Proto` header
+instead. Anyone can send that header, so it is only honoured when the request comes from one of the
+addresses in the `trusted_proxies` configuration option:
 
 ```php
-protected function initialise()
-{
-    $proto = $this->getInput()->server->getString('HTTP_X_FORWARDED_PROTO', '');
-
-    if ($this->isTrustedProxy() && $proto === 'https') {
-        $this->set('uri.scheme', 'https');
-    }
-}
+$config->set('trusted_proxies', ['10.0.0.0/8', '192.0.2.10']);
 ```
+
+The option takes IPv4 and IPv6 addresses and CIDR ranges, as a list or a comma separated string, and
+is compared with `REMOTE_ADDR`. It is empty by default, so `X-Forwarded-Proto` is ignored unless you
+configure it. Set it in the configuration passed to the constructor: the scheme is detected while the
+system URIs are loaded.
+
+The host part of the detected URIs comes from the `Host` header, which the client controls as well.
+Set `site_uri` in production so that absolute URLs (redirects, links in emails) do not depend on it.
 
 ## Client detection
 

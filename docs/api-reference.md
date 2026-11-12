@@ -71,7 +71,7 @@ Implements `WebApplicationInterface`.
 | `getResponse()` | public | The PSR-7 `ResponseInterface` |
 | `setResponse(ResponseInterface $response)` | public | `void` |
 | `isValidHttpStatus($code)` | public | Whether the code is in the known status map |
-| `isSslConnection()` | public | Based on `$_SERVER['HTTPS']` and the port only |
+| `isSslConnection()` | public | Based on `$_SERVER['HTTPS']`, and on `X-Forwarded-Proto` for requests from a `trusted_proxies` address |
 | `compress()` | protected | gzip/deflate the body based on `Accept-Encoding` |
 | `respond()` | protected | Content-Type, cache headers, status, then `sendHeaders()` and echo the body |
 | `getHttpStatusValue($value)` | protected | Maps an integer to a status line |

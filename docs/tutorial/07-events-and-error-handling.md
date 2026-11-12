@@ -155,8 +155,10 @@ final class SecurityHeadersSubscriber implements SubscriberInterface
 }
 ```
 
-`isSslConnection()` only inspects `$_SERVER['HTTPS']` and the port. Behind a TLS terminating proxy
-it returns `false`, so HSTS would never be sent — decide from your own configuration instead:
+`isSslConnection()` only inspects `$_SERVER['HTTPS']`, and `X-Forwarded-Proto` for requests from a
+proxy listed in the `trusted_proxies` option. Behind a TLS terminating proxy that is not configured
+there it returns `false`, so HSTS would never be sent — configure `trusted_proxies`, or decide from
+your own configuration instead:
 
 ```php
 if (str_starts_with((string) $app->get('site_uri'), 'https://')) {

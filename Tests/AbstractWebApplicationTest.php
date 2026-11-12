@@ -1200,6 +1200,55 @@ class AbstractWebApplicationTest extends TestCase
         $this->assertTrue($object->isSslConnection());
     }
 
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the X-Forwarded-Proto header is ignored when the request does not come from a trusted proxy')]
+    public function testIsSslConnectionIgnoresForwardedProtoFromUntrustedClient()
+    {
+        $object = $this->getAbstractWebApplication();
+
+        $object->getInput()->server->set('HTTP_X_FORWARDED_PROTO', 'https');
+        $object->getInput()->server->set('REMOTE_ADDR', '203.0.113.7');
+
+        $this->assertFalse($object->isSslConnection());
+    }
+
+    /**
+     * Data for the trusted proxy tests.
+     *
+     * @return  array
+     */
+    public static function getTrustedProxyData(): array
+    {
+        return [
+            // trusted_proxies, REMOTE_ADDR, expected
+            'exact IPv4 address'          => [['10.0.0.1'], '10.0.0.1', true],
+            'other IPv4 address'          => [['10.0.0.1'], '10.0.0.2', false],
+            'IPv4 range'                  => [['10.0.0.0/8'], '10.20.30.40', true],
+            'outside IPv4 range'          => [['10.0.0.0/8'], '11.0.0.1', false],
+            'IPv4 range with partial byte'=> [['192.168.0.0/23'], '192.168.1.200', true],
+            'outside partial byte range'  => [['192.168.0.0/23'], '192.168.2.1', false],
+            'comma separated string'      => ['127.0.0.1, 10.0.0.0/8', '10.1.1.1', true],
+            'IPv6 range'                  => [['2001:db8::/32'], '2001:db8:1::5', true],
+            'IPv4 range and IPv6 client'  => [['0.0.0.0/0'], '2001:db8::1', false],
+            'invalid range'               => [['10.0.0.0/33'], '10.0.0.1', false],
+            'no trusted proxies'          => [[], '10.0.0.1', false],
+            'no remote address'           => [['10.0.0.1'], '', false],
+        ];
+    }
+
+    #[BackupGlobals(true)]
+    #[DataProvider('getTrustedProxyData')]
+    #[TestDox('Tests the X-Forwarded-Proto header is honoured for requests from a trusted proxy')]
+    public function testIsSslConnectionWithTrustedProxies($trustedProxies, string $remoteAddress, bool $expected)
+    {
+        $object = $this->getAbstractWebApplication(null, new Registry(['trusted_proxies' => $trustedProxies]));
+
+        $object->getInput()->server->set('HTTP_X_FORWARDED_PROTO', 'https');
+        $object->getInput()->server->set('REMOTE_ADDR', $remoteAddress);
+
+        $this->assertSame($expected, $object->isSslConnection());
+    }
+
     #[TestDox('Tests the application correctly approves a valid HTTP Status Code')]
     public function testGetHttpStatusValue()
     {

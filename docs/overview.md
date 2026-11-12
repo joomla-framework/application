@@ -77,7 +77,9 @@ Knowing the boundaries saves time:
 * **No security headers.** `respond()` sets `Content-Type`, cache headers and the status. If you
   want `X-Content-Type-Options`, `Content-Security-Policy` or `Strict-Transport-Security`, set them
   yourself — see [Web applications](web-application.md#security-headers).
-* **No trusted proxy handling.** `isSslConnection()` looks at `$_SERVER['HTTPS']` only; it does not
-  consider `X-Forwarded-Proto`. Behind a TLS terminating proxy you must handle that yourself.
+* **Minimal trusted proxy handling.** `isSslConnection()` honours `X-Forwarded-Proto` only for
+  requests from the addresses in the `trusted_proxies` option, and no other `X-Forwarded-*` header
+  is read. The host always comes from the `Host` header — pin `site_uri` in production. See
+  [Web applications](web-application.md#tls-detection).
 * **No error page.** The `ERROR` event is dispatched and that is all. If nothing listens, the
   request produces an empty response body. See [Error handling](lifecycle-and-events.md#error-handling).
