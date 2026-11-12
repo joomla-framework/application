@@ -3,11 +3,11 @@
 ## Why errors need a listener
 
 `AbstractWebApplication::execute()` catches every `Throwable` from `doExecute()` and dispatches
-`application.error`. That is all it does — it does not log, does not set a status code, and does
-not produce a body.
+`application.error`. Once a listener is registered, that is all it does — it does not log, does not
+set a status code, and does not produce a body.
 
-Without a listener, an exception produces **HTTP 200 with an empty body**. That is the single most
-important thing to wire up in a new application.
+Without a listener, the throwable is logged and an exception produces **HTTP 500 with an empty
+body**. A proper error listener is the single most important thing to wire up in a new application.
 
 ## The error subscriber
 

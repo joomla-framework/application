@@ -80,4 +80,5 @@ Knowing the boundaries saves time:
 * **No trusted proxy handling.** `isSslConnection()` looks at `$_SERVER['HTTPS']` only; it does not
   consider `X-Forwarded-Proto`. Behind a TLS terminating proxy you must handle that yourself.
 * **No error page.** The `ERROR` event is dispatched and that is all. If nothing listens, the
-  request produces an empty response body. See [Error handling](lifecycle-and-events.md#error-handling).
+  throwable is logged and a web request produces a 500 response with an empty body. See
+  [Error handling](lifecycle-and-events.md#error-handling).

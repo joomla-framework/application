@@ -9,8 +9,11 @@ namespace Joomla\Application\Tests;
 
 use Joomla\Application\AbstractApplication;
 use Joomla\Application\AbstractWebApplication;
+use Joomla\Application\ApplicationEvents;
+use Joomla\Application\Event\ApplicationErrorEvent;
 use Joomla\Application\Event\ApplicationEvent;
 use Joomla\Application\Web\WebClient;
+use Joomla\Event\Dispatcher;
 use Joomla\Event\DispatcherInterface;
 use Joomla\Input\Input;
 use Joomla\Registry\Registry;
@@ -24,12 +27,14 @@ use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Test class for Joomla\Application\AbstractWebApplication.
  */
 #[CoversClass(AbstractWebApplication::class)]
 #[UsesClass(AbstractApplication::class)]
+#[UsesClass(ApplicationErrorEvent::class)]
 #[UsesClass(ApplicationEvent::class)]
 #[UsesClass(WebClient::class)]
 class AbstractWebApplicationTest extends TestCase
@@ -272,6 +277,64 @@ class AbstractWebApplicationTest extends TestCase
         );
 
         $this->assertEmpty($object->getBody());
+    }
+
+    #[TestDox('Tests that an uncaught error results in a 500 status and a log entry when no error listener is registered.')]
+    public function testExecuteWithErrorAndNoListener()
+    {
+        $exception = new \RuntimeException('boom');
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with($this->stringContains('boom'), ['exception' => $exception]);
+
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->onlyMethods(['doExecute', 'checkHeadersSent'])
+            ->getMock();
+        $object->expects($this->once())
+            ->method('doExecute')
+            ->willThrowException($exception);
+        $object->method('checkHeadersSent')
+            ->willReturn(true);
+
+        $object->setLogger($logger);
+
+        $object->execute();
+
+        $this->assertSame(['500'], $object->getResponse()->getHeader('Status'));
+    }
+
+    #[TestDox('Tests that an uncaught error is left to the error listener when one is registered.')]
+    public function testExecuteWithErrorAndListener()
+    {
+        $dispatcher = new Dispatcher();
+        $dispatcher->addListener(
+            ApplicationEvents::ERROR,
+            static function (ApplicationErrorEvent $event): void {
+                $event->getApplication()->setHeader('Status', '404', true);
+            }
+        );
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->never())
+            ->method('error');
+
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->onlyMethods(['doExecute', 'checkHeadersSent'])
+            ->getMock();
+        $object->expects($this->once())
+            ->method('doExecute')
+            ->willThrowException(new \RuntimeException('boom'));
+        $object->method('checkHeadersSent')
+            ->willReturn(true);
+
+        $object->setLogger($logger);
+        $object->setDispatcher($dispatcher);
+
+        $object->execute();
+
+        $this->assertSame(['404'], $object->getResponse()->getHeader('Status'));
     }
 
     #[TestDox('Tests that the application with compression enabled is executed successfully.')]

@@ -242,7 +242,7 @@ job.
 
 **Application**
 
-- [ ] An `application.error` listener is registered — otherwise exceptions produce HTTP 200 with an
+- [ ] An `application.error` listener is registered — otherwise exceptions produce HTTP 500 with an
       empty body
 - [ ] The CSRF subscriber covers every non-safe method
 - [ ] Logs go somewhere you actually read

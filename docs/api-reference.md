@@ -25,7 +25,7 @@ Implements `ConfigurationAwareApplicationInterface`, `LoggerAwareInterface`,
 | Member | Visibility | Description |
 |---|---|---|
 | `__construct(?Registry $config = null)` | public | Sets config, writes the `execution.*` keys, calls `initialise()` |
-| `execute()` | public | Dispatches `before_execute`, calls `doExecute()`, dispatches `after_execute`; catches `Throwable` into `application.error` |
+| `execute()` | public | Dispatches `before_execute`, calls `doExecute()`, dispatches `after_execute`; passes a caught `Throwable` to `dispatchErrorEvent()` |
 | `close($code = 0)` | public | `exit($code)` |
 | `get($key, $default = null)` | public | Configuration read |
 | `set($key, $value = null)` | public | Configuration write, returns previous value |
@@ -36,6 +36,7 @@ Implements `ConfigurationAwareApplicationInterface`, `LoggerAwareInterface`,
 | `doExecute()` | protected, **abstract** | Your application logic |
 | `initialise()` | protected | Empty hook, called at the end of the constructor |
 | `dispatchEvent(string $eventName, ?EventInterface $event = null)` | protected | Dispatches, or returns `null` when no dispatcher is set |
+| `dispatchErrorEvent(\Throwable $throwable): bool` | protected | Dispatches `application.error`; without a listener for it logs the throwable at `error` level and returns `false` |
 
 ## `AbstractWebApplication extends AbstractApplication`
 
@@ -56,7 +57,7 @@ Implements `WebApplicationInterface`.
 | Member | Visibility | Description |
 |---|---|---|
 | `__construct(?Input, ?Registry, ?WebClient, ?ResponseInterface)` | public | All arguments optional; calls `loadSystemUris()` |
-| `execute()` | public | Full lifecycle including `compress()` and `respond()` |
+| `execute()` | public | Full lifecycle including `compress()` and `respond()`; sets status 500 when an error has no `application.error` listener |
 | `getInput()` | public | The `Input` object |
 | `redirect($url, $status = 303)` | public | Sends a redirect and calls `close()` |
 | `allowCache($allow = null)` | public | Getter with `null`, setter otherwise; returns the resulting state |
