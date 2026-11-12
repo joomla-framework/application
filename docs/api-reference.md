@@ -73,7 +73,7 @@ Implements `WebApplicationInterface`.
 | `isValidHttpStatus($code)` | public | Whether the code is in the known status map |
 | `isSslConnection()` | public | Based on `$_SERVER['HTTPS']` and the port only |
 | `compress()` | protected | gzip/deflate the body based on `Accept-Encoding` |
-| `respond()` | protected | Content-Type, cache headers, status, then `sendHeaders()` and echo the body |
+| `respond()` | protected | Content-Type, cache headers, status, then `sendHeaders()` and echo the body (no body for 1xx, 204 and 304, no Content-Type for 1xx and 204) |
 | `getHttpStatusValue($value)` | protected | Maps an integer to a status line |
 | `checkConnectionAlive()` | protected | `connection_status() === CONNECTION_NORMAL` |
 | `checkHeadersSent()` | protected | `headers_sent()` |
