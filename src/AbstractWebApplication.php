@@ -337,7 +337,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
             // Always modified.
             $this->setHeader('Last-Modified', \gmdate('D, d M Y H:i:s') . ' GMT', true);
-            $this->setHeader('Cache-Control', 'no-cache, must-revalidate', false);
+            $this->setHeader('Cache-Control', 'no-cache, must-revalidate', true);
         } else {
             // Expires.
             if (!$this->getResponse()->hasHeader('Expires')) {
@@ -351,9 +351,11 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
             }
         }
 
-        // Make sure there is a status header already otherwise generate it from the response
-        if (!$this->getResponse()->hasHeader('Status')) {
-            $this->setHeader('Status', (string) $this->getResponse()->getStatusCode());
+        // The status line is sent from the Status header, make sure it matches the status code of the response
+        $status = (string) $this->getResponse()->getStatusCode();
+
+        if ($this->getResponse()->getHeader('Status') !== [$status]) {
+            $this->setHeader('Status', $status, true);
         }
 
         $this->sendHeaders();
@@ -481,6 +483,8 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * If the replace flag is set then all headers with the given name will be replaced by the new one.
      * The headers are stored in an internal array to be sent when the site is sent to the browser.
      *
+     * A "Status" header with a valid HTTP status code also sets the status code of the response.
+     *
      * @param  string   $name     The name of the header to set.
      * @param  string   $value    The value of the header to set.
      * @param  boolean  $replace  True to replace any headers with the same name.
@@ -499,6 +503,11 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         // If the replace flag is set, unset all known headers with the given name.
         if ($replace && $response->hasHeader($name)) {
             $response = $response->withoutHeader($name);
+        }
+
+        // Keep the status code of the response in sync with the Status header.
+        if (\strtolower($name) === 'status' && \ctype_digit($value) && (int) $value >= 100 && (int) $value <= 599) {
+            $response = $response->withStatus((int) $value);
         }
 
         // Add the header to the internal array.

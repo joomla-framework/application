@@ -60,7 +60,7 @@ Implements `WebApplicationInterface`.
 | `getInput()` | public | The `Input` object |
 | `redirect($url, $status = 303)` | public | Sends a redirect and calls `close()` |
 | `allowCache($allow = null)` | public | Getter with `null`, setter otherwise; returns the resulting state |
-| `setHeader($name, $value, $replace = false)` | public | Fluent |
+| `setHeader($name, $value, $replace = false)` | public | Fluent; a `Status` header also sets the response status code |
 | `getHeaders()` | public | List of `['name' => …, 'value' => …]` |
 | `clearHeaders()` | public | Removes every header, fluent |
 | `sendHeaders()` | public | Sends status line and headers, fluent |
