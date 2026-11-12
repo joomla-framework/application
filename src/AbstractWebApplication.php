@@ -34,7 +34,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    Input
      * @since  1.0.0
      */
-    protected $input;
+    protected Input $input;
 
     /**
      * Character encoding string.
@@ -42,7 +42,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    string
      * @since  1.0.0
      */
-    public $charSet = 'utf-8';
+    public string $charSet = 'utf-8';
 
     /**
      * Response mime type.
@@ -50,7 +50,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    string
      * @since  1.0.0
      */
-    public $mimeType = 'text/html';
+    public string $mimeType = 'text/html';
 
     /**
      * HTTP protocol version.
@@ -58,7 +58,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    string
      * @since  1.9.0
      */
-    public $httpVersion = '1.1';
+    public string $httpVersion = '1.1';
 
     /**
      * The body modified date for response headers.
@@ -66,7 +66,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    \DateTime
      * @since  1.0.0
      */
-    public $modifiedDate;
+    public ?\DateTime $modifiedDate = null;
 
     /**
      * The application client object.
@@ -74,7 +74,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    Web\WebClient
      * @since  1.0.0
      */
-    public $client;
+    public WebClient $client;
 
     /**
      * The application response object.
@@ -82,7 +82,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    ResponseInterface
      * @since  1.0.0
      */
-    protected $response;
+    protected ResponseInterface $response;
 
     /**
      * Is caching enabled?
@@ -90,7 +90,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @var    boolean
      * @since  2.0.0
      */
-    private $cacheable = false;
+    private bool $cacheable = false;
 
     /**
      * A map of integer HTTP response codes to the full HTTP Status for the headers.
@@ -99,7 +99,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @since  1.6.0
      * @link   https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      */
-    private $responseMap = [
+    private array $responseMap = [
         100 => 'HTTP/{version} 100 Continue',
         101 => 'HTTP/{version} 101 Switching Protocols',
         102 => 'HTTP/{version} 102 Processing',
@@ -257,7 +257,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    protected function compress()
+    protected function compress(): void
     {
         // Supported compression encodings.
         $supported = [
@@ -323,7 +323,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    protected function respond()
+    protected function respond(): void
     {
         // Send the content-type header.
         if (!$this->getResponse()->hasHeader('Content-Type')) {
@@ -388,7 +388,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @throws  \InvalidArgumentException
      * @since   1.0.0
      */
-    public function redirect($url, $status = 303)
+    public function redirect(string $url, int $status = 303): void
     {
         // Check for relative internal links.
         if (\preg_match('#^index\.php#', $url)) {
@@ -426,14 +426,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         if ($this->checkHeadersSent()) {
             // If the headers have already been sent we need to send the redirect statement via JavaScript.
             echo '<script>document.location.href=' . \json_encode($url) . ";</script>\n";
-        } elseif (($this->client->engine == WebClient::TRIDENT) && !static::isAscii($url)) {
-            // We have to use a JavaScript redirect here because MSIE doesn't play nice with UTF-8 URLs.
-            $html = '<html><head>';
-            $html .= '<meta http-equiv="content-type" content="text/html; charset=' . $this->charSet . '" />';
-            $html .= '<script>document.location.href=' . \json_encode($url) . ';</script>';
-            $html .= '</head><body></body></html>';
-
-            echo $html;
         } else {
             if (!\is_int($status) && !$this->isRedirectState($status)) {
                 throw new \InvalidArgumentException('You have not supplied a valid HTTP status code');
@@ -466,7 +458,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function allowCache($allow = null)
+    public function allowCache(?bool $allow = null): bool
     {
         if ($allow !== null) {
             $this->cacheable = (bool) $allow;
@@ -489,7 +481,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function setHeader($name, $value, $replace = false)
+    public function setHeader(string $name, string $value, bool $replace = false): static
     {
         // Sanitize the input values.
         $name     = (string) $name;
@@ -514,7 +506,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $return = [];
 
@@ -534,7 +526,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function clearHeaders()
+    public function clearHeaders(): static
     {
         $response = $this->getResponse();
 
@@ -554,7 +546,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function sendHeaders()
+    public function sendHeaders(): static
     {
         if (!$this->checkHeadersSent()) {
             foreach ($this->getHeaders() as $header) {
@@ -581,7 +573,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function setBody($content)
+    public function setBody(string $content): static
     {
         $stream = new Stream('php://memory', 'rw');
         $stream->write((string) $content);
@@ -599,7 +591,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function prependBody($content)
+    public function prependBody(string $content): static
     {
         $currentBody = $this->getResponse()->getBody();
 
@@ -623,7 +615,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function appendBody($content)
+    public function appendBody(string $content): static
     {
         $currentStream = $this->getResponse()->getBody();
 
@@ -648,7 +640,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function getBody()
+    public function getBody(): string
     {
         return (string) $this->getResponse()->getBody();
     }
@@ -674,7 +666,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.8.0
      */
-    protected function getHttpStatusValue($value)
+    protected function getHttpStatusValue(int|string $value): string
     {
         $code = (int) $value;
 
@@ -696,7 +688,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.8.1
      */
-    public function isValidHttpStatus($code)
+    public function isValidHttpStatus(int $code): bool
     {
         return \array_key_exists($code, $this->responseMap);
     }
@@ -711,7 +703,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @see     \connection_status()
      * @since   1.0.0
      */
-    protected function checkConnectionAlive()
+    protected function checkConnectionAlive(): bool
     {
         return \connection_status() === CONNECTION_NORMAL;
     }
@@ -725,7 +717,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @see     \headers_sent()
      * @since   1.0.0
      */
-    protected function checkHeadersSent()
+    protected function checkHeadersSent(): bool
     {
         return \headers_sent();
     }
@@ -737,7 +729,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    protected function detectRequestUri()
+    protected function detectRequestUri(): string
     {
         // First we need to detect the URI scheme.
         $scheme = $this->isSslConnection() ? 'https://' : 'http://';
@@ -794,7 +786,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * @see     \header()
      * @since   1.0.0
      */
-    protected function header($string, $replace = true, $code = null)
+    protected function header(string $string, bool $replace = true, ?int $code = null): void
     {
         if ($code === null) {
             $code = 0;
@@ -826,7 +818,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.8.0
      */
-    protected function isRedirectState($state)
+    protected function isRedirectState(int|string $state): bool
     {
         $state = (int) $state;
 
@@ -840,7 +832,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    public function isSslConnection()
+    public function isSslConnection(): bool
     {
         $serverSSLVar = $this->input->server->getString('HTTPS', '');
 
@@ -863,7 +855,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.0.0
      */
-    protected function loadSystemUris($requestUri = null)
+    protected function loadSystemUris(?string $requestUri = null): void
     {
         // Set the request URI.
         if (!empty($requestUri)) {
@@ -951,7 +943,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      *
      * @since   1.4.0
      */
-    public static function isAscii($str)
+    public static function isAscii(string $str): bool
     {
         // Search for any bytes which are outside the ASCII range...
         return \preg_match('/[^\x00-\x7F]/', $str) !== 1;

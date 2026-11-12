@@ -25,7 +25,7 @@ trait SessionAwareWebApplicationTrait
      * @var    SessionInterface
      * @since  2.0.0
      */
-    protected $session;
+    protected ?SessionInterface $session = null;
 
     /**
      * Method to get the application input object.
@@ -43,7 +43,7 @@ trait SessionAwareWebApplicationTrait
      *
      * @since   2.0.0
      */
-    public function getSession()
+    public function getSession(): SessionInterface
     {
         if ($this->session === null) {
             throw new \RuntimeException(\sprintf('A %s object has not been set.', SessionInterface::class));
@@ -61,7 +61,7 @@ trait SessionAwareWebApplicationTrait
      *
      * @since   2.0.0
      */
-    public function setSession(SessionInterface $session)
+    public function setSession(SessionInterface $session): static
     {
         $this->session = $session;
 
@@ -77,7 +77,7 @@ trait SessionAwareWebApplicationTrait
      *
      * @since   2.0.0
      */
-    public function checkToken($method = 'post')
+    public function checkToken(string $method = 'post'): bool
     {
         $token = $this->getFormToken();
 
@@ -104,7 +104,7 @@ trait SessionAwareWebApplicationTrait
      *
      * @since   2.0.0
      */
-    public function getFormToken($forceNew = false)
+    public function getFormToken(bool $forceNew = false): string
     {
         return $this->getSession()->getToken($forceNew);
     }
