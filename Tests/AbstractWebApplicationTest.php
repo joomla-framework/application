@@ -587,6 +587,47 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
+    /**
+     * Data for the invalid redirect status test.
+     *
+     * @return  array
+     */
+    public static function getInvalidRedirectStatusData(): array
+    {
+        return [
+            'success status'       => [200],
+            'client error status'  => [404],
+            'unknown 3xx status'   => [399],
+            'non-numeric string'   => ['foo'],
+        ];
+    }
+
+    #[BackupGlobals(true)]
+    #[DataProvider('getInvalidRedirectStatusData')]
+    #[TestDox('Tests that the application rejects a status code which is not a redirect status')]
+    public function testRedirectWithInvalidStatus($status)
+    {
+        $_SERVER['HTTP_HOST']   = self::TEST_HTTP_HOST;
+        $_SERVER['REQUEST_URI'] = self::TEST_REQUEST_URI;
+        $_SERVER['SCRIPT_NAME'] = self::TEST_REQUEST_URI;
+
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->setConstructorArgs([new Input([]), new Registry(), new WebClient()])
+            ->onlyMethods(['checkHeadersSent', 'close', 'header', 'doExecute'])
+            ->getMock();
+
+        $object->expects($this->never())
+            ->method('header');
+        $object->expects($this->never())
+            ->method('close');
+        $object->method('checkHeadersSent')
+            ->willReturn(true);
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $object->redirect('http://' . self::TEST_HTTP_HOST . '/', $status);
+    }
+
     #[BackupGlobals(true)]
     #[TestDox('Tests that the application redirects successfully.')]
     public function testRedirect()

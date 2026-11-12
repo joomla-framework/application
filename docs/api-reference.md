@@ -58,7 +58,7 @@ Implements `WebApplicationInterface`.
 | `__construct(?Input, ?Registry, ?WebClient, ?ResponseInterface)` | public | All arguments optional; calls `loadSystemUris()` |
 | `execute()` | public | Full lifecycle including `compress()` and `respond()` |
 | `getInput()` | public | The `Input` object |
-| `redirect($url, $status = 303)` | public | Sends a redirect and calls `close()` |
+| `redirect($url, $status = 303)` | public | Sends a redirect and calls `close()`; throws `InvalidArgumentException` for a status other than a 3xx code |
 | `allowCache($allow = null)` | public | Getter with `null`, setter otherwise; returns the resulting state |
 | `setHeader($name, $value, $replace = false)` | public | Fluent |
 | `getHeaders()` | public | List of `['name' => …, 'value' => …]` |
