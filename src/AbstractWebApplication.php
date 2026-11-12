@@ -381,15 +381,19 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      * accomplished using a JavaScript statement.
      *
      * @param  string   $url     The URL to redirect to. Can only be http/https URL
-     * @param  integer  $status  The HTTP status code to be provided. 303 is assumed by default.
+     * @param  integer  $status  The HTTP status code to be provided, a 3xx code. 303 is assumed by default.
      *
      * @return  void
      *
-     * @throws  \InvalidArgumentException
+     * @throws  \InvalidArgumentException  If the status code is not a known redirect (3xx) status code.
      * @since   1.0.0
      */
     public function redirect($url, $status = 303)
     {
+        if (!$this->isRedirectState($status)) {
+            throw new \InvalidArgumentException('You have not supplied a valid HTTP status code');
+        }
+
         // Check for relative internal links.
         if (\preg_match('#^index\.php#', $url)) {
             $url = $this->get('uri.base.full') . $url;
@@ -435,10 +439,6 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
             echo $html;
         } else {
-            if (!\is_int($status) && !$this->isRedirectState($status)) {
-                throw new \InvalidArgumentException('You have not supplied a valid HTTP status code');
-            }
-
             // All other cases use the more efficient HTTP header for redirection.
             $this->setHeader('Status', (string) $status, true);
             $this->setHeader('Location', $url, true);

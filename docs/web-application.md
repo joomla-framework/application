@@ -172,9 +172,9 @@ Two things to know:
   $app->redirect($target);
   ```
 
-* **The status code check is permissive.** The guard is
-  `if (!is_int($status) && !$this->isRedirectState($status))`, so any integer passes — including
-  `200`. Pass a real 3xx code.
+* **The status code must be a redirect status.** Anything but a known 3xx code (`300`–`308`)
+  throws an `InvalidArgumentException` before any output, also when the redirect falls back to
+  JavaScript.
 
 ## TLS detection
 
