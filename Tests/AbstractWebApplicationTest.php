@@ -959,6 +959,38 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
+    #[TestDox('Tests the \sendHeaders() method sends every value of a header with multiple values')]
+    public function testSendHeadersWithMultipleValues()
+    {
+        $object = $this->getMockBuilder(AbstractWebApplication::class)
+            ->onlyMethods(['checkHeadersSent', 'header', 'doExecute'])
+            ->getMock();
+
+        $object->expects($this->once())
+            ->method('checkHeadersSent')
+            ->willReturn(false);
+        $object->expects($this->exactly(4))
+            ->method('header')
+            ->willReturnCallback([$this, 'mockHeader']);
+
+        $object->setHeader('Link', '</a.css>; rel=preload');
+        $object->setHeader('Link', '</b.js>; rel=preload');
+        $object->setHeader('Vary', 'Accept-Encoding');
+        $object->setHeader('Set-Cookie', 'a=1');
+
+        $object->sendHeaders();
+
+        $this->assertSame(
+            [
+                ['Link: </a.css>; rel=preload', true, null],
+                ['Link: </b.js>; rel=preload', false, null],
+                ['Vary: Accept-Encoding', true, null],
+                ['Set-Cookie: a=1', true, null],
+            ],
+            self::$headers
+        );
+    }
+
     #[TestDox('Tests the \setBody() method correctly sets the response body')]
     public function testSetBody()
     {

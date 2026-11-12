@@ -557,6 +557,8 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
     public function sendHeaders()
     {
         if (!$this->checkHeadersSent()) {
+            $sent = [];
+
             foreach ($this->getHeaders() as $header) {
                 if (\strtolower($header['name']) == 'status') {
                     // 'status' headers indicate an HTTP status, and need to be handled slightly differently
@@ -564,7 +566,12 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
 
                     $this->header($status, true, (int) $header['value']);
                 } else {
-                    $this->header($header['name'] . ': ' . $header['value']);
+                    // Only the first value replaces a header of the same name, further values are added to it
+                    $name = \strtolower($header['name']);
+
+                    $this->header($header['name'] . ': ' . $header['value'], !isset($sent[$name]));
+
+                    $sent[$name] = true;
                 }
             }
         }

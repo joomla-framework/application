@@ -59,6 +59,10 @@ $app->clearHeaders();   // remove all headers, fluent
 $app->sendHeaders();    // send status line + headers now
 ```
 
+`sendHeaders()` sends every value of a header as its own header line: the first value replaces a
+header of the same name that PHP has already queued (for example with `header()`), the following
+values are added to it. Both `Set-Cookie` headers above reach the client.
+
 `getHeaders()` returns a flat list of `['name' => …, 'value' => …]` pairs, one entry per value, not
 a name-indexed map.
 
