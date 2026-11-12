@@ -52,7 +52,7 @@ These are set by the application itself; treat them as read-only.
 | `execution.datetime` | `AbstractApplication::__construct()` | `gmdate('Y-m-d H:i:s')` at boot |
 | `execution.timestamp` | `AbstractApplication::__construct()` | `time()` at boot |
 | `execution.microtimestamp` | `AbstractApplication::__construct()` | `microtime(true)` at boot |
-| `uri.request` | `loadSystemUris()` | Full URI of the current request |
+| `uri.request` | `loadSystemUris()` | Full URI of the current request. The host comes from the `Host` header; without one (HTTP/1.0, a web application started from the command line) from `SERVER_NAME`/`SERVER_PORT`, and then from `site_uri` |
 | `uri.base.full` | `loadSystemUris()` | Scheme, host, port and base path, with trailing slash |
 | `uri.base.host` | `loadSystemUris()` | Scheme, host and port only |
 | `uri.base.path` | `loadSystemUris()` | Base path only, with trailing slash |

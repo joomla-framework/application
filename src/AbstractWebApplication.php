@@ -751,7 +751,7 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         $phpSelf    = $this->input->server->getString('PHP_SELF', '');
         $requestUri = $this->input->server->getString('REQUEST_URI', '');
 
-        $uri = $scheme . $this->input->server->getString('HTTP_HOST');
+        $uri = $scheme . $this->detectHost($scheme === 'https://');
 
         if (!empty($phpSelf) && !empty($requestUri)) {
             // If PHP_SELF and REQUEST_URI are both populated then we will assume "Apache Mode".
@@ -777,6 +777,47 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         $uri = str_replace(["'", '"', '<', '>'], ['%27', '%22', '%3C', '%3E'], $uri);
 
         return \trim($uri);
+    }
+
+    /**
+     * Detect the host (and port) of the request for the request URI.
+     *
+     * Uses the Host header. Without it (HTTP/1.0 requests, a web application run from the command line) the
+     * server name and port are used, and then the host of the "site_uri" configuration option.
+     *
+     * @param   boolean  $isSsl  Whether the request uses a secure connection.
+     *
+     * @return  string  The host, possibly with a port, or an empty string if it cannot be detected.
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    private function detectHost(bool $isSsl): string
+    {
+        $host = $this->input->server->getString('HTTP_HOST', '');
+
+        if ($host !== '') {
+            return $host;
+        }
+
+        $serverName = $this->input->server->getString('SERVER_NAME', '');
+
+        if ($serverName !== '') {
+            $port = $this->input->server->getString('SERVER_PORT', '');
+
+            if ($port === '' || $port === ($isSsl ? '443' : '80')) {
+                return $serverName;
+            }
+
+            return $serverName . ':' . $port;
+        }
+
+        $siteUri = \trim((string) $this->get('site_uri', ''));
+
+        if ($siteUri !== '') {
+            return (new Uri($siteUri))->toString(['host', 'port']);
+        }
+
+        return '';
     }
 
     /**

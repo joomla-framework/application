@@ -1037,6 +1037,43 @@ class AbstractWebApplicationTest extends TestCase
         );
     }
 
+    /**
+     * Data for the request URI detection without a Host header.
+     *
+     * @return  array
+     */
+    public static function getDetectRequestUriWithoutHostData(): array
+    {
+        return [
+            // Server variables, configuration, expected request URI
+            'server name'                => [['SERVER_NAME' => 'example.org'], [], 'http://example.org/j/index.php'],
+            'server name with port'      => [['SERVER_NAME' => 'example.org', 'SERVER_PORT' => '8080'], [], 'http://example.org:8080/j/index.php'],
+            'server name with HTTP port' => [['SERVER_NAME' => 'example.org', 'SERVER_PORT' => '80'], [], 'http://example.org/j/index.php'],
+            'HTTPS with default port'    => [['SERVER_NAME' => 'example.org', 'SERVER_PORT' => '443', 'HTTPS' => 'on'], [], 'https://example.org/j/index.php'],
+            'host of site_uri'           => [[], ['site_uri' => 'http://site.example:81/path/'], 'http://site.example:81/j/index.php'],
+        ];
+    }
+
+    #[BackupGlobals(true)]
+    #[DataProvider('getDetectRequestUriWithoutHostData')]
+    #[TestDox('Tests that the request URI is detected when the request has no Host header')]
+    public function testDetectRequestUriWithoutHost(array $server, array $config, string $expects)
+    {
+        unset($_SERVER['HTTP_HOST'], $_SERVER['SERVER_NAME'], $_SERVER['SERVER_PORT'], $_SERVER['HTTPS']);
+
+        $_SERVER['PHP_SELF']    = '/j/index.php';
+        $_SERVER['REQUEST_URI'] = '/j/index.php';
+        $_SERVER['SCRIPT_NAME'] = '/j/index.php';
+
+        foreach ($server as $name => $value) {
+            $_SERVER[$name] = $value;
+        }
+
+        $object = $this->getAbstractWebApplication(new Input([]), new Registry($config));
+
+        $this->assertSame($expects, TestHelper::invoke($object, 'detectRequestUri'));
+    }
+
     #[TestDox('Tests the system URIs are correctly loaded when a URI is set in the application configuration')]
     public function testLoadSystemUrisWithSiteUriSet()
     {
