@@ -77,7 +77,7 @@ Implements `WebApplicationInterface`.
 | `getHttpStatusValue($value)` | protected | Maps an integer to a status line |
 | `checkConnectionAlive()` | protected | `connection_status() === CONNECTION_NORMAL` |
 | `checkHeadersSent()` | protected | `headers_sent()` |
-| `detectRequestUri()` | protected | Builds the request URI from the server environment |
+| `detectRequestUri()` | protected | Builds the request URI from the server environment; the host falls back from `HTTP_HOST` to `SERVER_NAME`/`SERVER_PORT` and the host of `site_uri` |
 | `header($string, $replace = true, $code = null)` | protected | Wraps `header()`, strips NUL bytes |
 | `isRedirectState($state)` | protected | Whether the code is a 3xx in the status map |
 | `loadSystemUris($requestUri = null)` | protected | Writes the `uri.*` configuration keys |
