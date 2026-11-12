@@ -90,10 +90,18 @@ Resolves, in order:
 | `[SomeClass::class, 'method']` | Instantiates `SomeClass`, returns `[$instance, 'method']` |
 | `[$object, 'method']` | Returned as-is |
 | An object with `__invoke()` | Returned as-is |
-| A function name | Returned as-is |
 | `SomeClass::class` (string) | Instantiates it and returns `[$instance, 'execute']` |
+| A function name | Returned as-is |
 
-Anything else, or a class that cannot be instantiated, raises `InvalidArgumentException`.
+Anything else, or a class that cannot be instantiated or has no `execute()` method, raises
+`InvalidArgumentException`. A class name is looked up before a function name, so a function cannot
+shadow a controller class of the same name. Class names are only resolved when `joomla/controller`
+is installed.
+
+> **Deprecated:** a class name whose class does not implement
+> `Joomla\Controller\ControllerInterface` still resolves to `[$instance, 'execute']`, but triggers a
+> deprecation. As of 5.0 it raises `InvalidArgumentException`. Use the `[SomeClass::class, 'method']`
+> form for other classes.
 
 `ControllerResolver::instantiateController()` calls `new $class()` — so a controller resolved this
 way **must have a constructor without required arguments**. If it has any, you get an
