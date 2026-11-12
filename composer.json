@@ -44,7 +44,6 @@
         "symfony/deprecation-contracts": "^2|^3"
     },
     "require-dev": {
-        "ext-json": "*",
         "joomla/controller": "^4.0",
         "joomla/di": "^4.0",
         "joomla/input": "^4.0",
@@ -59,7 +58,6 @@
         "phpstan/phpstan-deprecation-rules": "^2.0.3"
     },
     "suggest": {
-        "ext-json": "To use JSON format, ext-json is required",
         "joomla/controller": "^4.0 To support resolving ControllerInterface objects in ControllerResolverInterface, install joomla/controller",
         "joomla/input": "^4.0 To use WebApplicationInterface, install joomla/input",
         "joomla/router": "^4.0 To use WebApplication or ControllerResolverInterface implementations, install joomla/router",
