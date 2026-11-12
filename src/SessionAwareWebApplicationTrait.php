@@ -71,28 +71,43 @@ trait SessionAwareWebApplicationTrait
     /**
      * Checks for a form token in the request.
      *
-     * @param   string  $method  The request method in which to look for the token key.
+     * A token sent in the X-CSRF-Token header must match the session token. Otherwise the request must contain a
+     * variable named after the session token.
+     *
+     * @param   string  $method  The request method in which to look for the token key, either "post" or "get".
      *
      * @return  boolean
      *
+     * @throws  \InvalidArgumentException  If the request method is not supported.
      * @since   2.0.0
      */
     public function checkToken($method = 'post')
     {
-        $token = $this->getFormToken();
+        $method = \strtolower((string) $method);
 
-        // Support a token sent via the X-CSRF-Token header, then fall back to a token in the request
-        $requestToken = $this->getInput()->server->get(
-            'HTTP_X_CSRF_TOKEN',
-            $this->getInput()->$method->get($token, '', 'alnum'),
-            'alnum'
-        );
-
-        if (!$requestToken) {
-            return false;
+        if (!\in_array($method, ['post', 'get'], true)) {
+            throw new \InvalidArgumentException(
+                \sprintf('The request method "%s" is not supported for the token check, use "post" or "get".', $method)
+            );
         }
 
-        return $this->getSession()->hasToken($token);
+        $token = $this->getFormToken();
+
+        // Support a token sent via the X-CSRF-Token header, then fall back to a variable named after the token
+        $requestToken = $this->getInput()->server->get('HTTP_X_CSRF_TOKEN', '', 'raw');
+
+        if (!\is_string($requestToken) || $requestToken === '') {
+            if (!$this->getInput()->$method->get($token, '', 'alnum')) {
+                return false;
+            }
+
+            $requestToken = $token;
+        }
+
+        $valid = \hash_equals($token, $requestToken);
+
+        // Let the session see the result as well, it expires the session when the check fails
+        return $this->getSession()->hasToken($valid ? $token : '') && $valid;
     }
 
     /**

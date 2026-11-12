@@ -13,7 +13,10 @@ use Joomla\Application\SessionAwareWebApplicationTrait;
 use Joomla\Application\Web\WebClient;
 use Joomla\Application\WebApplication;
 use Joomla\Input\Input;
+use Joomla\Session\Session;
 use Joomla\Session\SessionInterface;
+use Joomla\Session\SessionState;
+use Joomla\Session\Storage\RuntimeStorage;
 use PHPUnit\Framework\Attributes\BackupGlobals;
 use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -69,48 +72,93 @@ class SessionAwareWebApplicationTraitTest extends TestCase
         $object->getSession();
     }
 
+    /**
+     * Returns a started session using runtime storage.
+     *
+     * @return  Session
+     */
+    private function getStartedSession(): Session
+    {
+        $session = new Session(new RuntimeStorage());
+        $session->start();
+
+        return $session;
+    }
+
     #[BackupGlobals(true)]
     #[TestDox('Tests the CSRF token can be checked from the `X-CSRF-Token` header')]
     public function testCheckTokenForHttpHeader()
     {
-        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'token';
+        $session = $this->getStartedSession();
 
-        $mockSession = $this->createMock(SessionInterface::class);
-        $mockSession->expects($this->once())
-            ->method('getToken')
-            ->willReturn('testing');
-
-        $mockSession->expects($this->once())
-            ->method('hasToken')
-            ->with('testing')
-            ->willReturn(true);
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = $session->getToken();
 
         $object = $this->getSessionAwareWebApplicationTrait();
-        $object->setSession($mockSession);
+        $object->setSession($session);
 
         $this->assertTrue($object->checkToken());
+        $this->assertSame(SessionState::ACTIVE, $session->getState());
+    }
+
+    #[BackupGlobals(true)]
+    #[TestDox('Tests checking the CSRF token fails when the `X-CSRF-Token` header does not match the session token')]
+    public function testCheckTokenFailsForMismatchingHttpHeader()
+    {
+        $session = $this->getStartedSession();
+        $session->getToken();
+
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'a';
+
+        $object = $this->getSessionAwareWebApplicationTrait();
+        $object->setSession($session);
+
+        $this->assertFalse($object->checkToken());
+        $this->assertSame(SessionState::EXPIRED, $session->getState(), 'A failed check expires the session.');
+    }
+
+    #[BackupGlobals(true)]
+    #[TestDox('Tests a mismatching `X-CSRF-Token` header fails even when the request contains the token variable')]
+    public function testCheckTokenFailsForMismatchingHttpHeaderWithRequestVariable()
+    {
+        $session = $this->getStartedSession();
+
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'a';
+        $_POST[$session->getToken()]  = '1';
+
+        $object = $this->getSessionAwareWebApplicationTrait();
+        $object->setSession($session);
+
+        $this->assertFalse($object->checkToken());
     }
 
     #[BackupGlobals(true)]
     #[TestDox('Tests the CSRF token can be checked from the request body')]
     public function testCheckTokenForRequestBody()
     {
-        $_POST['testing'] = 'token';
+        $session = $this->getStartedSession();
 
-        $mockSession = $this->createMock(SessionInterface::class);
-        $mockSession->expects($this->once())
-            ->method('getToken')
-            ->willReturn('testing');
-
-        $mockSession->expects($this->once())
-            ->method('hasToken')
-            ->with('testing')
-            ->willReturn(true);
+        $_POST[$session->getToken()] = '1';
 
         $object = $this->getSessionAwareWebApplicationTrait();
-        $object->setSession($mockSession);
+        $object->setSession($session);
 
         $this->assertTrue($object->checkToken());
+        $this->assertSame(SessionState::ACTIVE, $session->getState());
+    }
+
+    #[BackupGlobals(true)]
+    #[TestDox('Tests the CSRF token can be checked from the query string')]
+    public function testCheckTokenForQueryString()
+    {
+        $session = $this->getStartedSession();
+
+        $_GET[$session->getToken()] = '1';
+
+        $object = $this->getSessionAwareWebApplicationTrait();
+        $object->setSession($session);
+
+        $this->assertFalse($object->checkToken(), 'The token is looked up in the POST data by default.');
+        $this->assertTrue($object->checkToken('get'));
     }
 
     #[BackupGlobals(true)]
@@ -129,5 +177,16 @@ class SessionAwareWebApplicationTraitTest extends TestCase
         $object->setSession($mockSession);
 
         $this->assertFalse($object->checkToken());
+    }
+
+    #[TestDox('Tests checking the CSRF token rejects an unsupported request method')]
+    public function testCheckTokenRejectsUnsupportedMethod()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $object = $this->getSessionAwareWebApplicationTrait();
+        $object->setSession($this->createStub(SessionInterface::class));
+
+        $object->checkToken('server');
     }
 }
