@@ -76,21 +76,24 @@ class ControllerResolver implements ControllerResolverInterface
             return $controller;
         }
 
-        // Try to resolve a known function
-        if (\function_exists($controller)) {
-            return $controller;
+        if (!\is_string($controller)) {
+            throw new \InvalidArgumentException(\sprintf('Cannot resolve controller for URI `%s`', $route->getUri()));
         }
 
-        // Try to resolve a class name if it implements our ControllerInterface
-        if (\is_string($controller) && \interface_exists(ControllerInterface::class)) {
-            if (!\class_exists($controller)) {
-                throw new \InvalidArgumentException(
-                    \sprintf('Cannot resolve controller for URI `%s`', $route->getUri())
+        // Try to resolve a class name if it implements our ControllerInterface, before a function with the same name
+        if (\interface_exists(ControllerInterface::class) && \class_exists($controller)) {
+            if (!\is_subclass_of($controller, ControllerInterface::class)) {
+                trigger_deprecation(
+                    'joomla/application',
+                    '__DEPLOY_VERSION__',
+                    'Resolving the controller class "%s", which does not implement "%s", is deprecated and will throw an exception in 5.0.',
+                    $controller,
+                    ControllerInterface::class
                 );
             }
 
             try {
-                return [$this->instantiateController($controller), 'execute'];
+                $callable = [$this->instantiateController($controller), 'execute'];
             } catch (\ArgumentCountError $error) {
                 throw new \InvalidArgumentException(
                     \sprintf(
@@ -101,6 +104,19 @@ class ControllerResolver implements ControllerResolverInterface
                     $error
                 );
             }
+
+            if (!\is_callable($callable)) {
+                throw new \InvalidArgumentException(
+                    \sprintf('Cannot resolve controller for URI `%s`', $route->getUri())
+                );
+            }
+
+            return $callable;
+        }
+
+        // Try to resolve a known function
+        if (\function_exists($controller)) {
+            return $controller;
         }
 
         // Unsupported resolution
