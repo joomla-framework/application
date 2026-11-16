@@ -1,4 +1,4 @@
-# The Application Package [![Build Status](https://github.com/joomla-framework/application/actions/workflows/ci.yml/badge.svg?branch=3.x-dev)](https://github.com/joomla-framework/application)
+# The Application Package [![Build Status](https://github.com/joomla-framework/application/actions/workflows/ci.yml/badge.svg?branch=4.x-dev)](https://github.com/joomla-framework/application)
 
 [![Latest Stable Version](https://poser.pugx.org/joomla/application/v/stable.svg)](https://packagist.org/packages/joomla/application)
 [![Total Downloads](https://poser.pugx.org/joomla/application/downloads.svg)](https://packagist.org/packages/joomla/application)
