@@ -115,8 +115,7 @@ With caching **disabled**, `respond()` sends:
 ```
 Expires: Wed, 17 Aug 2005 00:00:00 GMT
 Last-Modified: <now> GMT
-Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
-Pragma: no-cache
+Cache-Control: no-cache, must-revalidate
 ```
 
 With caching **enabled**, it sends an `Expires` 15 minutes in the future and, if you set
