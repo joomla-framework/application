@@ -325,8 +325,14 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
      */
     protected function respond()
     {
-        // Send the content-type header.
-        if (!$this->getResponse()->hasHeader('Content-Type')) {
+        $statusCode = $this->getResponse()->getStatusCode();
+
+        // A 204 has no representation at all, so a Content-Type describing
+        // one makes no sense. A 304 is different: per RFC 9110 §15.4.5 it is
+        // expected to carry the same representation metadata headers
+        // (including Content-Type) the 200 it validates would have sent --
+        // only the body is withheld, further down.
+        if ($statusCode !== 204 && !$this->getResponse()->hasHeader('Content-Type')) {
             $this->setHeader('Content-Type', $this->mimeType . '; charset=' . $this->charSet);
         }
 
@@ -357,6 +363,12 @@ abstract class AbstractWebApplication extends AbstractApplication implements Web
         }
 
         $this->sendHeaders();
+
+        // RFC 9110 §15.3.5 (204 No Content) and §15.4.5 (304 Not Modified):
+        // neither response may include a message body.
+        if ($statusCode === 204 || $statusCode === 304) {
+            return;
+        }
 
         echo $this->getBody();
     }
